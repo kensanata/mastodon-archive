@@ -34,10 +34,9 @@ if not os.path.isfile(status_file):
     sys.exit(2)
 
 with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-    statuses = json.load(fp)
-    fp.close()
+    data = json.load(fp)
 
-for status in statuses:
+for status in data["statuses"]:
     if status["reblog"] is not None:
         print("%s boosted" % status["account"]["display_name"])
         status = status["reblog"]

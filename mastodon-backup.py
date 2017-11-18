@@ -77,22 +77,8 @@ print("Get statuses (this may take a while)")
 statuses = mastodon.account_statuses(user["id"])
 statuses = mastodon.fetch_remaining(
     first_page = statuses)
-
-def allSameAccount(statuses):
-    if len(statuses) < 1:
-        return False
-    a0 = statuses[0]['account']
-    return all(a[attrib] == a0[attrib]
-                for attrib in ('url', 'id', 'acct', 'display_name', 'created_at')
-                    for s in statuses[1:]
-                        for a in (s['account'],))
                         
-data = { 'statuses': statuses }
-
-if allSameAccount(statuses):
-    data['account'] = statuses[0]['account']
-    for s in statuses:
-        s.pop('account')
+data = { 'statuses': statuses, 'account': user }
     
 print("Saving %d statuses" % len(statuses))
 
