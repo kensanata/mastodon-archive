@@ -6,6 +6,7 @@
 - [Mastodon Backup](#mastodon-backup)
     - [Making a backup](#making-a-backup)
     - [Generating a text file](#generating-a-text-file)
+    - [Generating a HTML file](#generating-a-html-file)
 
 <!-- markdown-toc end -->
 
@@ -65,4 +66,14 @@ it all started with Labyrinth Lord which I knew long before I knew B/X. Sadly,
 my Indie Game Night is no longer a thing but I still love Lady Blackbird, all
 the [#pbta](https://dice.camp/tags/pbta) hacks on my drive, and so much more.
 But in the three campaigns I run, it’s all OSR right now.
+```
+
+
+## Generating a HTML file
+
+You probably want to redirect the `mastodon-backup-to-text.py` output
+to a file. Assuming you already made a backup of your toots:
+
+```
+$ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
