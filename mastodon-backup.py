@@ -78,6 +78,22 @@ statuses = mastodon.account_statuses(user["id"])
 statuses = mastodon.fetch_remaining(
     first_page = statuses)
 
+def allSameAccount(statuses):
+    if len(statuses) < 1:
+        return False
+    a0 = statuses[0]['account']
+    return all(a[attrib] == a0[attrib]
+                for attrib in ('url', 'id', 'acct', 'display_name', 'created_at')
+                    for s in statuses[1:]
+                        for a in (s['account'],))
+                        
+data = { 'statuses': statuses }
+
+if allSameAccount(statuses):
+    data['account'] = statuses[0]['account']
+    for s in statuses:
+        s.pop('account')
+    
 print("Saving %d statuses" % len(statuses))
 
 date_handler = lambda obj: (
@@ -86,4 +102,4 @@ date_handler = lambda obj: (
     else None)
 
 with open(status_file, mode = 'w', encoding = 'utf-8') as fp:
-    data = json.dump(statuses, fp, indent = 2, default = date_handler)
+    data = json.dump(data, fp, indent = 2, default = date_handler)
