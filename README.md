@@ -57,4 +57,12 @@ Assuming you already made a backup of your toots:
 
 ```
 $ ./mastodon-backup-to-text.py kensanata@dice.camp
+[lots of other toots]
+Alex Schroeder 🐉 @kensanata 2017-11-14T22:21:50.599000+00:00
+[#introduction](https://dice.camp/tags/introduction) I run
+[#osr](https://dice.camp/tags/osr) games using my own hose rule document but
+it all started with Labyrinth Lord which I knew long before I knew B/X. Sadly,
+my Indie Game Night is no longer a thing but I still love Lady Blackbird, all
+the [#pbta](https://dice.camp/tags/pbta) hacks on my drive, and so much more.
+But in the three campaigns I run, it’s all OSR right now.
 ```
