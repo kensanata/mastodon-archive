@@ -1,5 +1,16 @@
 # Mastodon Backup
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Mastodon Backup](#mastodon-backup)
+    - [Making a backup](#making-a-backup)
+    - [Generating a text file](#generating-a-text-file)
+
+<!-- markdown-toc end -->
+
+## Making a backup
+
 This tool uses the [Mastodon.py](https://github.com/halcy/Mastodon.py)
 library which you must install:
 
@@ -32,3 +43,18 @@ exist, you don't have to log in the next time you run the application.
 
 `dice.camp.user.kensanata.json` is the JSON file with your data (but
 without your media attachments).
+
+## Generating a text file
+
+The tool `mastodon-backup-to-text.py` requires `html2text`:
+
+```bash
+# Python 3
+pip3 install html2text
+```
+
+Assuming you already made a backup of your toots:
+
+```
+$ ./mastodon-backup-to-text.py kensanata@dice.camp
+```
