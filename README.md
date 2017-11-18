@@ -10,7 +10,7 @@ pip3 install Mastodon.py
 
 When using the app for the first time, you will have to authorize it:
 
-```bash
+```
 $ ./mastodon-backup.py kensanata@dice.camp
 Registering app
 Log in
