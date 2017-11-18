@@ -87,4 +87,3 @@ date_handler = lambda obj: (
 
 with open(status_file, mode = 'w', encoding = 'utf-8') as fp:
     data = json.dump(statuses, fp, default = date_handler)
-    fp.close()
