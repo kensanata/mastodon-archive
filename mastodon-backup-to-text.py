@@ -37,9 +37,6 @@ with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
     statuses = json.load(fp)
     fp.close()
 
-if len(statuses) == 0:
-    sys.exit(3)
-
 for status in statuses:
     if status["reblog"] is not None:
         print("%s boosted" % status["account"]["display_name"])
