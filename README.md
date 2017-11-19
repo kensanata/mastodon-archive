@@ -79,6 +79,29 @@ to a file. Assuming you already made a backup of your toots:
 $ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
 
+# Downloading media files
+
+By default, media you uploaded are not part of your backup.
+`mastodon-backup-media.py` will look through your backup and download
+all the missing media files.
+
+It requires `progress` and `pySmartDL`:
+
+```bash
+# Python 3
+pip3 install pySmartDL
+pip3 install progress
+```
+
+Assuming you already made a backup of your toots:
+
+```
+$ ./mastodon-backup-media.py kensanata@dice.camp
+44 urls in your backup (half of them are previews)
+34 files already exist
+Downloading |################################| 10/10
+```
+
 # Documentation
 
 The data we have in our backup file is a hash with two keys:
