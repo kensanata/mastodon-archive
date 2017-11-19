@@ -3,11 +3,11 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-    - [Making a backup](#making-a-backup)
-    - [Generating a text file](#generating-a-text-file)
-    - [Generating a HTML file](#generating-a-html-file)
-    - [Documentation](#documentation)
-    - [Alternatives](#alternatives)
+- [Making a backup](#making-a-backup)
+- [Generating a text file](#generating-a-text-file)
+- [Generating a HTML file](#generating-a-html-file)
+- [Documentation](#documentation)
+- [Alternatives](#alternatives)
 
 <!-- markdown-toc end -->
 
