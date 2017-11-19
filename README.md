@@ -11,7 +11,7 @@
 
 <!-- markdown-toc end -->
 
-## Making a backup
+# Making a backup
 
 This tool uses the [Mastodon.py](https://github.com/halcy/Mastodon.py)
 library which you must install:
@@ -46,7 +46,7 @@ exist, you don't have to log in the next time you run the application.
 `dice.camp.user.kensanata.json` is the JSON file with your data (but
 without your media attachments).
 
-## Generating a text file
+# Generating a text file
 
 The tool `mastodon-backup-to-text.py` requires `html2text`:
 
@@ -70,7 +70,7 @@ But in the three campaigns I run, it’s all OSR right now.
 ```
 
 
-## Generating a HTML file
+# Generating a HTML file
 
 You probably want to redirect the `mastodon-backup-to-text.py` output
 to a file. Assuming you already made a backup of your toots:
@@ -79,7 +79,7 @@ to a file. Assuming you already made a backup of your toots:
 $ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
 
-## Documentation
+# Documentation
 
 The data we have in our backup file is a hash with two keys:
 
@@ -92,7 +92,7 @@ One way to get started is to look at what a
 [Status](https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#status)
 entity looks like.
 
-## Alternatives
+# Alternatives
 
 There are two kinds of alternatives.
 
