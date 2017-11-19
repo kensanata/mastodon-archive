@@ -77,3 +77,23 @@ to a file. Assuming you already made a backup of your toots:
 ```
 $ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
+
+## Alternatives
+
+There are two kinds of alternatives.
+
+1. Solutions that extract your public toots from your profile, e.g.
+   [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
+   The problem there is that you'll only get "top level" toots and
+   boosts but *no replies*.
+   
+    * [Mastotool](https://mdhughes.tech/mastotool/) -- includes media
+      download!
+    * [MastoUserScrape.py](https://gist.github.com/FlyMyPG/2e9d4532453182ada0da78e74980193b)
+   
+2. Solutions that extract your public toots from your Atom feed, e.g.
+   [https://octodon.social/users/kensanata.atom](https://octodon.social/users/kensanata.atom).
+   The problem there is that you'll only get a few pages worth of
+   toots, not *all* of them.
+
+	* [Mastotool "Atom"](https://github.com/kensanata/mastotool)
