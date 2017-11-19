@@ -3,10 +3,10 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Mastodon Backup](#mastodon-backup)
     - [Making a backup](#making-a-backup)
     - [Generating a text file](#generating-a-text-file)
     - [Generating a HTML file](#generating-a-html-file)
+    - [Documentation](#documentation)
     - [Alternatives](#alternatives)
 
 <!-- markdown-toc end -->
@@ -78,6 +78,19 @@ to a file. Assuming you already made a backup of your toots:
 ```
 $ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
+
+## Documentation
+
+The data we have in our backup file is a hash with two keys:
+
+1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
+2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
+
+If you want to understand the details and the nested nature of these
+data structures, you need to look at the Mastodon API documentation.
+One way to get started is to look at what a
+[Status](https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#status)
+entity looks like.
 
 ## Alternatives
 
