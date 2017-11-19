@@ -7,6 +7,7 @@
     - [Making a backup](#making-a-backup)
     - [Generating a text file](#generating-a-text-file)
     - [Generating a HTML file](#generating-a-html-file)
+    - [Alternatives](#alternatives)
 
 <!-- markdown-toc end -->
 
