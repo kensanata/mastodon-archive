@@ -21,7 +21,7 @@ import html2text
 argv = sys.argv
 
 if len(argv) != 2:
-    print("Usage: %s username@instance" % argv[0])
+    print("Usage: %s username@instance" % argv[0], file=sys.stderr)
     sys.exit(1)
 
 (username, domain) = argv[1].split('@')
@@ -30,7 +30,7 @@ status_file = domain + '.user.' + username + '.json'
 
 if not os.path.isfile(status_file):
 
-    print("You need to run mastodon-backup.py, first")
+    print("You need to run mastodon-backup.py, first", file=sys.stderr)
     sys.exit(2)
 
 with open(status_file, mode = 'r', encoding = 'utf-8') as fp:

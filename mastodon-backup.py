@@ -22,7 +22,7 @@ import datetime
 argv = sys.argv
 
 if len(argv) != 2:
-    print("Usage: %s username@instance" % argv[0])
+    print("Usage: %s username@instance" % argv[0], file=sys.stderr)
     sys.exit(1)
 
 (username, domain) = argv[1].split('@')
