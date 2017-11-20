@@ -4,6 +4,7 @@
 **Table of Contents**
 
 - [Making a backup](#making-a-backup)
+- [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
 - [Generating a HTML file](#generating-a-html-file)
 - [Documentation](#documentation)
@@ -40,7 +41,7 @@ You will end up with three new files:
 
 `dice.camp.client.secret` is where the client secret for this instance
 is stored. `dice.camp.user.kensanata.secret` is where the
-authorization for this user and instance is stored. If these two files
+authorisation for this user and instance is stored. If these two files
 exist, you don't have to log in the next time you run the application.
 
 `dice.camp.user.kensanata.json` is the JSON file with your data (but
@@ -71,6 +72,11 @@ Downloading |################################| 10/10
 
 You will end up with a new directory, `dice.camp.user.kensanata`. It
 contains all the media you uploaded, and their corresponding previews.
+
+If you rerun it, it will simply try to get the remaining files. Note,
+however, that instance administrators can *delete* media files. Thus,
+you might be forever missing some files—particularly the ones from
+*remote* instances, if you added any to your favourites.
 
 # Generating a text file
 
@@ -130,7 +136,7 @@ There are two kinds of alternatives.
    The problem there is that you'll only get "top level" toots and
    boosts but *no replies*.
    
-    * [Mastotool](https://mdhughes.tech/mastotool/) -- includes media
+    * [Mastotool](https://mdhughes.tech/mastotool/) includes media
       download!
     * [MastoUserScrape.py](https://gist.github.com/FlyMyPG/2e9d4532453182ada0da78e74980193b)
    
