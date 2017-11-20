@@ -86,6 +86,13 @@ however, that instance administrators can *delete* media files. Thus,
 you might be forever missing some files—particularly the ones from
 *remote* instances, if you added any to your favourites.
 
+There's one thing you need to remember, though: the media directory
+contains all the media from your statuses, and all the media from your
+favourites. There is no a particular reason why the media files from
+both sources need to be in the same directory. If you think this is a
+problem, [create an issue](https://github.com/kensanata/mastodon-backup/issues)
+and we'll discuss it.
+
 # Generating a text file
 
 The tool `mastodon-backup-to-text.py` requires `html2text`:
@@ -115,11 +122,22 @@ You probably want to redirect the `mastodon-backup-to-text.py` output
 to a file. Assuming you already made a backup of your toots:
 
 ```
-$ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
+$ ./mastodon-backup-to-html.py kensanata@dice.camp > statuses.html
 ```
 
 If you have downloaded your media attachments, these will be used in
-the HTML file.
+the HTML file. Thus, if you want to upload the HTML file, you now need
+to upload the media directory as well or all the media links will be
+broken.
+
+You can also generate a file for your favourites:
+
+```
+$ ./mastodon-backup-to-html.py favourites kensanata@dice.camp > favourites.html
+```
+
+Note that both the HTML file with your statuses and the HTML file with
+your favourites will refer to the media files in your media directory.
 
 # Documentation
 
