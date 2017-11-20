@@ -21,26 +21,41 @@ import datetime
 import dateutil.parser
 
 argv = sys.argv
+collection = 'statuses'
+handle = None
 
-if len(argv) != 2:
-    print("Usage: %s username@instance" % argv[0])
+if len(argv) > 1:
+    handle = argv.pop()
+
+if len(argv) > 1:
+    collection = argv.pop()
+
+if len(argv) > 1 or handle is None:
+    print("Usage: %s [favourites] username@instance" % argv[0], file=sys.stderr)
+    print("The default is to export your statuses.", file=sys.stderr)
     sys.exit(1)
 
-(username, domain) = argv[1].split('@')
+(username, domain) = handle.split('@')
 
 status_file = domain + '.user.' + username + '.json'
 
 if not os.path.isfile(status_file):
 
-    print("You need to run mastodon-backup.py, first")
+    print("You need to run mastodon-backup.py, first", file=sys.stderr)
     sys.exit(2)
 
 with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
     data = json.load(fp)
 
 user = data["account"]
-statuses = data["statuses"]
-    
+
+try:
+    statuses = data[collection]
+except KeyError:
+    print("You can only export statuses or favourites.", file=sys.stderr)
+    print("Please check your spelling.", file=sys.stderr)
+    sys.exit(3)
+
 header_template = '''\
 <!DOCTYPE html>
 <html>
