@@ -20,6 +20,7 @@ from pySmartDL import SmartDL
 from progress.bar import Bar
 from urllib.parse import urlparse
 from time import sleep
+from urllib.error import HTTPError
 
 argv = sys.argv
 
@@ -42,40 +43,35 @@ with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
 
 urls = []
 for status in data["statuses"]:
-    for media in status["media_attachments"]:
-        for url in [media["preview_url"], media["url"]]:
-            urls.append(url)
+    attachments = status["media_attachments"]
+    if status["reblog"] is not None:
+        attachments = status["reblog"]["media_attachments"]
+    for attachment in attachments:
+            for url in [attachment["preview_url"], attachment["url"]]:
+                    urls.append(url)
 
 print("%d urls in your backup (half of them are previews)" % len(urls))
-            
+
+bar = Bar('Downloading', max = len(urls))
+
+errors = 0
+
 downloaders = []
 for url in urls:
+    bar.next()
     path = urlparse(url).path
     if not os.path.isfile(media_dir + path):
         download = SmartDL(url,
                            dest = media_dir + path,
                            progress_bar = None)
-        download.start()
-        downloaders.append(download)
-
-print("%d files already exist" % (len(urls) - len(downloaders)))
-
-bar = Bar('Downloading', max = len(downloaders))
-
-errors = 0
-while len(downloaders) > 0:
-    sleep(1)
-    done = []
-    for download in downloaders:
-        if download.isFinished():
-            done.append(download)
-            bar.next()
-            if not download.isSuccessful():
-                errors += 1
-    for download in done:
-        downloaders.remove(download)
+        try:
+            download.start(blocking = False)
+            downloaders.append(download)
+        except HTTPError as e:
+            # print("\n" + e.msg + ": " + url, file=sys.stderr)
+            errors += 1
 
 bar.finish()
 
 if errors > 0:
-    print("%d downloads failed: " + errors)
+    print("%d downloads failed" % errors)

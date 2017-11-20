@@ -46,6 +46,32 @@ exist, you don't have to log in the next time you run the application.
 `dice.camp.user.kensanata.json` is the JSON file with your data (but
 without your media attachments).
 
+# Downloading media files
+
+By default, media you uploaded are not part of your backup.
+`mastodon-backup-media.py` will look through your backup and download
+all the missing media files.
+
+It requires `progress` and `pySmartDL`:
+
+```bash
+# Python 3
+pip3 install pySmartDL
+pip3 install progress
+```
+
+Assuming you already made a backup of your toots:
+
+```
+$ ./mastodon-backup-media.py kensanata@dice.camp
+44 urls in your backup (half of them are previews)
+34 files already exist
+Downloading |################################| 10/10
+```
+
+You will end up with a new directory, `dice.camp.user.kensanata`. It
+contains all the media you uploaded, and their corresponding previews.
+
 # Generating a text file
 
 The tool `mastodon-backup-to-text.py` requires `html2text`:
@@ -79,28 +105,8 @@ to a file. Assuming you already made a backup of your toots:
 $ ./mastodon-backup-to-html.py kensanata@dice.camp > kensanata.html
 ```
 
-# Downloading media files
-
-By default, media you uploaded are not part of your backup.
-`mastodon-backup-media.py` will look through your backup and download
-all the missing media files.
-
-It requires `progress` and `pySmartDL`:
-
-```bash
-# Python 3
-pip3 install pySmartDL
-pip3 install progress
-```
-
-Assuming you already made a backup of your toots:
-
-```
-$ ./mastodon-backup-media.py kensanata@dice.camp
-44 urls in your backup (half of them are previews)
-34 files already exist
-Downloading |################################| 10/10
-```
+If you have downloaded your media attachments, these will be used in
+the HTML file.
 
 # Documentation
 
