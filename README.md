@@ -1,5 +1,12 @@
 # Mastodon Backup
 
+This tool allows you to make a backup of your statuses, your
+favourites and the media in both your statuses and your favourites.
+From this backup, you can generate a simple text file, or a HTML file
+with or without media. Take a look at an
+[example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
+if you're curious.
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -49,9 +56,10 @@ without your media attachments).
 
 # Downloading media files
 
-By default, media you uploaded are not part of your backup.
-`mastodon-backup-media.py` will look through your backup and download
-all the missing media files.
+By default, media you uploaded and media of statuses you added your
+favourites are not part of your backup. `mastodon-backup-media.py`
+will look through your backup and download all the missing media
+files.
 
 It requires `progress` and `pySmartDL`:
 
@@ -100,7 +108,6 @@ my Indie Game Night is no longer a thing but I still love Lady Blackbird, all
 the [#pbta](https://dice.camp/tags/pbta) hacks on my drive, and so much more.
 But in the three campaigns I run, it’s all OSR right now.
 ```
-
 
 # Generating a HTML file
 
