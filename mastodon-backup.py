@@ -77,10 +77,19 @@ print("Get statuses (this may take a while)")
 statuses = mastodon.account_statuses(user["id"])
 statuses = mastodon.fetch_remaining(
     first_page = statuses)
-                        
-data = { 'statuses': statuses, 'account': user }
+
+print("Get favourites (this may take a while)")
+favourites = mastodon.favourites()
+favourites = mastodon.fetch_remaining(
+    first_page = favourites)
+
+data = { 'account': user,
+         'statuses': statuses,
+         'favourites': favourites }
     
-print("Saving %d statuses" % len(statuses))
+print("Saving %d statuses and %d favourites" % (
+    len(statuses),
+    len(favourites)))
 
 date_handler = lambda obj: (
     obj.isoformat()
