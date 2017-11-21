@@ -174,9 +174,13 @@ a:hover {
 .more a {
         max-width: 50%%;
         max-height: 50%%;
+	display: block;
 }
+/* http://jonrohan.codes/fieldnotes/vertically-center-clipped-image/ */
 .media img {
-	margin-top: -30%%;
+	position: relative;
+	top: 50%%;
+	transform: translateY(-50%%);
 }
 .content a {
 	color: #d9e1e8;
