@@ -76,7 +76,7 @@ header_template = '''\
 <style type="text/css">
 body {
         font-family: sans-serif;
-        background: #191B22;
+        background: #191b22;
         font-size: 14px;
         line-height: 18px;
         font-weight: 400;
@@ -147,23 +147,36 @@ a:hover {
 .meta a:visited {
 	color: #fff;
 }
+.meta a.time {
+	color: inherit;
+}
+.meta a.time:visited {
+	color: inherit;
+}
 .meta .time {
 	display: block;
 	float: right;
 }
 .media {
 	margin-top: 8px;
+	margin-bottom: 8px;
 	height: 110px;
 	overflow: hidden;
 }
-.more a {
+.media a {
         display: block;
-        width: 50%%;
-        height: 50%%;
-        box-sizing: border-box;
-        overflow: hidden;
         float: left;
-        padding: 2px;
+	position: relative;
+        border: 1px solid #282c37;
+        box-sizing: border-box;
+	overflow: hidden;
+}
+.more a {
+        max-width: 50%%;
+        max-height: 50%%;
+}
+.media img {
+	margin-top: -30%%;
 }
 .content a {
 	color: #d9e1e8;
@@ -206,7 +219,7 @@ status_template = '''\
 <div class="meta">
 <strong class="name"><a href="%s">%s</a></strong>
 <span class="nick">@%s</span>
-<span class="time">%s</span>
+<a class="time" href="%s">%s</a>
 </div>
 <div class="content">
 %s
@@ -253,6 +266,7 @@ if len(statuses) > 0:
             user["url"],
             user["display_name"],
             user["username"],
+            status["url"],
             dateutil.parser.parse(
                 status["created_at"]).strftime(
                     "%Y-%m-%d %H:%M"),
