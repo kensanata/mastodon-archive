@@ -20,9 +20,13 @@ import html2text
 import re
 
 argv = sys.argv
+collection = 'statuses'
 
-if len(argv) < 2:
-    print("Usage: %s username@instance [patterns...]" % argv[0], file=sys.stderr)
+if len(argv) > 1 and "@" not in argv[1]:
+    collection = argv.pop(1)
+
+if len(argv) < 2 or "@" not in argv[1]:
+    print("Usage: %s [favourites] username@instance [patterns...]" % argv[0], file=sys.stderr)
     sys.exit(1)
 
 (username, domain) = argv[1].split('@')
@@ -39,6 +43,13 @@ if not os.path.isfile(status_file):
 with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
     data = json.load(fp)
 
+try:
+    statuses = data[collection]
+except KeyError:
+    print("You can only search or export statuses or favourites.", file=sys.stderr)
+    print("Please check your spelling.", file=sys.stderr)
+    sys.exit(3)
+    
 def matches(status):
     if status["reblog"] is not None:
         status = status["reblog"]
@@ -56,9 +67,9 @@ def matches(status):
     return True
     
 if len(patterns) > 0:
-    data["statuses"] = list(filter(matches, data["statuses"]))
+    statuses = list(filter(matches, statuses))
     
-for status in data["statuses"]:
+for status in statuses:
     if status["reblog"] is not None:
         print("%s boosted" % status["account"]["display_name"])
         status = status["reblog"]

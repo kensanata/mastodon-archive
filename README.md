@@ -147,11 +147,17 @@ $ ./mastodon-backup-to-text.py kensanata@dice.camp house rule
 
 Remember basic
 [regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax):
-`\b` is a word boundary, for example. Use single quotes to protect
-your backslashes.
+`\b` is a word boundary, `(?i)` ignores case, just to pick some useful
+ones. Use single quotes to protect your backslashes and questionmarks.
 
 ```
 $ ./mastodon-backup-to-text.py kensanata@dice.camp house 'rule\b'
+```
+
+You can also search your favourites:
+
+```
+$ ./mastodon-backup-to-text.py favourites kensanata@dice.camp '(?i)blackbird'
 ```
 
 # Generating a HTML file
