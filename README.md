@@ -62,7 +62,8 @@ favourites are not part of your backup. `mastodon-backup-media.py`
 will look through your backup and download all the missing media
 files.
 
-It requires `progress` and `pySmartDL`:
+It requires [progress](https://pypi.python.org/pypi/progress)
+and [pySmartDL](https://pypi.python.org/pypi/pySmartDL):
 
 ```bash
 # Python 3
