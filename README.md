@@ -13,6 +13,7 @@ if you're curious.
 - [Making a backup](#making-a-backup)
 - [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
+- [Searching your backup](#searching-your-backup)
 - [Generating a HTML file](#generating-a-html-file)
 - [Documentation](#documentation)
 - [Alternatives](#alternatives)
@@ -114,6 +115,43 @@ it all started with Labyrinth Lord which I knew long before I knew B/X. Sadly,
 my Indie Game Night is no longer a thing but I still love Lady Blackbird, all
 the [#pbta](https://dice.camp/tags/pbta) hacks on my drive, and so much more.
 But in the three campaigns I run, it’s all OSR right now.
+```
+
+Generating a text file just means redirection the output to a text
+file:
+
+```
+$ ./mastodon-backup-to-text.py kensanata@dice.camp > statuses.txt
+```
+
+# Searching your backup
+
+You can also filter using regular expressions. These will be checked
+against the status *content* (obviously), *display name* and
+*username* (both are important for boosted toots), and the *created
+at* date. Also note that the regular expression will be applied to the
+raw status content. In other words, the status contains all the HTML
+and problably starts with a `<p>`, which is then removed in the
+output.
+
+```
+$ ./mastodon-backup-to-text.py kensanata@dice.camp house
+```
+
+You can provide multiple regular expressions and they will all be
+checked:
+
+```
+$ ./mastodon-backup-to-text.py kensanata@dice.camp house rule
+```
+
+Remember basic
+[regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax):
+`\b` is a word boundary, for example. Use single quotes to protect
+your backslashes.
+
+```
+$ ./mastodon-backup-to-text.py kensanata@dice.camp house 'rule\b'
 ```
 
 # Generating a HTML file

@@ -17,14 +17,17 @@ import sys
 import os.path
 import json
 import html2text
+import re
 
 argv = sys.argv
 
-if len(argv) != 2:
-    print("Usage: %s username@instance" % argv[0], file=sys.stderr)
+if len(argv) < 2:
+    print("Usage: %s username@instance [patterns...]" % argv[0], file=sys.stderr)
     sys.exit(1)
 
 (username, domain) = argv[1].split('@')
+
+patterns = argv[2:]
 
 status_file = domain + '.user.' + username + '.json'
 
@@ -36,6 +39,25 @@ if not os.path.isfile(status_file):
 with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
     data = json.load(fp)
 
+def matches(status):
+    if status["reblog"] is not None:
+        status = status["reblog"]
+    for pattern in patterns:
+        found = False
+        for s in [status["content"],
+                  status["account"]["display_name"],
+                  status["account"]["username"],
+                  status["created_at"]]:
+            if re.search(pattern,s) is not None:
+                found = True
+                continue
+        if not found:
+            return False 
+    return True
+    
+if len(patterns) > 0:
+    data["statuses"] = list(filter(matches, data["statuses"]))
+    
 for status in data["statuses"]:
     if status["reblog"] is not None:
         print("%s boosted" % status["account"]["display_name"])
