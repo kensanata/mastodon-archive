@@ -96,7 +96,8 @@ and we'll discuss it.
 
 # Generating a text file
 
-The tool `mastodon-backup-to-text.py` requires `html2text`:
+The tool `mastodon-backup-to-text.py` requires
+[html2text](https://pypi.python.org/pypi/html2text):
 
 ```bash
 # Python 3
