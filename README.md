@@ -149,8 +149,9 @@ $ ./mastodon-backup-to-text.py kensanata@dice.camp house rule
 
 Remember basic
 [regular expression syntax](https://docs.python.org/3/library/re.html#regular-expression-syntax):
-`\b` is a word boundary, `(?i)` ignores case, just to pick some useful
-ones. Use single quotes to protect your backslashes and questionmarks.
+`\b` is a word boundary, `(?i)` ignores case, `(a|b)` is for
+alternatives, just to pick some useful ones. Use single quotes to
+protect your backslashes and questionmarks.
 
 ```
 $ ./mastodon-backup-to-text.py kensanata@dice.camp house 'rule\b'
@@ -160,6 +161,13 @@ You can also search your favourites:
 
 ```
 $ ./mastodon-backup-to-text.py favourites kensanata@dice.camp '(?i)blackbird'
+```
+
+Dates are in ISO format (e.g. `2017-11-19T14:00`). I usually only care
+about year and month, though:
+
+```
+$ ./mastodon-backup-to-text.py favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
 
 # Generating a HTML file
