@@ -16,6 +16,7 @@ if you're curious.
 - [Searching your backup](#searching-your-backup)
 - [Generating a HTML file](#generating-a-html-file)
 - [Documentation](#documentation)
+- [Processing using jq](#processing-using-jq)
 - [Alternatives](#alternatives)
 
 <!-- markdown-toc end -->
@@ -206,9 +207,34 @@ One way to get started is to look at what a
 [Status](https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#status)
 entity looks like.
 
+# Processing using jq
+
+[jq](https://stedolan.github.io/jq/) is a lightweight and flexible
+command-line JSON processor. That means you can use it to work with
+your backup.
+
+The following command will take all your favourites and create a map
+with the keys `time` and `message` for each one of them, and put it
+all in an array.
+
+```
+$ jq '[.favourites[] | {time: .account.username, message: .content}]' < dice.camp.user.kensanata.json
+```
+
+Example output, assuming I had only a single favourite:
+
+```
+[
+  {
+    "time": "andrhia",
+    "message": "<p>It’s nice to reinvent yourself every so often, don’t you think?</p>"
+  }
+]
+```
+
 # Alternatives
 
-There are two kinds of alternatives.
+There are two kinds of alternatives to `mastodon-backup`:
 
 1. Solutions that extract your public toots from your profile, e.g.
    [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
