@@ -127,6 +127,14 @@ file:
 $ ./mastodon-backup-to-text.py kensanata@dice.camp > statuses.txt
 ```
 
+If you're working with text, you might expect the first toot to be at
+the top and the last toot to be at the bottom. In this case, you need
+to reverse the list:
+
+```
+$ ./mastodon-backup-to-text.py --reverse kensanata@dice.camp | head
+```
+
 # Searching your backup
 
 You can also filter using regular expressions. These will be checked

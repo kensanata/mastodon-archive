@@ -21,12 +21,17 @@ import re
 
 argv = sys.argv
 collection = 'statuses'
+reverse = False
+
+if len(argv) > 1 and argv[1] == "--reverse":
+    reverse = True
+    argv.pop(1)
 
 if len(argv) > 1 and "@" not in argv[1]:
     collection = argv.pop(1)
 
 if len(argv) < 2 or "@" not in argv[1]:
-    print("Usage: %s [favourites] username@instance [patterns...]" % argv[0], file=sys.stderr)
+    print("Usage: %s [--reverse] [favourites] username@instance [patterns...]" % argv[0], file=sys.stderr)
     sys.exit(1)
 
 (username, domain) = argv[1].split('@')
@@ -68,7 +73,10 @@ def matches(status):
     
 if len(patterns) > 0:
     statuses = list(filter(matches, statuses))
-    
+
+if reverse:
+    statuses = reversed(statuses)
+
 for status in statuses:
     if status["reblog"] is not None:
         print("%s boosted" % status["account"]["display_name"])
