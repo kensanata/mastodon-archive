@@ -50,11 +50,16 @@ You will end up with three new files:
 
 `dice.camp.client.secret` is where the client secret for this instance
 is stored. `dice.camp.user.kensanata.secret` is where the
-authorisation for this user and instance is stored. If these two files
-exist, you don't have to log in the next time you run the application.
+authorisation token for this user and instance is stored. If these two
+files exist, you don't have to log in the next time you run the app.
+If your login expired, you need to remove the file containing the
+authorisation token and you will be asked to authorize the app again.
 
 `dice.camp.user.kensanata.json` is the JSON file with your data (but
-without your media attachments).
+without your media attachments). If this file exists, only the missing
+toots will be downloaded the next time you run the app. If you suspect
+a problem and want to make sure that everything is downloaded again,
+you need to remove this file.
 
 # Downloading media files
 
