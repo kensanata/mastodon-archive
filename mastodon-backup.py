@@ -31,6 +31,12 @@ url = 'https://' + domain
 client_secret = domain + '.client.secret'
 user_secret = domain + '.user.' + username + '.secret'
 status_file = domain + '.user.' + username + '.json'
+data = None
+
+if os.path.isfile(status_file):
+    print("Loading existing backup")
+    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
+        data = json.load(fp)
 
 if not os.path.isfile(client_secret):
 
@@ -73,15 +79,48 @@ else:
 print("Get user info")
 user = mastodon.account_verify_credentials()
 
-print("Get statuses (this may take a while)")
-statuses = mastodon.account_statuses(user["id"])
-statuses = mastodon.fetch_remaining(
-    first_page = statuses)
+def find_id(list, id):
+    """Return the list item whose id attribute matches."""
+    return next((item for item in list if item["id"] == id), None)
 
-print("Get favourites (this may take a while)")
-favourites = mastodon.favourites()
-favourites = mastodon.fetch_remaining(
-    first_page = favourites)
+def fetch_up_to(page, id):
+    statuses = []
+    # use a generator expression to find our last status
+    found = find_id(page, id)
+    # get the remaining pages
+    while len(page) > 0 and found is None:
+        statuses.extend(page)
+        sys.stdout.flush()
+        page = mastodon.fetch_next(page)
+        if page is None:
+            break
+        found = find_id(page, id)
+    page = page[0:page.index(found)]
+    statuses.extend(page)
+    print("Fetched a total of %d new toots" % len(statuses))
+    return statuses
+
+if data is None or not "statuses" in data:
+    print("Get statuses (this may take a while)")
+    statuses = mastodon.account_statuses(user["id"])
+    statuses = mastodon.fetch_remaining(
+        first_page = statuses)
+else:
+    id = data["statuses"][0]["id"]
+    print("Get new statuses")
+    statuses = fetch_up_to(mastodon.account_statuses(user["id"]), id)
+    statuses.extend(data["statuses"])
+
+if data is None or not "favourites" in data:
+    print("Get favourites (this may take a while)")
+    favourites = mastodon.favourites()
+    favourites = mastodon.fetch_remaining(
+        first_page = favourites)
+else:
+    id = data["favourites"][0]["id"]
+    print("Get new favourites")
+    favourites = fetch_up_to(mastodon.favourites(), id)
+    favourites.extend(data["favourites"])
 
 data = { 'account': user,
          'statuses': statuses,
