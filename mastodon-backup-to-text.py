@@ -85,4 +85,5 @@ for status in statuses:
         status["account"]["display_name"],
         status["account"]["username"],
         status["created_at"]))
+    print(status["url"])
     print(html2text.html2text(status["content"]))
