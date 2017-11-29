@@ -240,6 +240,33 @@ Example output, assuming I had only a single favourite:
 ]
 ```
 
+# Exploring the API
+
+Now that you have token files, you can explore the Mastodon API using
+`curl`. Your *access token* is the long string in the file
+`*.user.*.secret`. Here is how to use it.
+
+Getting a single status:
+
+```
+curl --silent --show-error \
+	 --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
+     https://dice.camp/api/v1/statuses/99005111284322450
+```
+
+Extract the account id from your backup using `jq` and use `echo` to
+[strip the surrounding double quotes](https://stackoverflow.com/a/24358387/534893).
+Then use the id to get some statuses from the account and use `jq` to
+print the status ids.
+
+```
+ID=$(eval echo $(jq .account.id < dice.camp.user.kensanata.json))
+curl --silent --show-error \
+	 --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
+     "https://dice.camp/api/v1/accounts/$ID/statuses?limit=3" \
+	 | jq '.[]|.id'
+```
+
 # Alternatives
 
 There are two kinds of alternatives to `mastodon-backup`:
