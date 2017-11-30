@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>, Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,7 @@ def backup(args):
     Backup toots, followers, etc from your Mastodon account
     """
 
-    (username, domain) = args.user
+    (username, domain) = args.user.split("@")
 
     url = 'https://' + domain
     client_secret = domain + '.client.secret'
@@ -52,7 +52,7 @@ def backup(args):
         mastodon = Mastodon(
             client_id = client_secret,
             api_base_url = url)
-        
+
         url = mastodon.auth_request_url(
             client_id = client_secret,
             scopes=['read'])
@@ -125,7 +125,7 @@ def backup(args):
     data = { 'account': user,
             'statuses': statuses,
             'favourites': favourites }
-        
+
     print("Saving %d statuses and %d favourites" % (
         len(statuses),
         len(favourites)))
