@@ -256,7 +256,7 @@ Getting a single status:
 
 ```
 curl --silent --show-error \
-	 --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
+     --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
      https://dice.camp/api/v1/statuses/99005111284322450
 ```
 
@@ -268,9 +268,9 @@ print the status ids.
 ```
 ID=$(eval echo $(jq .account.id < dice.camp.user.kensanata.json))
 curl --silent --show-error \
-	 --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
+     --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
      "https://dice.camp/api/v1/accounts/$ID/statuses?limit=3" \
-	 | jq '.[]|.id'
+     | jq '.[]|.id'
 ```
 
 # Alternatives
@@ -291,4 +291,4 @@ There are two kinds of alternatives to `mastodon-backup`:
    The problem there is that you'll only get a few pages worth of
    toots, not *all* of them.
 
-	* [Mastotool "Atom"](https://github.com/kensanata/mastotool)
+    * [Mastotool "Atom"](https://github.com/kensanata/mastotool)
