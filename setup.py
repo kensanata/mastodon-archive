@@ -7,13 +7,12 @@ setup(
     author="Alex Schroeder",
     packages=["mastodon_backup"],
     entry_points={
-        "console_scripts": ["mastodon_backup:mastodon_backup:main"]
+        "console_scripts": ["mastodon_backup=mastodon_backup:main"]
     },
     install_requires=[
         "mastodon.py",
         "pysmartdl",
         "progress",
         "html2text",
-        
     ],
 )
