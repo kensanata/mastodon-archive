@@ -17,6 +17,7 @@ if you're curious.
 - [Generating a HTML file](#generating-a-html-file)
 - [Documentation](#documentation)
 - [Processing using jq](#processing-using-jq)
+- [Exploring the API](#exploring-the-api)
 - [Alternatives](#alternatives)
 
 <!-- markdown-toc end -->
