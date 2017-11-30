@@ -217,10 +217,11 @@ your favourites will refer to the media files in your media directory.
 
 # Documentation
 
-The data we have in our backup file is a hash with two keys:
+The data we have in our backup file is a hash with three keys:
 
 1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
 2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
+3. `favourites` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 
 If you want to understand the details and the nested nature of these
 data structures, you need to look at the Mastodon API documentation.
