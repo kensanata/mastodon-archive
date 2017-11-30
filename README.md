@@ -24,6 +24,13 @@ if you're curious.
 
 # Making a backup
 
+First, you need to download the tool itself. One way to do this is to
+visit the page with all the
+[releases](https://github.com/kensanata/mastodon-backup/releases) and
+pick the latest one, unzip it and move the `.py` files to a directory
+of your liking. Run the app from this directory. Your backup files
+will be created in this directory, too.
+
 This tool uses the [Mastodon.py](https://github.com/halcy/Mastodon.py)
 library which you must install:
 
