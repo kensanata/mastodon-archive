@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017  Alex Schroeder <alex@gnu.org> Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -184,11 +184,11 @@ a:hover {
 }
 .content a {
 	color: #d9e1e8;
-	
+
 }
 .content a:visited {
 	color: #d9e1e8;
-	
+
 }
 .invisible {
 	display: none;
@@ -253,9 +253,9 @@ if len(statuses) > 0:
         user["display_name"],
         user["username"],
         user["note"]))
-    
+
     for status in statuses:
-        
+
         boost = "";
         if status["reblog"] is not None:
             user = status["account"]
@@ -264,7 +264,7 @@ if len(statuses) > 0:
                 user["display_name"])
             # display the boosted status instead
             status = status["reblog"]
-            
+
         user = status["account"]
         info = status_template % (
             user["url"],

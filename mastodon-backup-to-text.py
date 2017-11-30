@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017  Alex Schroeder <alex@gnu.org> Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -54,7 +54,7 @@ except KeyError:
     print("You can only search or export statuses or favourites.", file=sys.stderr)
     print("Please check your spelling.", file=sys.stderr)
     sys.exit(3)
-    
+
 def matches(status):
     if status["reblog"] is not None:
         status = status["reblog"]
@@ -68,9 +68,9 @@ def matches(status):
                 found = True
                 continue
         if not found:
-            return False 
+            return False
     return True
-    
+
 if len(patterns) > 0:
     statuses = list(filter(matches, statuses))
 
