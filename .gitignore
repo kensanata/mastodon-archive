@@ -1,6 +1,8 @@
-*.json
-*.secret
-*.html
-*.egg-info
-__pycache__
-*.user.*
+/*.json
+/*.secret
+/*.html
+/*.egg-info
+/mastodon_archive/__pycache__
+/*.user.*
+/build
+/setup.cfg
