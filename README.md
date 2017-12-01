@@ -26,23 +26,20 @@ if you're curious.
 
 First, you need to download the tool itself. One way to do this is to
 visit the page with all the
-[releases](https://github.com/kensanata/mastodon-backup/releases) and
-pick the latest one, unzip it and move the `.py` files to a directory
-of your liking. Run the app from this directory. Your backup files
-will be created in this directory, too.
-
-This tool uses the [Mastodon.py](https://github.com/halcy/Mastodon.py)
-library which you must install:
+[releases](https://github.com/kensanata/mastodon-backup/releases),
+download the latest one, unzip it and install it. Run the following in
+the directory containing the `setup.py` file. This will also install
+all the dependencies.
 
 ```bash
 # Python 3
-pip3 install Mastodon.py
+pip3 install .
 ```
 
 When using the app for the first time, you will have to authorize it:
 
 ```
-$ ./mastodon-backup.py kensanata@dice.camp
+$ mastodon_backup archive kensanata@dice.camp
 Registering app
 Log in
 Visit the following URL and authorize the app:
@@ -72,23 +69,13 @@ you need to remove this file.
 # Downloading media files
 
 By default, media you uploaded and media of statuses you added your
-favourites are not part of your backup. `mastodon-backup-media.py`
-will look through your backup and download all the missing media
-files.
-
-It requires [progress](https://pypi.python.org/pypi/progress)
-and [pySmartDL](https://pypi.python.org/pypi/pySmartDL):
-
-```bash
-# Python 3
-pip3 install pySmartDL
-pip3 install progress
-```
+favourites are not part of your backup. You can download it using a
+separate command, however.
 
 Assuming you already made a backup of your toots:
 
 ```
-$ ./mastodon-backup-media.py kensanata@dice.camp
+$ mastodon_backup media kensanata@dice.camp
 44 urls in your backup (half of them are previews)
 34 files already exist
 Downloading |################################| 10/10
@@ -111,18 +98,10 @@ and we'll discuss it.
 
 # Generating a text file
 
-The tool `mastodon-backup-to-text.py` requires
-[html2text](https://pypi.python.org/pypi/html2text):
-
-```bash
-# Python 3
-pip3 install html2text
-```
-
 Assuming you already made a backup of your toots:
 
 ```
-$ ./mastodon-backup-to-text.py kensanata@dice.camp
+$ mastodon_backup text kensanata@dice.camp
 [lots of other toots]
 Alex Schroeder 🐉 @kensanata 2017-11-14T22:21:50.599000+00:00
 [#introduction](https://dice.camp/tags/introduction) I run
@@ -137,7 +116,7 @@ Generating a text file just means redirection the output to a text
 file:
 
 ```
-$ ./mastodon-backup-to-text.py kensanata@dice.camp > statuses.txt
+$ mastodon_backup text kensanata@dice.camp > statuses.txt
 ```
 
 If you're working with text, you might expect the first toot to be at
@@ -145,7 +124,7 @@ the top and the last toot to be at the bottom. In this case, you need
 to reverse the list:
 
 ```
-$ ./mastodon-backup-to-text.py --reverse kensanata@dice.camp | head
+$ mastodon_backup text --reverse kensanata@dice.camp | head
 ```
 
 # Searching your backup
@@ -159,14 +138,14 @@ and problably starts with a `<p>`, which is then removed in the
 output.
 
 ```
-$ ./mastodon-backup-to-text.py kensanata@dice.camp house
+$ mastodon_backup text kensanata@dice.camp house
 ```
 
 You can provide multiple regular expressions and they will all be
 checked:
 
 ```
-$ ./mastodon-backup-to-text.py kensanata@dice.camp house rule
+$ mastodon_backup text kensanata@dice.camp house rule
 ```
 
 Remember basic
@@ -176,30 +155,31 @@ alternatives, just to pick some useful ones. Use single quotes to
 protect your backslashes and questionmarks.
 
 ```
-$ ./mastodon-backup-to-text.py kensanata@dice.camp house 'rule\b'
+$ mastodon_backup text kensanata@dice.camp house 'rule\b'
 ```
 
 You can also search your favourites:
 
 ```
-$ ./mastodon-backup-to-text.py favourites kensanata@dice.camp '(?i)blackbird'
+$ mastodon_backup text --collection favourites kensanata@dice.camp '(?i)blackbird'
 ```
 
 Dates are in ISO format (e.g. `2017-11-19T14:00`). I usually only care
 about year and month, though:
 
 ```
-$ ./mastodon-backup-to-text.py favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
+$ mastodon_backup text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
 
 # Generating a HTML file
 
-You probably want to redirect the `mastodon-backup-to-text.py` output
-to a file. Assuming you already made a backup of your toots:
+Assuming you already made a backup of your toots:
 
 ```
-$ ./mastodon-backup-to-html.py kensanata@dice.camp > statuses.html
+$ mastodon_backup html kensanata@dice.camp > statuses.html
 ```
+
+The above redirects the output of this command to a static HTML file.
 
 If you have downloaded your media attachments, these will be used in
 the HTML file. Thus, if you want to upload the HTML file, you now need
@@ -209,7 +189,7 @@ broken.
 You can also generate a file for your favourites:
 
 ```
-$ ./mastodon-backup-to-html.py favourites kensanata@dice.camp > favourites.html
+$ mastodon_backup html --collection favourites kensanata@dice.camp > favourites.html
 ```
 
 Note that both the HTML file with your statuses and the HTML file with
@@ -283,7 +263,7 @@ curl --silent --show-error \
 
 # Alternatives
 
-There are two kinds of alternatives to `mastodon-backup`:
+There are two kinds of alternatives:
 
 1. Solutions that extract your public toots from your profile, e.g.
    [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
