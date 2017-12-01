@@ -17,7 +17,7 @@ setup(
     ],
     packages=["mastodon_archive"],
     entry_points={
-        "console_scripts": ["mastodon_archive=mastodon_archive:main"]
+        "console_scripts": ["mastodon-archive=mastodon_archive:main"]
     },
     install_requires=[
         "mastodon.py",

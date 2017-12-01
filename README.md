@@ -25,7 +25,7 @@ if you're curious.
 
 # Installation
 
-The following command will install `mastodon_archive` all its
+The following command will install `mastodon-archive` all its
 dependencies:
 
 ```bash
@@ -33,15 +33,12 @@ dependencies:
 $ pip3 install mastodon-archive
 ```
 
-Note the small difference between `mastodon-archive` and
-`mastodon_archive`.
-
 # Making an archive
 
 When using the app for the first time, you will have to authorize it:
 
 ```
-$ mastodon_archive archive kensanata@dice.camp
+$ mastodon-archive archive kensanata@dice.camp
 Registering app
 Log in
 Visit the following URL and authorize the app:
@@ -89,7 +86,7 @@ separate command, however.
 Assuming you already made a archive of your toots:
 
 ```
-$ mastodon_archive media kensanata@dice.camp
+$ mastodon-archive media kensanata@dice.camp
 44 urls in your archive (half of them are previews)
 34 files already exist
 Downloading |################################| 10/10
@@ -115,7 +112,7 @@ and we'll discuss it.
 Assuming you already made a archive of your toots:
 
 ```
-$ mastodon_archive text kensanata@dice.camp
+$ mastodon-archive text kensanata@dice.camp
 [lots of other toots]
 Alex Schroeder 🐉 @kensanata 2017-11-14T22:21:50.599000+00:00
 [#introduction](https://dice.camp/tags/introduction) I run
@@ -130,7 +127,7 @@ Generating a text file just means redirection the output to a text
 file:
 
 ```
-$ mastodon_archive text kensanata@dice.camp > statuses.txt
+$ mastodon-archive text kensanata@dice.camp > statuses.txt
 ```
 
 If you're working with text, you might expect the first toot to be at
@@ -138,7 +135,7 @@ the top and the last toot to be at the bottom. In this case, you need
 to reverse the list:
 
 ```
-$ mastodon_archive text --reverse kensanata@dice.camp | head
+$ mastodon-archive text --reverse kensanata@dice.camp | head
 ```
 
 # Searching your archive
@@ -152,14 +149,14 @@ and problably starts with a `<p>`, which is then removed in the
 output.
 
 ```
-$ mastodon_archive text kensanata@dice.camp house
+$ mastodon-archive text kensanata@dice.camp house
 ```
 
 You can provide multiple regular expressions and they will all be
 checked:
 
 ```
-$ mastodon_archive text kensanata@dice.camp house rule
+$ mastodon-archive text kensanata@dice.camp house rule
 ```
 
 Remember basic
@@ -169,20 +166,20 @@ alternatives, just to pick some useful ones. Use single quotes to
 protect your backslashes and questionmarks.
 
 ```
-$ mastodon_archive text kensanata@dice.camp house 'rule\b'
+$ mastodon-archive text kensanata@dice.camp house 'rule\b'
 ```
 
 You can also search your favourites:
 
 ```
-$ mastodon_archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
+$ mastodon-archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
 ```
 
 Dates are in ISO format (e.g. `2017-11-19T14:00`). I usually only care
 about year and month, though:
 
 ```
-$ mastodon_archive text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
+$ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
 
 # Generating a HTML file
@@ -190,7 +187,7 @@ $ mastodon_archive text --collection favourites kensanata@dice.camp bird '2017-(
 Assuming you already made a archive of your toots:
 
 ```
-$ mastodon_archive html kensanata@dice.camp > statuses.html
+$ mastodon-archive html kensanata@dice.camp > statuses.html
 ```
 
 The above redirects the output of this command to a static HTML file.
@@ -203,7 +200,7 @@ broken.
 You can also generate a file for your favourites:
 
 ```
-$ mastodon_archive html --collection favourites kensanata@dice.camp > favourites.html
+$ mastodon-archive html --collection favourites kensanata@dice.camp > favourites.html
 ```
 
 Note that both the HTML file with your statuses and the HTML file with
