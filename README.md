@@ -24,16 +24,12 @@ if you're curious.
 
 # Making an archive
 
-First, you need to download the tool itself. One way to do this is to
-visit the page with all the
-[releases](https://github.com/kensanata/mastodon-backup/releases),
-download the latest one, unzip it and install it. Run the following in
-the directory containing the `setup.py` file. This will also install
-all the dependencies.
+First, you need to install the tool itself. The following command will
+install `mastodon_archive` all its dependencies:
 
 ```bash
 # Python 3
-pip3 install .
+$ pip3 install mastodon-archive
 ```
 
 When using the app for the first time, you will have to authorize it:
