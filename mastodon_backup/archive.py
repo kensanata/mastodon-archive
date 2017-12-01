@@ -21,9 +21,9 @@ import json
 import datetime
 
 
-def backup(args):
+def archive(args):
     """
-    Backup your toots and favourites from your Mastodon account
+    Archive your toots and favourites from your Mastodon account
     """
 
     (username, domain) = args.user.split("@")
@@ -35,7 +35,7 @@ def backup(args):
     data = None
 
     if os.path.isfile(status_file):
-        print("Loading existing backup")
+        print("Loading existing archive")
         with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
             data = json.load(fp)
 
@@ -43,7 +43,7 @@ def backup(args):
 
         print("Registering app")
         Mastodon.create_app(
-            'mastodon-backup',
+            'mastodon-archive',
             api_base_url = url,
             to_file = client_secret)
 

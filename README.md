@@ -1,8 +1,8 @@
-# Mastodon Backup
+# Mastodon Archive
 
-This tool allows you to make a backup of your statuses, your
+This tool allows you to make a archive of your statuses, your
 favourites and the media in both your statuses and your favourites.
-From this backup, you can generate a simple text file, or a HTML file
+From this archive, you can generate a simple text file, or a HTML file
 with or without media. Take a look at an
 [example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
 if you're curious.
@@ -10,10 +10,10 @@ if you're curious.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Making a backup](#making-a-backup)
+- [Making an archive](#making-an-archive)
 - [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
-- [Searching your backup](#searching-your-backup)
+- [Searching your archive](#searching-your-archive)
 - [Generating a HTML file](#generating-a-html-file)
 - [Documentation](#documentation)
 - [Processing using jq](#processing-using-jq)
@@ -22,7 +22,7 @@ if you're curious.
 
 <!-- markdown-toc end -->
 
-# Making a backup
+# Making an archive
 
 First, you need to download the tool itself. One way to do this is to
 visit the page with all the
@@ -69,14 +69,14 @@ you need to remove this file.
 # Downloading media files
 
 By default, media you uploaded and media of statuses you added your
-favourites are not part of your backup. You can download it using a
+favourites are not part of your archive. You can download it using a
 separate command, however.
 
-Assuming you already made a backup of your toots:
+Assuming you already made a archive of your toots:
 
 ```
 $ mastodon_backup media kensanata@dice.camp
-44 urls in your backup (half of them are previews)
+44 urls in your archive (half of them are previews)
 34 files already exist
 Downloading |################################| 10/10
 ```
@@ -98,7 +98,7 @@ and we'll discuss it.
 
 # Generating a text file
 
-Assuming you already made a backup of your toots:
+Assuming you already made a archive of your toots:
 
 ```
 $ mastodon_backup text kensanata@dice.camp
@@ -127,7 +127,7 @@ to reverse the list:
 $ mastodon_backup text --reverse kensanata@dice.camp | head
 ```
 
-# Searching your backup
+# Searching your archive
 
 You can also filter using regular expressions. These will be checked
 against the status *content* (obviously), *display name* and
@@ -173,7 +173,7 @@ $ mastodon_backup text --collection favourites kensanata@dice.camp bird '2017-(0
 
 # Generating a HTML file
 
-Assuming you already made a backup of your toots:
+Assuming you already made a archive of your toots:
 
 ```
 $ mastodon_backup html kensanata@dice.camp > statuses.html
@@ -197,7 +197,7 @@ your favourites will refer to the media files in your media directory.
 
 # Documentation
 
-The data we have in our backup file is a hash with three keys:
+The data we have in our archive file is a hash with three keys:
 
 1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
 2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
@@ -213,7 +213,7 @@ entity looks like.
 
 [jq](https://stedolan.github.io/jq/) is a lightweight and flexible
 command-line JSON processor. That means you can use it to work with
-your backup.
+your archive.
 
 The following command will take all your favourites and create a map
 with the keys `time` and `message` for each one of them, and put it
@@ -248,7 +248,7 @@ curl --silent --show-error \
      https://dice.camp/api/v1/statuses/99005111284322450
 ```
 
-Extract the account id from your backup using `jq` and use `echo` to
+Extract the account id from your archive using `jq` and use `echo` to
 [strip the surrounding double quotes](https://stackoverflow.com/a/24358387/534893).
 Then use the id to get some statuses from the account and use `jq` to
 print the status ids:

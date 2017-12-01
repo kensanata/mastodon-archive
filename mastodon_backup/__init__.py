@@ -1,5 +1,5 @@
 import argparse
-from . import backup
+from . import archive
 from . import text
 from . import html
 from . import media
@@ -16,7 +16,7 @@ def main():
         name='archive',
         help='archive your toots and favourites')
     parser_content.add_argument("user")
-    parser_content.set_defaults(command=backup.backup)
+    parser_content.set_defaults(command=archive.archive)
 
 
     parser_content = subparsers.add_parser(
