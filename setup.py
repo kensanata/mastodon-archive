@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mastodon_archive',
-    version='0.0.1',
+    version='0.0.2',
     description="Utility for backing up your Mastodon content",
     author="Alex Schroeder",
     author_email="alex@gnu.org",
