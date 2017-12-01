@@ -6,3 +6,5 @@
 /*.user.*
 /build
 /setup.cfg
+/MANIFEST
+/dist
