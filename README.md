@@ -53,6 +53,18 @@ Get statuses (this may take a while)
 Save 41 statuses
 ```
 
+Note that the library we are using says: "Mastodons API rate limits
+per IP. By default, the limit is 300 requests per 5 minute time slot.
+This can differ from instance to instance and is subject to change."
+Thus, if every request gets 20 toots, then we can get at most 6000
+toots per five minutes.
+
+If this is taking too long, consider skipping your favourites:
+
+```
+$ mastodon_backup archive --no-favourites kensanata@dice.camp
+```
+
 You will end up with three new files:
 
 `dice.camp.client.secret` is where the client secret for this instance
