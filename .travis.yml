@@ -1,3 +1,10 @@
+language: python
+python:
+  - "3.6"
+install:
+  - pip install .
+script:
+  echo "No test"
 deploy:
   provider: pypi
   user: kensanata
