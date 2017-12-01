@@ -10,6 +10,7 @@ if you're curious.
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
+- [Installation](#installation)
 - [Making an archive](#making-an-archive)
 - [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
@@ -22,15 +23,20 @@ if you're curious.
 
 <!-- markdown-toc end -->
 
-# Making an archive
+# Installation
 
-First, you need to install the tool itself. The following command will
-install `mastodon_archive` all its dependencies:
+The following command will install `mastodon_archive` all its
+dependencies:
 
 ```bash
 # Python 3
 $ pip3 install mastodon-archive
 ```
+
+Note the small difference between `mastodon-archive` and
+`mastodon_archive`.
+
+# Making an archive
 
 When using the app for the first time, you will have to authorize it:
 
