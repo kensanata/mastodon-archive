@@ -24,7 +24,7 @@ def text(args):
     """
     Convert toots to plain text, optionally filtering them
     """
-    
+
     collection = args.collection
     reverse = args.reverse
     patterns = args.pattern
@@ -35,18 +35,11 @@ def text(args):
 
     if not os.path.isfile(status_file):
 
-        print("You need to run mastodon-backup.py, first", file=sys.stderr)
+        print("You need to create an archive, first", file=sys.stderr)
         sys.exit(2)
 
     with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
         data = json.load(fp)
-
-    try:
-        statuses = data[collection]
-    except KeyError:
-        print("You can only search or export statuses or favourites.", file=sys.stderr)
-        print("Please check your spelling.", file=sys.stderr)
-        sys.exit(3)
 
     def matches(status):
         if status["reblog"] is not None:
@@ -63,6 +56,8 @@ def text(args):
             if not found:
                 return False
         return True
+
+    statuses = data[collection]
 
     if len(patterns) > 0:
         statuses = list(filter(matches, statuses))

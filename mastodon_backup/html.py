@@ -22,45 +22,7 @@ import datetime
 import dateutil.parser
 from urllib.parse import urlparse
 
-def html(args):
-    """
-    Convert toots and media files to static HTML
-    """
-    
-    collection = args.collection
-
-    (username, domain) = args.user.split('@')
-
-    status_file = domain + '.user.' + username + '.json'
-    media_dir = domain + '.user.' + username
-    base_url = 'https://' + domain
-
-    def file_url(url1, url2=None):
-        for url in [url1, url2]:
-            if url is not None:
-                path = urlparse(url).path
-                if os.path.isfile(media_dir + path):
-                    return media_dir + path
-        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QsUETQjvc7YnAAAACZpVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVAgb24gYSBNYWOV5F9bAAADfElEQVRo3u1ZTUhUURg997sPy9TnDxk4IeqkmKghCKLBLNq2MCXQTXsXomFMIdK0EIoIskWLcNVKaFEulBIzxEgQLBRFXZmiaIOkboSe2Lv3tsg3+Hr96Mx7OhNzl/PuvHfPPd/5zvfdy5719Cj8B4Pwn4wkkCSQRAGilIIQ4q9zpJSQUrr6Xc2tF0kpQURgjGF2fh4zc3P4vLyMza0t27xzubkoKy1FoLYW532+yP/iBohhGHjR349P09M/qSaCUs7M/nVzE1vb23g/Po6zOTkItrcjPS0NnPOYvs9i9RGlFJ739eHj1BSI6EghY81va2nBxZKSmJiJidPvpon+wUHMzs1FwgsAGGN/3rkDz6z5T3t7sR4O/1NbnoUWA3AqJQXm/gKsHS7Iz0egrg7lZWXI1PUI6PmFBbwcGMDW9rbjXQ8eP8aznp4T1AhjICIIIVBVWYkbzc1IPX0apmnaQkXjHJXl5ai6dAmvBgbwbmzMwdSHiQlcrqmJSi+uiD0jPR3BtjZkZ2VFwkXTNMdCrQVer6/H6toaFpeWbJqamJxEoK7u+DVCRKiqqMD9UCgSQocRrJQSTQ0NNhBKKSyvrJyM2IkIvry8QwM4yM55ny++nD2alPm3rHbihnjUKiC8seEAl52VlVhFIxFhcGjIxiZjDDXV1VF7ybEz8t008SUcxsy+iR5k6drVq78ta+KOEdM0sbe3h4dPnjieNTU2QggRtX6OjREhBKSUCN69C8ZYZOeJCBeKinAlEIh/sVs7fbOz0waCc46c7Gzcam2N/w7RAtF2546ttOecI1PX0d3VFbUujg2IlBKcc7QGg7Zql3MOPSMD90MhKKVc8RVPgRARbodC4JzbQJxJTcWDe/dcA+GpRqSUeD08jG+GYauphBB41N3tWovrOSNEhDcjI46OsbOjw1Hixy0jUkqsh8OOEkTXdRTk5yfOuZZSCqtraw4gZSUliXVAp5TCzs6Oo5bK1PWY+vIT0Yhpmo6MpGmaK54RN9Vv4gPxoKHyViMAjN1dmx6EEDAMA17dKrHkjVWcDU9LlF9dnYhcd3TPnX1xacl2AEdEKPb7Uez3ewLGUyBvR0cj58La/imjv7AwcYBYYEwhbJlLKpUUezJrudGPaAeuBzTOQR46u+YViGK/39anW78lVPq1Fu0vLExsH/F60cmslQSSBHL08QPK53LVsfanXQAAAABJRU5ErkJggg=="
-
-    if not os.path.isfile(status_file):
-
-        print("You need to run mastodon-backup.py, first", file=sys.stderr)
-        sys.exit(2)
-
-    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-        data = json.load(fp)
-
-    user = data["account"]
-
-    try:
-        statuses = data[collection]
-    except KeyError:
-        print("You can only export statuses or favourites.", file=sys.stderr)
-        print("Please check your spelling.", file=sys.stderr)
-        sys.exit(3)
-
-    header_template = '''\
+header_template = '''\
 <!DOCTYPE html>
 <html>
 <head>
@@ -177,11 +139,9 @@ a:hover {
 }
 .content a {
         color: #d9e1e8;
-
 }
 .content a:visited {
         color: #d9e1e8;
-
 }
 .invisible {
         display: none;
@@ -199,19 +159,19 @@ a:hover {
 </div>
 '''
 
-    footer_template = '''\
+footer_template = '''\
 </div>
 </body>
 </html>\
 '''
 
-    boost_template = '''\
+boost_template = '''\
 <div class="boosted">
 <a class="name" href="%s">%s</a> boosted
 </div>
 '''
 
-    status_template = '''\
+status_template = '''\
 <div class="status">
 <div class="meta">
 <strong class="name"><a href="%s">%s</a></strong>
@@ -224,20 +184,52 @@ a:hover {
 </div>
 '''
 
-    media_template = '''\
+media_template = '''\
 <div class="media %s">
 %s</div>\
 '''
 
-    preview_template = '''\
+preview_template = '''\
 <a href="%s"><img src="%s"/></a>
 '''
 
-    wrapper_template = '''\
+wrapper_template = '''\
 <div class="wrapper">
 %s%s%s
 </div>
 '''
+
+def html(args):
+    """
+    Convert toots and media files to static HTML
+    """
+
+    collection = args.collection
+
+    (username, domain) = args.user.split('@')
+
+    status_file = domain + '.user.' + username + '.json'
+    media_dir = domain + '.user.' + username
+    base_url = 'https://' + domain
+
+    def file_url(url1, url2=None):
+        for url in [url1, url2]:
+            if url is not None:
+                path = urlparse(url).path
+                if os.path.isfile(media_dir + path):
+                    return media_dir + path
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QsUETQjvc7YnAAAACZpVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVAgb24gYSBNYWOV5F9bAAADfElEQVRo3u1ZTUhUURg997sPy9TnDxk4IeqkmKghCKLBLNq2MCXQTXsXomFMIdK0EIoIskWLcNVKaFEulBIzxEgQLBRFXZmiaIOkboSe2Lv3tsg3+Hr96Mx7OhNzl/PuvHfPPd/5zvfdy5719Cj8B4Pwn4wkkCSQRAGilIIQ4q9zpJSQUrr6Xc2tF0kpQURgjGF2fh4zc3P4vLyMza0t27xzubkoKy1FoLYW532+yP/iBohhGHjR349P09M/qSaCUs7M/nVzE1vb23g/Po6zOTkItrcjPS0NnPOYvs9i9RGlFJ739eHj1BSI6EghY81va2nBxZKSmJiJidPvpon+wUHMzs1FwgsAGGN/3rkDz6z5T3t7sR4O/1NbnoUWA3AqJQXm/gKsHS7Iz0egrg7lZWXI1PUI6PmFBbwcGMDW9rbjXQ8eP8aznp4T1AhjICIIIVBVWYkbzc1IPX0apmnaQkXjHJXl5ai6dAmvBgbwbmzMwdSHiQlcrqmJSi+uiD0jPR3BtjZkZ2VFwkXTNMdCrQVer6/H6toaFpeWbJqamJxEoK7u+DVCRKiqqMD9UCgSQocRrJQSTQ0NNhBKKSyvrJyM2IkIvry8QwM4yM55ny++nD2alPm3rHbihnjUKiC8seEAl52VlVhFIxFhcGjIxiZjDDXV1VF7ybEz8t008SUcxsy+iR5k6drVq78ta+KOEdM0sbe3h4dPnjieNTU2QggRtX6OjREhBKSUCN69C8ZYZOeJCBeKinAlEIh/sVs7fbOz0waCc46c7Gzcam2N/w7RAtF2546ttOecI1PX0d3VFbUujg2IlBKcc7QGg7Zql3MOPSMD90MhKKVc8RVPgRARbodC4JzbQJxJTcWDe/dcA+GpRqSUeD08jG+GYauphBB41N3tWovrOSNEhDcjI46OsbOjw1Hixy0jUkqsh8OOEkTXdRTk5yfOuZZSCqtraw4gZSUliXVAp5TCzs6Oo5bK1PWY+vIT0Yhpmo6MpGmaK54RN9Vv4gPxoKHyViMAjN1dmx6EEDAMA17dKrHkjVWcDU9LlF9dnYhcd3TPnX1xacl2AEdEKPb7Uez3ewLGUyBvR0cj58La/imjv7AwcYBYYEwhbJlLKpUUezJrudGPaAeuBzTOQR46u+YViGK/39anW78lVPq1Fu0vLExsH/F60cmslQSSBHL08QPK53LVsfanXQAAAABJRU5ErkJggg=="
+
+    if not os.path.isfile(status_file):
+
+        print("You need to create an archive, first", file=sys.stderr)
+        sys.exit(2)
+
+    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
+        data = json.load(fp)
+
+    user = data["account"]
+    statuses = data[collection]
 
     if len(statuses) > 0:
 
