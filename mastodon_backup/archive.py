@@ -26,6 +26,8 @@ def archive(args):
     Archive your toots and favourites from your Mastodon account
     """
 
+    skip_favourites = args.skip_favourites
+    
     (username, domain) = args.user.split("@")
 
     url = 'https://' + domain
@@ -112,7 +114,13 @@ def archive(args):
         statuses = fetch_up_to(mastodon.account_statuses(user["id"]), id)
         statuses.extend(data["statuses"])
 
-    if data is None or not "favourites" in data:
+    if skip_favourites:
+        print("Skipping favourites")
+        if data is None or not "favourites" in data:
+            favourites = []
+        else:
+            favourites = data["favourites"]
+    elif data is None or not "favourites" in data:
         print("Get favourites (this may take a while)")
         favourites = mastodon.favourites()
         favourites = mastodon.fetch_remaining(
