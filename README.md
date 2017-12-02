@@ -207,54 +207,6 @@ $ mastodon-archive html --collection favourites kensanata@dice.camp > favourites
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
 
-# Troubleshooting
-
-If you are generating a text or HTML file and you are getting a
-`UnicodeEncodeError` as shown below, you need to set an environment
-variable telling the app that your terminal will in fact display UTF-8
-encoded Unicode characters.
-
-Problem:
-
-```
-$ mastodon-archive text kensanata@dice.camp
-Traceback (most recent call last):
-  File "/usr/local/bin/mastodon-archive", line 11, in <module>
-    sys.exit(main())
-  File "/usr/local/lib/python3.6/site-packages/mastodon_archive/__init__.py", line 65, in main
-    args.command(args)
-  File "/usr/local/lib/python3.6/site-packages/mastodon_archive/text.py", line 70, in text
-    print("%s boosted" % status["account"]["display_name"])
-UnicodeEncodeError: 'ascii' codec can't encode character '\U0001f41d' in position 15: ordinal not in range(128)
-```
-
-Solution: temporarily set `LC_CTYPE`.
-
-```
-$ LC_CTYPE=UTF-8 mastodon-archive text kensanata@dice.camp
-```
-
-In macOS, this is controlled by Terminal preferences (`⌘,`) and this
-is what they look like on my system:
-
-![Terminal Preferences](macos-preferences.png)
-
-Set both the *Character encoding* and the *Set locale environment
-variables on startup* checkbox, then open a new terminal window and
-what `locale` says. On my system, this is what I get:
-
-```
-$ locale
-LANG=
-LC_COLLATE="C"
-LC_CTYPE="UTF-8"
-LC_MESSAGES="C"
-LC_MONETARY="C"
-LC_NUMERIC="C"
-LC_TIME="C"
-LC_ALL=
-```
-
 # Documentation
 
 The data we have in our archive file is a hash with three keys:

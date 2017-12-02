@@ -162,7 +162,7 @@ a:hover {
 footer_template = '''\
 </div>
 </body>
-</html>\
+</html>
 '''
 
 boost_template = '''\
@@ -233,11 +233,17 @@ def html(args):
 
     if len(statuses) > 0:
 
-        print(header_template % (
+        html = header_template % (
             user["display_name"],
             user["display_name"],
             user["username"],
-            user["note"]))
+            user["note"])
+
+        # This forces UTF-8 independent of terminal capabilities, thus
+        # avoiding problems with LC_CTYPE=C and other such issues.
+        # This works well when redirecting output to a file, which
+        # will then be an UTF-8 encoded file.
+        sys.stdout.buffer.write(html.encode('utf-8'))
 
         for status in statuses:
 
@@ -276,6 +282,6 @@ def html(args):
                         ''.join(previews))
 
             html = wrapper_template % (boost, info, media)
-            print(html)
+            sys.stdout.buffer.write(html.encode('utf-8'))
 
-        print(footer_template)
+        sys.stdout.buffer.write(footer_template.encode('utf-8'))
