@@ -278,8 +278,11 @@ the working directory on a single user system, use `pip3 install
 directory, now).
 
 If you don't want to do this for the entire system, you need your own
-virtual environemt (`pip3 install virtualenvwrapper` and `mkvirtualenv
-ma --python python3`).
+virtual environemt: `pip3 install virtualenvwrapper`, `mkvirtualenv ma
+--python python3` (this installs and activates a virtual environment
+called `ma`), `pip install -e .` (`-e` installs an "editable" copy)
+and you're set. Use `workon ma` to work in that virtual environment in
+the future.
 
 # Processing using jq
 
