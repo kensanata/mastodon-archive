@@ -269,6 +269,18 @@ One way to get started is to look at what a
 [Status](https://github.com/tootsuite/documentation/blob/master/Using-the-API/API.md#status)
 entity looks like.
 
+# Development
+
+If you checked out the repository and you want to run the code from
+the working directory on a single user system, use `pip3 install
+--upgrade --editable .` in your working directory to make it
+"editable" (i.e. the system installation is linked to your working
+directory, now).
+
+If you don't want to do this for the entire system, you need your own
+virtual environemt (`pip3 install virtualenvwrapper` and `mkvirtualenv
+ma --python python3`).
+
 # Processing using jq
 
 [jq](https://stedolan.github.io/jq/) is a lightweight and flexible
