@@ -1,6 +1,6 @@
 # Mastodon Archive
 
-This tool allows you to make a archive of your statuses, your
+This tool allows you to make an archive of your statuses, your
 favourites and the media in both your statuses and your favourites.
 From this archive, you can generate a simple text file, or a HTML file
 with or without media. Take a look at an
@@ -84,7 +84,7 @@ By default, media you uploaded and media of statuses you added your
 favourites are not part of your archive. You can download it using a
 separate command, however.
 
-Assuming you already made a archive of your toots:
+Assuming you already made an archive of your toots:
 
 ```
 $ mastodon-archive media kensanata@dice.camp
@@ -110,7 +110,7 @@ and we'll discuss it.
 
 # Generating a text file
 
-Assuming you already made a archive of your toots:
+Assuming you already made an archive of your toots:
 
 ```
 $ mastodon-archive text kensanata@dice.camp
@@ -185,7 +185,7 @@ $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(
 
 # Generating a HTML file
 
-Assuming you already made a archive of your toots:
+Assuming you already made an archive of your toots:
 
 ```
 $ mastodon-archive html kensanata@dice.camp > statuses.html
