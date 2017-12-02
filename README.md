@@ -16,6 +16,7 @@ if you're curious.
 - [Generating a text file](#generating-a-text-file)
 - [Searching your archive](#searching-your-archive)
 - [Generating a HTML file](#generating-a-html-file)
+- [Troubleshooting](#troubleshooting)
 - [Documentation](#documentation)
 - [Processing using jq](#processing-using-jq)
 - [Exploring the API](#exploring-the-api)
@@ -205,6 +206,38 @@ $ mastodon-archive html --collection favourites kensanata@dice.camp > favourites
 
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
+
+# Troubleshooting
+
+If you are generating a text or HTML file and you are getting a
+`UnicodeEncodeError` as shown below, you need to set an environment
+variable telling the app that your terminal will in fact display UTF-8
+encoded Unicode characters.
+
+Problem:
+
+```
+$ mastodon-archive text kensanata@dice.camp
+Traceback (most recent call last):
+  File "/usr/local/bin/mastodon-archive", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/site-packages/mastodon_archive/__init__.py", line 65, in main
+    args.command(args)
+  File "/usr/local/lib/python3.6/site-packages/mastodon_archive/text.py", line 70, in text
+    print("%s boosted" % status["account"]["display_name"])
+UnicodeEncodeError: 'ascii' codec can't encode character '\U0001f41d' in position 15: ordinal not in range(128)
+```
+
+Solution: temporarily set `LC_CTYPE`.
+
+```
+$ LC_CTYPE=UTF-8 mastodon-archive text kensanata@dice.camp
+```
+
+In macOS, this is controlled by Terminal preferences (`⌘,`) and this
+is what they look like on my system:
+
+![Terminal Preferences](macos-preferences.png)
 
 # Documentation
 
