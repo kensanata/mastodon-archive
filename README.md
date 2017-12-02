@@ -239,6 +239,22 @@ is what they look like on my system:
 
 ![Terminal Preferences](macos-preferences.png)
 
+Set both the *Character encoding* and the *Set locale environment
+variables on startup* checkbox, then open a new terminal window and
+what `locale` says. On my system, this is what I get:
+
+```
+$ locale
+LANG=
+LC_COLLATE="C"
+LC_CTYPE="UTF-8"
+LC_MESSAGES="C"
+LC_MONETARY="C"
+LC_NUMERIC="C"
+LC_TIME="C"
+LC_ALL=
+```
+
 # Documentation
 
 The data we have in our archive file is a hash with three keys:
