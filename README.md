@@ -60,7 +60,7 @@ toots per five minutes.
 If this is taking too long, consider skipping your favourites:
 
 ```
-$ mastodon_backup archive --no-favourites kensanata@dice.camp
+$ mastodon-archive archive --no-favourites kensanata@dice.camp
 ```
 
 You will end up with three new files:
