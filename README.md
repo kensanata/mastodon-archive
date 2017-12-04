@@ -26,7 +26,7 @@ if you're curious.
 
 # Installation
 
-The following command will install `mastodon-archive` all its
+The following command will install `mastodon-archive` and all its
 dependencies:
 
 ```bash
