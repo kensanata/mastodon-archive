@@ -207,6 +207,30 @@ $ mastodon-archive html --collection favourites kensanata@dice.camp > favourites
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
 
+# Troubleshooting
+
+If you are archiving a ton of toots and you run into a General API
+problem, use the `--pace` option. This is what the problem looks like:
+
+```
+$ mastodon-archive archive kensanata@dice.camp
+...
+Get statuses (this may take a while)
+Traceback (most recent call last):
+...
+mastodon.Mastodon.MastodonAPIError: General API problem.
+```
+
+Solution:
+
+```
+$ mastodon-archive archive --pace kensanata@dice.camp
+```
+
+The problem seems to be related to how Mastodon [rate
+limits](https://mastodonpy.readthedocs.io/en/latest/#a-note-about-rate-limits)
+requests.
+
 # Documentation
 
 The data we have in our archive file is a hash with three keys:

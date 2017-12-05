@@ -27,6 +27,7 @@ def archive(args):
     """
 
     skip_favourites = args.skip_favourites
+    pace = args.pace
     
     (username, domain) = args.user.split("@")
 
@@ -74,10 +75,25 @@ def archive(args):
 
     else:
 
-        mastodon = Mastodon(
-            client_id = client_secret,
-            access_token = user_secret,
-            api_base_url = url)
+        if pace:
+            
+            # in case the user kept running into a General API problem
+            mastodon = Mastodon(
+                client_id = client_secret,
+                access_token = user_secret,
+                api_base_url = url,
+                ratelimit_method='pace',
+                ratelimit_pacefactor=0.9,
+                request_timeout=300)
+            
+        else:
+            
+            # the defaults are ratelimit_method='wait',
+            # ratelimit_pacefactor=1.1, request_timeout=300
+            mastodon = Mastodon(
+                client_id = client_secret,
+                access_token = user_secret,
+                api_base_url = url)
 
     print("Get user info")
     user = mastodon.account_verify_credentials()

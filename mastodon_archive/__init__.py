@@ -18,6 +18,9 @@ def main():
     parser_content.add_argument("--no-favourites", dest='skip_favourites', action='store_const',
                                 const=True, default=False,
                                 help='skip download of favourites')
+    parser_content.add_argument("--pace", dest='pace', action='store_const',
+                                const=True, default=False,
+                                help='avoid timeouts and pace requests')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=archive.archive)
