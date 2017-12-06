@@ -17,11 +17,9 @@
 import sys
 import os
 import json
+import urllib.request
 from progress.bar import Bar
 from urllib.parse import urlparse
-from urllib.request import urlopen
-from time import sleep
-from urllib.error import HTTPError
 
 def media(args):
     """
@@ -61,10 +59,11 @@ def media(args):
         path = urlparse(url).path
         file_name = media_dir + path
         if not os.path.isfile(file_name):
-            with urllib.request.urlopen(url) as response, open(file_name, 'wb') as fp:
-                data = response.read()
-                fp.write(data)
-            except UrlError as e:
+            try:
+                with urllib.request.urlopen(url) as response, open(file_name, 'wb') as fp:
+                    data = response.read()
+                    fp.write(data)
+            except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
 
