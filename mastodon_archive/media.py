@@ -59,6 +59,8 @@ def media(args):
         path = urlparse(url).path
         file_name = media_dir + path
         if not os.path.isfile(file_name):
+            dir_name =  os.path.dirname(file_name)
+            os.makedirs(dir_name, exist_ok = True)
             try:
                 with urllib.request.urlopen(url) as response, open(file_name, 'wb') as fp:
                     data = response.read()
