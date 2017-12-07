@@ -114,8 +114,15 @@ def archive(args):
             if page is None:
                 break
             found = find_id(page, id)
-        page = page[0:page.index(found)]
-        statuses.extend(page)
+        if found is None:
+            print("Error: did not find the last toot we have in our archive\n"
+                  + "Perhaps it was deleted? I recommend you remove the .json\n"
+                  + "file restart from scratch.",
+                  file=sys.stderr)
+            sys.exit(3)
+        else:
+            page = page[0:page.index(found)]
+            statuses.extend(page)
         print("Fetched a total of %d new toots" % len(statuses))
         return statuses
 
