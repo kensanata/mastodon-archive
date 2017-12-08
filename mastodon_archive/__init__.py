@@ -3,6 +3,7 @@ from . import archive
 from . import text
 from . import html
 from . import media
+from . import expire
 
 def main():
     parser = argparse.ArgumentParser(
@@ -66,9 +67,28 @@ def main():
     parser_content.set_defaults(command=html.html)
 
 
+    parser_content = subparsers.add_parser(
+        name='expire',
+        help='''delete older toots from the server and unfavour favourites
+if and only if they are in your archive''')
+    parser_content.add_argument("--collection", dest='collection',
+                                choices=['statuses', 'favourites'],
+                                default='statuses',
+                                help='delete statuses or unfavour favourites')
+    parser_content.add_argument("--older-than", dest='weeks',
+                                metavar='N', type=int, default=4,
+                                help='expire toots older than this many weeks')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=expire.expire)
+
+
     args = parser.parse_args()
 
-    args.command(args)
+    if hasattr(args, "command"):
+        args.command(args)
+    else:
+        parser.print_help()
 
 if __name__ == "__main__":
     main()
