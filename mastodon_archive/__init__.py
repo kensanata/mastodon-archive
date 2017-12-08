@@ -58,6 +58,9 @@ def main():
                                 choices=['statuses', 'favourites'],
                                 default='statuses',
                                 help='export statuses or favourites')
+    parser_content.add_argument("--toots-per-page", dest='toots',
+                                metavar='N', type=int, default=2000,
+                                help='how many toots per HTML page')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=html.html)

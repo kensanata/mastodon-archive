@@ -188,21 +188,32 @@ $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(
 Assuming you already made an archive of your toots:
 
 ```
-$ mastodon-archive html kensanata@dice.camp > statuses.html
+$ mastodon-archive html kensanata@dice.camp
 ```
 
-The above redirects the output of this command to a static HTML file.
+This will create numbered HTML files starting with
+`dice.camp.user.kensanata.statuses.0.html`, each page with 2000 toots.
+
+You can change the number of toots per page using an option:
+
+```
+$ mastodon-archive html --toots-per-page 100 kensanata@dice.camp
+```
 
 If you have downloaded your media attachments, these will be used in
-the HTML file. Thus, if you want to upload the HTML file, you now need
-to upload the media directory as well or all the media links will be
-broken.
+the HTML files. Thus, if you want to upload the HTML files, you now
+need to upload the media directory as well or all the media links will
+be broken.
 
 You can also generate a file for your favourites:
 
 ```
-$ mastodon-archive html --collection favourites kensanata@dice.camp > favourites.html
+$ mastodon-archive html --collection favourites kensanata@dice.camp
 ```
+
+This will create numbered HTML files starting with
+`dice.camp.user.kensanata.favourites.0.html`, each page with 2000
+toots.
 
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
