@@ -21,7 +21,6 @@ setup(
     },
     install_requires=[
         "mastodon.py",
-        "pysmartdl",
         "progress",
         "html2text",
     ],
