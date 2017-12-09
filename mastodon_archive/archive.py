@@ -43,7 +43,11 @@ def archive(args):
 
     def find_id(list, id):
         """Return the list item whose id attribute matches."""
-        return next((item for item in list if item["id"] == id), None)
+        for item in list:
+            if str(item["id"]) == id:
+                return item
+        else:
+            return None
 
     def fetch_up_to(page, id):
         statuses = []
