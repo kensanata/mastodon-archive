@@ -19,13 +19,14 @@ import os.path
 import json
 from progress.bar import Bar
 from datetime import timedelta, datetime
-
+from . import login
 
 def expire(args):
     """
     Expire toots: delete toots and unfavour favourites older than a few weeks
     """
 
+    confirmed = args.confirmed
     collection = args.collection
 
     (username, domain) = args.user.split('@')
@@ -39,6 +40,13 @@ def expire(args):
 
     with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
         data = json.load(fp)
+
+    if confirmed:
+        mastodon = login.readwrite(args)
+    else:
+        print("This is a dry run and nothing will be expired.\n"
+              "Instead, we'll just list what would have happened.\n"
+              "Use --confirmed to actually do it.")
 
     delta = timedelta(weeks = args.weeks)
     cutoff = datetime.today() - delta
@@ -54,15 +62,44 @@ def expire(args):
               file=sys.stderr)
         sys.exit(3)
 
-    bar = Bar('Expiring', max = len(statuses))
+    if confirmed:
+        
+        bar = Bar('Expiring', max = len(statuses))
+        
+        for status in statuses:
+            bar.next()
+            try:
+                if collection == 'statuses':
+                    mastodon.status_delete(status["id"]);
+                elif collection == 'favourites':
+                    mastodon.status_unfavourite(status["id"])
+            except Exception as e:
+                print(e, file=sys.stderr)
+                
+                if "authorized scopes" in str(msg):
+                    
+                    print("\nWe need to authorize the app to make changes to your account.")
+                    login.deauthorize(args)
+                    mastodon = login.readwrite(args)
+                    
+                    # retry
+                    if collection == 'statuses':
+                        mastodon.status_delete(status["id"]);
+                    elif collection == 'favourites':
+                        mastodon.status_unfavourite(status["id"])
+            
+        bar.finish()
+        
+    else:
 
-    for status in statuses:
-        bar.next()
-        if collection == 'statuses':
-            mastodon.delete(status["id"]);
-            # print ("Delete %s: %s" % (status["id"], status["created_at"]))
-        elif collection == 'favourites':
-            mastodon.unfavourite(status["reblog"]["id"])
-            # print ("Unfavour %s: %s" % (status["id"], status["created_at"]))
-
-    bar.finish()
+        for status in statuses:
+            if collection == 'statuses':
+                print ("Delete: %s \"%s\"" % (
+                    status["created_at"][0:10],
+                    status["content"][0:60] +
+                    ('...' if len(status["content"]) > 60 else '')))
+            elif collection == 'favourites':
+                print ("Unfavour: %s \"%s\"" % (
+                    status["created_at"][0:10],
+                    status["content"][0:60] +
+                    ('...' if len(status["content"]) > 60 else '')))

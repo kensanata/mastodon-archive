@@ -16,8 +16,10 @@ if you're curious.
 - [Generating a text file](#generating-a-text-file)
 - [Searching your archive](#searching-your-archive)
 - [Generating a HTML file](#generating-a-html-file)
+- [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
 - [Documentation](#documentation)
+- [Development](#development)
 - [Processing using jq](#processing-using-jq)
 - [Exploring the API](#exploring-the-api)
 - [Alternatives](#alternatives)
@@ -217,6 +219,86 @@ toots.
 
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
+
+# Expiring your toots and favourites
+
+**Warning**: This is a destructive operation. You will delete your
+toots on your instance, or unfavour your favourites on your instance.
+Where as it might be possible to favour all your favourites again,
+there is no way to repost all those toots. You will have a copy in
+your archive, but there is no way to restore these to your instance.
+
+You can expire your toots using the `expire` command and providing the
+`--older-than` option. This option specifies the number of weeks to
+keep on the server. Anything older than that is deleted or unfavoured.
+If you use `--older-than 0`, then *all* your toots will be deleted or
+*all* your favourites will be unfavoured.
+
+```
+~/src/mastodon-backup $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
+This is a dry run and nothing will be expired.
+Instead, we'll just list what would have happened.
+Use --confirmed to actually do it.
+Delete: 2017-11-26 "<p>Testing äöü</p>"
+```
+
+Actually, the default operation just does a dry run. You need to use
+the `--confirmed` option to proceed.
+
+And one more thing: since this requires the permission to *write* to
+your account, you will have to reauthorize the app.
+
+```
+$ mastodon-archive expire --collection favourites --older-than 0 \
+  --confirmed kensanata@social.nasqueron.org
+Log in
+Visit the following URL and authorize the app:
+[long URL shown here]
+Then paste the access token here:
+[long token pasted here]
+Expiring |################################| 1/1
+```
+
+These toots will remain in your archive. And now you have a problem if
+you deleted *all* the toots from your instance using `--older-than 0`
+because when you try to archive your toots a while later, the app will
+attempt to fetch toots up to the last one in your archive, but you
+deleted it, so it can't be found.
+
+```
+$ mastodon-archive archive kensanata@social.nasqueron.org
+Loading existing archive
+Get user info
+Get new statuses
+Error: I did not find the last toot we have in our archive.
+Perhaps it was deleted?
+
+If you have expired all the toots on your server, then this is
+expected. In this case you need to use the --append-all option to make
+sure we download all the toots on the server and append them to the
+archive.
+
+If you have never expired any toots and you just manually deleted or
+unfavoured the last one in the archive, you could first use the delete
+command to delete the latest toot our favourite and then try the
+archive command again.
+
+If you're not sure, you probably want to export the toots from your
+archive, rename the file and restart from scratch. The archive you
+need to delete is this file:
+social.nasqueron.org.user.kensanata.json
+```
+
+So that's what you need to use:
+
+```
+$ mastodon-archive archive --append-all kensanata@social.nasqueron.org
+Loading existing archive
+Get user info
+Get statuses (this may take a while)
+Get favourites (this may take a while)
+Saving 1 statuses and 1 favourites
+```
 
 # Troubleshooting
 

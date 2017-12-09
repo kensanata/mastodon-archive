@@ -16,6 +16,9 @@ def main():
     parser_content = subparsers.add_parser(
         name='archive',
         help='archive your toots and favourites')
+    parser_content.add_argument("--append-all", dest='append', action='store_const',
+                                const=True, default=False,
+                                help='download all toots and append to existing archive')
     parser_content.add_argument("--no-favourites", dest='skip_favourites', action='store_const',
                                 const=True, default=False,
                                 help='skip download of favourites')
@@ -78,6 +81,12 @@ if and only if they are in your archive''')
     parser_content.add_argument("--older-than", dest='weeks',
                                 metavar='N', type=int, default=4,
                                 help='expire toots older than this many weeks')
+    parser_content.add_argument("--confirmed", dest='confirmed', action='store_const',
+                                const=True, default=False,
+                                help='perform the expiration on the server')
+    parser_content.add_argument("--pace", dest='pace', action='store_const',
+                                const=True, default=False,
+                                help='avoid timeouts and pace requests')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=expire.expire)

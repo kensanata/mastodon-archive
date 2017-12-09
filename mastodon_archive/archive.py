@@ -14,86 +14,31 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-from mastodon import Mastodon
 import sys
 import os.path
 import json
 import datetime
-
+from . import login
 
 def archive(args):
     """
     Archive your toots and favourites from your Mastodon account
     """
 
+    append = args.append
     skip_favourites = args.skip_favourites
-    pace = args.pace
     
     (username, domain) = args.user.split("@")
 
-    url = 'https://' + domain
-    client_secret = domain + '.client.secret'
-    user_secret = domain + '.user.' + username + '.secret'
     status_file = domain + '.user.' + username + '.json'
     data = None
-
+    
     if os.path.isfile(status_file):
         print("Loading existing archive")
         with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
             data = json.load(fp)
 
-    if not os.path.isfile(client_secret):
-
-        print("Registering app")
-        Mastodon.create_app(
-            'mastodon-archive',
-            api_base_url = url,
-            to_file = client_secret)
-
-    if not os.path.isfile(user_secret):
-
-        print("Log in")
-        mastodon = Mastodon(
-            client_id = client_secret,
-            api_base_url = url)
-
-        url = mastodon.auth_request_url(
-            client_id = client_secret,
-            scopes=['read'])
-
-        print("Visit the following URL and authorize the app:")
-        print(url)
-
-        print("Then paste the access token here:")
-        token = sys.stdin.readline().rstrip()
-
-        mastodon.log_in(
-            username = username,
-            code = token,
-            to_file = user_secret,
-            scopes=['read'])
-
-    else:
-
-        if pace:
-            
-            # in case the user kept running into a General API problem
-            mastodon = Mastodon(
-                client_id = client_secret,
-                access_token = user_secret,
-                api_base_url = url,
-                ratelimit_method='pace',
-                ratelimit_pacefactor=0.9,
-                request_timeout=300)
-            
-        else:
-            
-            # the defaults are ratelimit_method='wait',
-            # ratelimit_pacefactor=1.1, request_timeout=300
-            mastodon = Mastodon(
-                client_id = client_secret,
-                access_token = user_secret,
-                api_base_url = url)
+    mastodon = login.login(args)
 
     print("Get user info")
     user = mastodon.account_verify_credentials()
@@ -115,9 +60,23 @@ def archive(args):
                 break
             found = find_id(page, id)
         if found is None:
-            print("Error: did not find the last toot we have in our archive\n"
-                  + "Perhaps it was deleted? I recommend you remove the .json\n"
-                  + "file restart from scratch.",
+            print('''Error: I did not find the last toot we have in our archive.
+Perhaps it was deleted?
+
+If you have expired all the toots on your server, then this is
+expected. In this case you need to use the --append-all option to make
+sure we download all the toots on the server and append them to the
+archive.
+
+If you have never expired any toots and you just manually deleted or
+unfavoured the last one in the archive, you could first use the delete
+command to delete the latest toot our favourite and then try the
+archive command again.
+
+If you're not sure, you probably want to export the toots from your
+archive, rename the file and restart from scratch. The archive you
+need to delete is this file:
+%s''' % status_file,
                   file=sys.stderr)
             sys.exit(3)
         else:
@@ -126,7 +85,13 @@ def archive(args):
         print("Fetched a total of %d new toots" % len(statuses))
         return statuses
 
-    if data is None or not "statuses" in data:
+    if append:
+        print("Get statuses (this may take a while)")
+        statuses = mastodon.account_statuses(user["id"])
+        statuses = mastodon.fetch_remaining(
+            first_page = statuses)
+        statuses.extend(data["statuses"])
+    elif data is None or not "statuses" in data:
         print("Get statuses (this may take a while)")
         statuses = mastodon.account_statuses(user["id"])
         statuses = mastodon.fetch_remaining(
@@ -143,6 +108,12 @@ def archive(args):
             favourites = []
         else:
             favourites = data["favourites"]
+    elif append:
+        print("Get favourites (this may take a while)")
+        favourites = mastodon.favourites()
+        favourites = mastodon.fetch_remaining(
+            first_page = favourites)
+        favourites.extend(data["favourites"])
     elif data is None or not "favourites" in data:
         print("Get favourites (this may take a while)")
         favourites = mastodon.favourites()
