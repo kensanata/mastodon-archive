@@ -16,7 +16,8 @@
 from mastodon import Mastodon
 import sys
 import os.path
-
+import datetime
+import json
 
 def read(args):
     """
@@ -42,21 +43,21 @@ def deauthorize(args):
     user_secret = domain + '.user.' + username + '.secret'
     if os.path.isfile(client_secret):
         os.remove(user_secret)
-    
+
 def login(args, scopes = ['read']):
     """
     Login to your Mastodon account
     """
 
     pace = args.pace
-    
+
     (username, domain) = args.user.split("@")
 
     url = 'https://' + domain
     client_secret = domain + '.client.secret'
     user_secret = domain + '.user.' + username + '.secret'
     mastodon = None
-        
+
     if not os.path.isfile(client_secret):
 
         print("Registering app")
@@ -92,7 +93,7 @@ def login(args, scopes = ['read']):
     else:
 
         if pace:
-            
+
             # in case the user kept running into a General API problem
             mastodon = Mastodon(
                 client_id = client_secret,
@@ -101,9 +102,9 @@ def login(args, scopes = ['read']):
                 ratelimit_method='pace',
                 ratelimit_pacefactor=0.9,
                 request_timeout=300)
-            
+
         else:
-            
+
             # the defaults are ratelimit_method='wait',
             # ratelimit_pacefactor=1.1, request_timeout=300
             mastodon = Mastodon(
@@ -112,3 +113,34 @@ def login(args, scopes = ['read']):
                 api_base_url = url)
 
     return mastodon
+
+def load(file_name, required = False, quiet = False):
+    """
+    Load the JSON data from a file.
+    """
+
+    if required and not os.path.isfile(file_name):
+        print("You need to create an archive, first", file=sys.stderr)
+        sys.exit(2)
+
+    if os.path.isfile(file_name) and os.path.getsize(file_name) > 0:
+        if not quiet:
+            print("Loading existing archive")
+        with open(file_name, mode = 'r', encoding = 'utf-8') as fp:
+            return json.load(fp)
+    return None
+
+def save(file_name, data):
+    """
+    Save the JSON data in a file. If the file exists, rename it,
+    just in case.
+    """
+    date_handler = lambda obj: (
+        obj.isoformat()
+        if isinstance(obj, (datetime.datetime, datetime.date))
+        else None)
+
+    if os.path.isfile(file_name):
+        os.replace(file_name, file_name + '~')
+    with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
+        data = json.dump(data, fp, indent = 2, default = date_handler)

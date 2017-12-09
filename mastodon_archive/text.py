@@ -16,9 +16,9 @@
 
 import sys
 import os.path
-import json
 import html2text
 import re
+from . import core
 
 def text(args):
     """
@@ -32,14 +32,7 @@ def text(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-
-    if not os.path.isfile(status_file):
-
-        print("You need to create an archive, first", file=sys.stderr)
-        sys.exit(2)
-
-    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-        data = json.load(fp)
+    data = core.load(status_file, required = True, quiet = True)
 
     def matches(status):
         if status["reblog"] is not None:
@@ -70,11 +63,11 @@ def text(args):
         if status["reblog"] is not None:
             str += ("%s boosted" % status["account"]["display_name"])
             status = status["reblog"]
-        str += ("%s @%s %s" % (
+        str += ("%s @%s %s\n" % (
             status["account"]["display_name"],
             status["account"]["username"],
             status["created_at"]))
-        str += (status["url"])
+        str += status["url"] + "\n"
         str += html2text.html2text(status["content"])
         # This forces UTF-8 independent of terminal capabilities, thus
         # avoiding problems with LC_CTYPE=C and other such issues.

@@ -16,11 +16,11 @@
 
 import sys
 import os.path
-import json
 import html2text
 import datetime
 import dateutil.parser
 from urllib.parse import urlparse
+from . import core
 
 header_template = '''\
 <!DOCTYPE html>
@@ -291,16 +291,7 @@ def html(args):
     status_file = domain + '.user.' + username + '.json'
     media_dir = domain + '.user.' + username
     base_url = 'https://' + domain
-
-
-    if not os.path.isfile(status_file):
-
-        print("You need to create an archive, first", file=sys.stderr)
-        sys.exit(2)
-
-    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-        data = json.load(fp)
-
+    data = core.load(status_file, required = True)
     user = data["account"]
     statuses = data[collection]
 
@@ -331,6 +322,8 @@ def html(args):
             file_name = html_file(domain, username, collection, page)
 
             with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
+
+                print("Writing %s" % file_name)
 
                 html = header_template % (
                     user["display_name"],

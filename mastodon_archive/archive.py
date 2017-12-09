@@ -16,9 +16,7 @@
 
 import sys
 import os.path
-import json
-import datetime
-from . import login
+from . import core
 
 def archive(args):
     """
@@ -27,18 +25,18 @@ def archive(args):
 
     append = args.append
     skip_favourites = args.skip_favourites
-    
+
     (username, domain) = args.user.split("@")
 
     status_file = domain + '.user.' + username + '.json'
-    data = None
-    
-    if os.path.isfile(status_file):
-        print("Loading existing archive")
-        with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-            data = json.load(fp)
+    data = core.load(status_file)
 
-    mastodon = login.login(args)
+    if append and data is None:
+        print("Error: --append-all cannot be used with an empty data file",
+              file=sys.stderr)
+        sys.exit(3)
+
+    mastodon = core.login(args)
 
     print("Get user info")
     user = mastodon.account_verify_credentials()
@@ -78,7 +76,7 @@ archive, rename the file and restart from scratch. The archive you
 need to delete is this file:
 %s''' % status_file,
                   file=sys.stderr)
-            sys.exit(3)
+            sys.exit(4)
         else:
             page = page[0:page.index(found)]
             statuses.extend(page)
@@ -91,7 +89,7 @@ need to delete is this file:
         statuses = mastodon.fetch_remaining(
             first_page = statuses)
         statuses.extend(data["statuses"])
-    elif data is None or not "statuses" in data:
+    elif data is None or not "statuses" in data or len(data["statuses"]) == 0:
         print("Get statuses (this may take a while)")
         statuses = mastodon.account_statuses(user["id"])
         statuses = mastodon.fetch_remaining(
@@ -114,7 +112,7 @@ need to delete is this file:
         favourites = mastodon.fetch_remaining(
             first_page = favourites)
         favourites.extend(data["favourites"])
-    elif data is None or not "favourites" in data:
+    elif data is None or not "favourites" in data or len(data["favourites"]) == 0:
         print("Get favourites (this may take a while)")
         favourites = mastodon.favourites()
         favourites = mastodon.fetch_remaining(
@@ -125,19 +123,14 @@ need to delete is this file:
         favourites = fetch_up_to(mastodon.favourites(), id)
         favourites.extend(data["favourites"])
 
-    data = { 'account': user,
-            'statuses': statuses,
-            'favourites': favourites }
+    data = {
+        'account': user,
+        'statuses': statuses,
+        'favourites': favourites
+    }
 
     print("Saving %d statuses and %d favourites" % (
         len(statuses),
         len(favourites)))
 
-    date_handler = lambda obj: (
-        obj.isoformat()
-        if isinstance(obj, (datetime.datetime, datetime.date))
-        else None)
-
-    with open(status_file, mode = 'w', encoding = 'utf-8') as fp:
-        data = json.dump(data, fp, indent = 2, default = date_handler)
-
+    core.save(status_file, data)

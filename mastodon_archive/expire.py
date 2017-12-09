@@ -16,10 +16,20 @@
 
 import sys
 import os.path
-import json
 from progress.bar import Bar
 from datetime import timedelta, datetime
-from . import login
+from . import core
+
+def delete(mastodon, collection, status):
+    """
+    Delete toot or unfavour favourite and mark it as deleted.
+    The "record not found" error is handled elsewhere.
+    """
+    if collection == 'statuses':
+        mastodon.status_delete(status["id"]);
+    elif collection == 'favourites':
+        mastodon.status_unfavourite(status["id"])
+    status["deleted"] = True
 
 def expire(args):
     """
@@ -32,17 +42,10 @@ def expire(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    
-    if not os.path.isfile(status_file):
-
-        print("You need to create an archive, first", file=sys.stderr)
-        sys.exit(2)
-
-    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-        data = json.load(fp)
+    data = core.load(status_file)
 
     if confirmed:
-        mastodon = login.readwrite(args)
+        mastodon = core.readwrite(args)
     else:
         print("This is a dry run and nothing will be expired.\n"
               "Instead, we'll just list what would have happened.\n"
@@ -53,7 +56,8 @@ def expire(args):
 
     def matches(status):
         created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
-        return created < cutoff
+        deleted = "deleted" in status and status["deleted"] == True
+        return created < cutoff and not deleted
 
     statuses = list(filter(matches, data[collection]))
 
@@ -63,33 +67,29 @@ def expire(args):
         sys.exit(3)
 
     if confirmed:
-        
+
         bar = Bar('Expiring', max = len(statuses))
-        
+
         for status in statuses:
             bar.next()
             try:
-                if collection == 'statuses':
-                    mastodon.status_delete(status["id"]);
-                elif collection == 'favourites':
-                    mastodon.status_unfavourite(status["id"])
+                delete(mastodon, collection, status)
             except Exception as e:
-                print(e, file=sys.stderr)
-                
-                if "authorized scopes" in str(msg):
-                    
+                if "authorized scopes" in str(e):
                     print("\nWe need to authorize the app to make changes to your account.")
-                    login.deauthorize(args)
-                    mastodon = login.readwrite(args)
-                    
+                    core.deauthorize(args)
+                    mastodon = core.readwrite(args)
                     # retry
-                    if collection == 'statuses':
-                        mastodon.status_delete(status["id"]);
-                    elif collection == 'favourites':
-                        mastodon.status_unfavourite(status["id"])
-            
+                    delete(mastodon, collection, status)
+                elif "not found" in str(e):
+                    status["deleted"] = True
+                else:
+                    print(e, file=sys.stderr)
+
         bar.finish()
-        
+
+        core.save(status_file, data)
+
     else:
 
         for status in statuses:
