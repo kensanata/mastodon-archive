@@ -220,6 +220,17 @@ toots.
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
 
+# Reporting
+
+There is actually no reporting to speak of. It's tiny:
+
+```
+$ mastodon-archive report kensanata@dice.camp
+Statuses:          209
+Boosts:             14
+Favourites:        223
+```
+
 # Expiring your toots and favourites
 
 **Warning**: This is a destructive operation. You will delete your

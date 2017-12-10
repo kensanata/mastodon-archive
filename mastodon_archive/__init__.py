@@ -4,6 +4,7 @@ from . import text
 from . import html
 from . import media
 from . import expire
+from . import report
 
 def main():
     parser = argparse.ArgumentParser(
@@ -90,6 +91,15 @@ if and only if they are in your archive''')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=expire.expire)
+
+
+
+    parser_content = subparsers.add_parser(
+        name='report',
+        help='''report some numbers about your toots and favourites''')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=report.report)
 
 
     args = parser.parse_args()
