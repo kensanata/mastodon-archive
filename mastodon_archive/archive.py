@@ -44,7 +44,7 @@ def archive(args):
     def find_id(list, id):
         """Return the list item whose id attribute matches."""
         for item in list:
-            if str(item["id"]) == id:
+            if str(item["id"]) == str(id):
                 return item
         else:
             return None
