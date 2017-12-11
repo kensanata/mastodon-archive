@@ -16,6 +16,7 @@ if you're curious.
 - [Generating a text file](#generating-a-text-file)
 - [Searching your archive](#searching-your-archive)
 - [Generating a HTML file](#generating-a-html-file)
+- [Reporting](#reporting)
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
 - [Documentation](#documentation)
