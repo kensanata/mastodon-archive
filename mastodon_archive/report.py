@@ -19,13 +19,45 @@ from . import core
 
 def boosts(list):
     """
-    Count boosts in list of statuses
+    Count boosts in a list of statuses
     """
     i = 0
     for item in list:
         if item["reblog"] is not None:
             i += 1
     return i
+
+def media(list):
+    """
+    Count media attachments in a list of statuses
+    """
+    i = 0
+    for item in list:
+        i += len(item["media_attachments"])
+    return i
+
+
+def tags(list):
+    """
+    Count all the hashtags in a list of statuses
+    """
+    count = {}
+    for item in list:
+        for name in [tag["name"] for tag in item["tags"]]:
+            if name in count:
+                count[name] += 1
+            else:
+                count[name] = 1
+    return count
+
+def print_tags(list, max=10):
+    """
+    Count media attachments in a list of statuses
+    """
+    count = tags(list)
+    most = sorted(count.keys(), key = lambda tag: -count[tag])
+    for tag in most[0:max]:
+        print(("#" + tag + ":").ljust(20), str(count[tag]).rjust(6))
 
 def report(args):
     """
@@ -38,8 +70,12 @@ def report(args):
     data = core.load(status_file, required = True, quiet = True)
 
     if "statuses" in data:
-        print("Statuses:   %10d" % len(data["statuses"]))
-        print("Boosts:     %10d" % boosts(data["statuses"]))
-
+        print("Statuses:".ljust(20), str(len(data["statuses"])).rjust(6))
+        print("Boosts:".ljust(20), str(boosts(data["statuses"])).rjust(6))
+        print("Media:".ljust(20), str(media(data["statuses"])).rjust(6))
+        
     if "favourites" in data:
-        print("Favourites: %10d" % len(data["favourites"]))
+        print("Favourites:".ljust(20), str(len(data["favourites"])).rjust(6))
+
+    print()
+    print_tags(data["statuses"])

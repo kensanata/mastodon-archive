@@ -222,13 +222,25 @@ your favourites will refer to the media files in your media directory.
 
 # Reporting
 
-There is actually no reporting to speak of. It's tiny:
+Some numbers, including your ten most used hashtags:
 
 ```
 $ mastodon-archive report kensanata@dice.camp
-Statuses:          209
-Boosts:             14
-Favourites:        223
+Statuses:               209
+Boosts:                  14
+Media:                    5
+Favourites:             223
+
+#caster:                  5
+#20questions:             5
+#introduction:            2
+#osr:                     2
+#currentprojects:         2
+#caller:                  1
+#rpgmusic:                1
+#razorcoast:              1
+#rpghaiku:                1
+#haiku:                   1
 ```
 
 # Expiring your toots and favourites
