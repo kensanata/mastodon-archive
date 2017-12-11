@@ -231,16 +231,11 @@ Boosts:                  14
 Media:                    5
 Favourites:             223
 
-#caster:                  5
-#20questions:             5
-#introduction:            2
-#osr:                     2
-#currentprojects:         2
-#caller:                  1
-#rpgmusic:                1
-#razorcoast:              1
-#rpghaiku:                1
-#haiku:                   1
+#caster(5) #20questions(5) #introduction(2) #osr(2)
+#currentprojects(2) #caller(1) #rpgmusic(1) #razorcoast(1)
+#rpghaiku(1) #haiku(1) #character(1) #amaroq(1) #tootdon(1) #howto(1)
+#spells(1) #history(1) #rpg(1) #myfirstcharacter(1) #1strpgs(1)
+#favouritepen(1) #pbta(1)
 ```
 
 # Expiring your toots and favourites
