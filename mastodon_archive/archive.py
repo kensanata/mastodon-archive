@@ -39,7 +39,15 @@ def archive(args):
     mastodon = core.login(args)
 
     print("Get user info")
-    user = mastodon.account_verify_credentials()
+
+    try:
+        user = mastodon.account_verify_credentials()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        if "access token was revoked" in str(e):
+            core.deauthorize(args)
+            archive(args)
+            sys.exit(0)
 
     def find_id(list, id):
         """Return the list item whose id attribute matches."""
