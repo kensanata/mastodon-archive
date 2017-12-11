@@ -1,5 +1,6 @@
 all:
-	@echo make dist is what you want
+	@echo "Have you edited setup.py?"
+	@echo "Have you tagged the release?"
 
 .PHONY: dist upload
 
