@@ -15,6 +15,7 @@
 
 import sys
 import os.path
+import textwrap
 from . import core
 
 def boosts(list):
@@ -52,12 +53,12 @@ def tags(list):
 
 def print_tags(list, max=10):
     """
-    Count media attachments in a list of statuses
+    Print hashtags used in a list of statuses
     """
     count = tags(list)
     most = sorted(count.keys(), key = lambda tag: -count[tag])
-    for tag in most[0:max]:
-        print(("#" + tag + ":").ljust(20), str(count[tag]).rjust(6))
+    print(textwrap.fill(" ".join(
+        ["#"+tag+"("+str(count[tag])+")" for tag in most])))
 
 def report(args):
     """
