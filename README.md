@@ -321,7 +321,7 @@ Saving 1 statuses and 1 favourites
 
 # Troubleshooting
 
-If you are archiving a ton of toots and you run into a General API
+🔥 If you are archiving a ton of toots and you run into a General API
 problem, use the `--pace` option. This is what the problem looks like:
 
 ```
@@ -342,6 +342,21 @@ $ mastodon-archive archive --pace kensanata@dice.camp
 The problem seems to be related to how Mastodon [rate
 limits](https://mastodonpy.readthedocs.io/en/latest/#a-note-about-rate-limits)
 requests.
+
+🔥 If you are experimenting with a expiry, you'll need to give the app
+write permissions. If you then delete the user secret file, hoping to
+start with a clean slate when archiving, you'll be asked to authorize
+the app again, but somehow Mastodon remembers that you have already
+granted the app read and write permissions, and you will get this
+error:
+
+`mastodon.Mastodon.MastodonAPIError: Granted scopes "read write" differ from requested scopes "read".`
+
+In order to get rid of this, you need to visit the website, got to
+Settings → Authorized apps and revoke your authorization for
+mastodon-archive. Now you can try the authorization URL again and you
+will only get read permissions instead of both read and write
+permissions.
 
 # Documentation
 
