@@ -42,7 +42,7 @@ def expire(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file)
+    data = core.load(status_file, required = True)
 
     if confirmed:
         mastodon = core.readwrite(args)
