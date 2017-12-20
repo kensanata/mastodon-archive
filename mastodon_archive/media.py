@@ -62,7 +62,8 @@ def media(args):
             dir_name =  os.path.dirname(file_name)
             os.makedirs(dir_name, exist_ok = True)
             try:
-                with urllib.request.urlopen(url) as response, open(file_name, 'wb') as fp:
+                req = urllib.request.Request(url, data=None, headers={'User-Agent': 'Mozilla'})
+                with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
                     data = response.read()
                     fp.write(data)
             except OSError as e:
