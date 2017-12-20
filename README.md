@@ -106,10 +106,9 @@ you might be forever missing some files—particularly the ones from
 
 There's one thing you need to remember, though: the media directory
 contains all the media from your statuses, and all the media from your
-favourites. There is no a particular reason why the media files from
-both sources need to be in the same directory. If you think this is a
-problem, [create an issue](https://github.com/kensanata/mastodon-backup/issues)
-and we'll discuss it.
+favourites. There is no particular reason why the media files from
+both sources need to be in the same directory, see
+[issue #11](https://github.com/kensanata/mastodon-backup/issues/11).
 
 # Generating a text file
 
