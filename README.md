@@ -118,6 +118,7 @@ Assuming you already made an archive of your toots:
 $ mastodon-archive text kensanata@dice.camp
 [lots of other toots]
 Alex Schroeder 🐉 @kensanata 2017-11-14T22:21:50.599000+00:00
+https://dice.camp/@kensanata/99005111284322450
 [#introduction](https://dice.camp/tags/introduction) I run
 [#osr](https://dice.camp/tags/osr) games using my own hose rule document but
 it all started with Labyrinth Lord which I knew long before I knew B/X. Sadly,
