@@ -62,7 +62,10 @@ def media(args):
             dir_name =  os.path.dirname(file_name)
             os.makedirs(dir_name, exist_ok = True)
             try:
-                req = urllib.request.Request(url, data=None, headers={'User-Agent': 'Mozilla'})
+                req = urllib.request.Request(
+                    url, data=None,
+                    headers={'User-Agent': 'Mastodon-Archive/0.0 '
+                             '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
                 with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
                     data = response.read()
                     fp.write(data)
