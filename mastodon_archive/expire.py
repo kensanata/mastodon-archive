@@ -65,6 +65,9 @@ def expire(args):
         print("No statuses are older than %d weeks" % args.weeks,
               file=sys.stderr)
         sys.exit(3)
+    elif (len(statuses) > 300):
+        print("Default rate limiting is 300 requests per five minutes.\n"
+              "This will take a while.")
 
     if confirmed:
 

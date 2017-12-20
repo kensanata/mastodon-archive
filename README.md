@@ -343,6 +343,26 @@ The problem seems to be related to how Mastodon [rate
 limits](https://mastodonpy.readthedocs.io/en/latest/#a-note-about-rate-limits)
 requests.
 
+🔥 If you are expiring many toots, same thing. The default rate limit
+is 300 requests per five minutes, so when more than 300 toots are to
+be deleted, the app simply has to wait for five minutes before
+continuing. It takes time.
+
+```
+$ mastodon-archive expire --confirm kensanata@octodon.social
+Loading existing archive
+Expiring |                                | 1/1236
+We need to authorize the app to make changes to your account.
+Log in
+Visit the following URL and authorize the app:
+[long URL here]
+Then paste the access token here:
+[access token here]
+Default rate limiting is 300 requests per five minutes.
+This will take a while.
+Expiring |#######                         | 301/1236
+```
+
 🔥 If you are experimenting with a expiry, you'll need to give the app
 write permissions. If you then delete the user secret file, hoping to
 start with a clean slate when archiving, you'll be asked to authorize
