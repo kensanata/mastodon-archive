@@ -394,6 +394,10 @@ entity looks like.
 
 # Development
 
+The
+[setup.py](https://setuptools.readthedocs.io/en/latest/setuptools.html#automatic-script-creation)
+determines how the app is installed and what its dependencies are.
+
 If you checked out the repository and you want to run the code from
 the working directory on a single user system, use `pip3 install
 --upgrade --editable .` in your working directory to make it
