@@ -97,6 +97,15 @@ if and only if they are in your archive''')
     parser_content = subparsers.add_parser(
         name='report',
         help='''report some numbers about your toots and favourites''')
+    parser_content.add_argument("--all", dest='all', action='store_const',
+                                const=True, default=False,
+                                help='consider all toots (ignore --newer-than)')
+    parser_content.add_argument("--newer-than", dest='weeks',
+                                metavar='N', type=int, default=12,
+                                help='only consider toots newer than this many weeks')
+    parser_content.add_argument("--top", dest='top',
+                                metavar='N', type=int, default=10,
+                                help='only print the top N tags')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=report.report)

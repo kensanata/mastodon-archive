@@ -227,17 +227,31 @@ Some numbers, including your ten most used hashtags:
 
 ```
 $ mastodon-archive report kensanata@dice.camp
-Statuses:               209
-Boosts:                  14
-Media:                    5
-Favourites:             223
+Considering the last 12 weeks
+Statuses:               296
+Boosts:                  17
+Media:                    9
 
-#caster(5) #20questions(5) #introduction(2) #osr(2)
-#currentprojects(2) #caller(1) #rpgmusic(1) #razorcoast(1)
-#rpghaiku(1) #haiku(1) #character(1) #amaroq(1) #tootdon(1) #howto(1)
-#spells(1) #history(1) #rpg(1) #myfirstcharacter(1) #1strpgs(1)
-#favouritepen(1) #pbta(1)
+Top 10 hashtags:
+#caster(8) #20questions(5) #osr(3) #dungeonslayers(2) #introduction(2)
+#currentprojects(2) #diaspora(1) #gygax(1) #yoonsuin(1) #casters(1)
+
+Favourites:             248
+Boosts:                   0
+Media:                   20
+
+Top 10 hashtags:
+#1strpg(9) #rpg(5) #myfirstcharacter(5) #introduction(5) #osr(4)
+#1strpgs(4) #dnd(3) #gamesnacks(1) #vancian(1) #mastoart(1)
 ```
+
+You can specify a different time number of weeks to consider using
+`--newer-than N` or use `--all` to consider all your statuses and
+favourites.
+
+You can list a different number of hashtags using `--top N` and you
+can list all of them by using `--top -1`. This might result in a very
+long list.
 
 # Expiring your toots and favourites
 

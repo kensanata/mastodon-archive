@@ -16,34 +16,35 @@
 import sys
 import os.path
 import textwrap
+from datetime import timedelta, datetime
 from . import core
 
-def boosts(list):
+def boosts(statuses):
     """
-    Count boosts in a list of statuses
+    Count boosts in statuses
     """
     i = 0
-    for item in list:
+    for item in statuses:
         if item["reblog"] is not None:
             i += 1
     return i
 
-def media(list):
+def media(statuses):
     """
-    Count media attachments in a list of statuses
+    Count media attachments in statuses
     """
     i = 0
-    for item in list:
+    for item in statuses:
         i += len(item["media_attachments"])
     return i
 
 
-def tags(list):
+def tags(statuses):
     """
-    Count all the hashtags in a list of statuses
+    Count all the hashtags in statuses
     """
     count = {}
-    for item in list:
+    for item in statuses:
         for name in [tag["name"] for tag in item["tags"]]:
             if name in count:
                 count[name] += 1
@@ -51,15 +52,33 @@ def tags(list):
                 count[name] = 1
     return count
 
-def print_tags(list, max=10):
+def print_tags(statuses, max):
     """
-    Print hashtags used in a list of statuses
+    Print hashtags used in statuses
     """
-    count = tags(list)
+    if max == -1:
+        print("All the hashtags:")
+    else:
+        print("Top " + str(max) + " hashtags:")
+    count = tags(statuses)
     most = sorted(count.keys(), key = lambda tag: -count[tag])
     print(textwrap.fill(" ".join(
-        ["#"+tag+"("+str(count[tag])+")" for tag in most])))
+        ["#"+tag+"("+str(count[tag])+")" for tag in most[0:max]])))
 
+def keep(statuses, weeks):
+    """
+    Return all statuses newer than some weeks
+    """
+
+    delta = timedelta(weeks = weeks)
+    cutoff = datetime.today() - delta
+
+    def matches(status):
+        created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
+        return created >= cutoff
+
+    return list(filter(matches, statuses))
+    
 def report(args):
     """
     Report on your toots and favourites
@@ -70,13 +89,32 @@ def report(args):
     status_file = domain + '.user.' + username + '.json'
     data = core.load(status_file, required = True, quiet = True)
 
+    if args.all:
+        print("Considering the entire archive")
+        statuses = data["statuses"]
+        favourites = data["favourites"]
+    else:
+        print("Considering the last "
+              + str(args.weeks)
+              + " weeks")
+        statuses = keep(data["statuses"], args.weeks)
+        favourites = keep(data["favourites"], args.weeks)
+    
     if "statuses" in data:
-        print("Statuses:".ljust(20), str(len(data["statuses"])).rjust(6))
-        print("Boosts:".ljust(20), str(boosts(data["statuses"])).rjust(6))
-        print("Media:".ljust(20), str(media(data["statuses"])).rjust(6))
+        print("Statuses:".ljust(20), str(len(statuses)).rjust(6))
+        print("Boosts:".ljust(20), str(boosts(statuses)).rjust(6))
+        print("Media:".ljust(20), str(media(statuses)).rjust(6))
+
+        print()
+        print_tags(statuses, args.top)
+
+    if "statuses" in data and "favourites" in data:
+        print()
         
     if "favourites" in data:
-        print("Favourites:".ljust(20), str(len(data["favourites"])).rjust(6))
+        print("Favourites:".ljust(20), str(len(favourites)).rjust(6))
+        print("Boosts:".ljust(20), str(boosts(favourites)).rjust(6))
+        print("Media:".ljust(20), str(media(favourites)).rjust(6))
 
-    print()
-    print_tags(data["statuses"])
+        print()
+        print_tags(favourites, args.top)
