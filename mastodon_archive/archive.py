@@ -79,9 +79,9 @@ sure we download all the toots on the server and append them to the
 archive.
 
 If you have never expired any toots and you just manually deleted or
-unfavoured the last one in the archive, you could try to edit the
-archive file and the delete the latest toot our latest favourite and
-try the archive command again.
+unfavoured a toot online which happens to be the last one in the
+archive, you could try to edit the archive file and delete the latest
+toot or latest favourite and try the archive command again.
 
 If you're not sure, you probably want to export the toots from your
 archive, rename the file and restart from scratch. The archive you
