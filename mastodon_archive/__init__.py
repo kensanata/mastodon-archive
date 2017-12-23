@@ -106,6 +106,9 @@ if and only if they are in your archive''')
     parser_content.add_argument("--top", dest='top',
                                 metavar='N', type=int, default=10,
                                 help='only print the top N tags')
+    parser_content.add_argument("--include-boosts", dest='include_boosts', action='store_const',
+                                const=True, default=False,
+                                help='include boosts')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=report.report)
