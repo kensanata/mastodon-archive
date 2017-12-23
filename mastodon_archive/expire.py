@@ -16,6 +16,7 @@
 
 import sys
 import os.path
+import math
 from progress.bar import Bar
 from datetime import timedelta, datetime
 from . import core
@@ -60,14 +61,16 @@ def expire(args):
         return created < cutoff and not deleted
 
     statuses = list(filter(matches, data[collection]))
+    n_statuses = len(statuses)
 
-    if (len(statuses) == 0):
+    if (n_statuses == 0):
         print("No statuses are older than %d weeks" % args.weeks,
               file=sys.stderr)
         sys.exit(3)
-    elif (len(statuses) > 300):
-        print("Default rate limiting is 300 requests per five minutes.\n"
-              "This will take a while.")
+    elif (True or n_statuses > 300):
+        estimated_time = math.floor((n_statuses - 1) / 300) * 5
+        print("Considering the default rate limit of 300 requests per five minutes and having {} statuses,\n"
+              "this will take at least {} minutes to complete.".format(n_statuses, estimated_time))
 
     if confirmed:
 

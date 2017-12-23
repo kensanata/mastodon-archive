@@ -372,8 +372,8 @@ Visit the following URL and authorize the app:
 [long URL here]
 Then paste the access token here:
 [access token here]
-Default rate limiting is 300 requests per five minutes.
-This will take a while.
+Considering the default rate limit of 300 requests per five minutes and having 1236 statuses,
+this will take at least 20 minutes to complete.
 Expiring |#######                         | 301/1236
 ```
 
