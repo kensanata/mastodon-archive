@@ -37,6 +37,14 @@ dependencies:
 $ pip3 install mastodon-archive
 ```
 
+If this is the first tool you installed using `pip` then perhaps it
+installed `mastodon-archive` in a dictory that's not on your `PATH`. I
+have had to add the following to my `~/.bashrc` file:
+
+```bash
+export PATH=$PATH:$HOME/.local/bin
+```
+
 # Making an archive
 
 When using the app for the first time, you will have to authorize it:
@@ -415,9 +423,9 @@ The
 determines how the app is installed and what its dependencies are.
 
 If you checked out the repository and you want to run the code from
-the working directory on a single user system, use `pip3 install
---upgrade --editable .` in your working directory to make it
-"editable" (i.e. the system installation is linked to your working
+the working directory on a single user system, use `sudo pip3 install
+--upgrade --editable .` in your working directory to make it is
+"editable" (i.e. the installation you have is linked to your working
 directory, now).
 
 If you don't want to do this for the entire system, you need your own
