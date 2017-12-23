@@ -253,6 +253,8 @@ You can list a different number of hashtags using `--top N` and you
 can list all of them by using `--top -1`. This might result in a very
 long list.
 
+By default only your toots are considered for the hashtags. Use `--include-boosts` to also include toot you have boosted.
+
 # Expiring your toots and favourites
 
 **Warning**: This is a destructive operation. You will delete your

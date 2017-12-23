@@ -39,12 +39,14 @@ def media(statuses):
     return i
 
 
-def tags(statuses):
+def tags(statuses, include_boosts):
     """
     Count all the hashtags in statuses
     """
     count = {}
     for item in statuses:
+        if include_boosts and item["reblog"] is not None:
+            item = item["reblog"]
         for name in [tag["name"] for tag in item["tags"]]:
             if name in count:
                 count[name] += 1
@@ -52,7 +54,7 @@ def tags(statuses):
                 count[name] = 1
     return count
 
-def print_tags(statuses, max):
+def print_tags(statuses, max, include_boosts):
     """
     Print hashtags used in statuses
     """
@@ -60,7 +62,7 @@ def print_tags(statuses, max):
         print("All the hashtags:")
     else:
         print("Top " + str(max) + " hashtags:")
-    count = tags(statuses)
+    count = tags(statuses, include_boosts)
     most = sorted(count.keys(), key = lambda tag: -count[tag])
     print(textwrap.fill(" ".join(
         ["#"+tag+"("+str(count[tag])+")" for tag in most[0:max]])))
@@ -106,7 +108,7 @@ def report(args):
         print("Media:".ljust(20), str(media(statuses)).rjust(6))
 
         print()
-        print_tags(statuses, args.top)
+        print_tags(statuses, args.top, args.include_boosts)
 
     if "statuses" in data and "favourites" in data:
         print()
@@ -117,4 +119,4 @@ def report(args):
         print("Media:".ljust(20), str(media(favourites)).rjust(6))
 
         print()
-        print_tags(favourites, args.top)
+        print_tags(favourites, args.top, args.include_boosts)
