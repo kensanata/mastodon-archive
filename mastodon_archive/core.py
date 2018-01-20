@@ -18,6 +18,8 @@ import sys
 import os.path
 import datetime
 import json
+import glob
+import re
 
 def read(args):
     """
@@ -144,3 +146,19 @@ def save(file_name, data):
         os.replace(file_name, file_name + '~')
     with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
         data = json.dump(data, fp, indent = 2, default = date_handler)
+
+def all_accounts():
+    """
+    Return all the known user accounts in the current directory.
+    """
+    archives = glob.glob('*.user.*.json');
+    if not archives:
+        print("You need to create an archive, first", file=sys.stderr)
+        sys.exit(2)
+    else:
+        users = []
+        for archive in archives:
+            m = re.match(r"(.*)\.user\.(.*)\.json", archive)
+            if m:
+                users.append("%s@%s" % m.group(2, 1))
+        return users

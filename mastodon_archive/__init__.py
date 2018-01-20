@@ -9,7 +9,10 @@ from . import report
 def main():
     parser = argparse.ArgumentParser(
         description="""Archive your toots and favourites,
-        and work with them.""")
+        and work with them.""",
+        epilog="""Once you have created archives in the current directory, you can
+        use 'all' instead of your account and the commands will be run
+        once for every archive in the directory.""")
 
     subparsers = parser.add_subparsers()
 
@@ -116,10 +119,19 @@ if and only if they are in your archive''')
 
     args = parser.parse_args()
 
-    if hasattr(args, "command"):
-        args.command(args)
-    else:
-        parser.print_help()
+    try:
+        if hasattr(args, "command"):
+            if hasattr(args, "user") and args.user == 'all':
+                for user in core.all_accounts():
+                    print(user)
+                    args.user = user
+                    args.command(args)
+            else:
+                args.command(args)
+        else:
+            parser.print_help()
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == "__main__":
     main()
