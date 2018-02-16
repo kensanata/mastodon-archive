@@ -25,6 +25,7 @@ def archive(args):
 
     append = args.append
     skip_favourites = args.skip_favourites
+    with_mentions = args.with_mentions
 
     (username, domain) = args.user.split("@")
 
@@ -52,7 +53,7 @@ def archive(args):
     def find_id(list, id):
         """Return the list item whose id attribute matches."""
         for item in list:
-            if str(item["id"]) == str(id):
+            if str(item["id"]) == str(id) or "status" in item and str(item.status["id"]) == str(id):
                 return item
         else:
             return None
@@ -95,6 +96,9 @@ need to delete is this file:
         print("Fetched a total of %d new toots" % len(statuses))
         return statuses
 
+    def keep_mentions(notifications):
+        return [x.status for x in notifications if x.type == "mention"]
+    
     if append:
         print("Get statuses (this may take a while)")
         statuses = mastodon.account_statuses(user["id"])
@@ -135,14 +139,42 @@ need to delete is this file:
         favourites = fetch_up_to(mastodon.favourites(), id)
         favourites.extend(data["favourites"])
 
+    if not with_mentions:
+        print("Skipping mentions")
+        if data is None or not "mentions" in data:
+            mentions = []
+        else:
+            mentions = data["mentions"]
+    elif append:
+        print("Get mentions (this may take a while)")
+        notifications = mastodon.notifications()
+        notifications = mastodon.fetch_remaining(
+            first_page = notifications)
+        mentions = keep_mentions(notifications)
+        mentions.extend(data["mentions"])
+    elif data is None or not "mentions" in data or len(data["mentions"]) == 0:
+        print("Get mentions (this may take a while)")
+        notifications = mastodon.notifications()
+        notifications = mastodon.fetch_remaining(
+            first_page = notifications)
+        mentions = keep_mentions(notifications)
+    else:
+        id = data["mentions"][0]["id"]
+        print("Get new notifications")
+        notifications = fetch_up_to(mastodon.notifications(), id)
+        mentions = keep_mentions(notifications)
+        mentions.extend(data["mentions"])
+
     data = {
         'account': user,
         'statuses': statuses,
-        'favourites': favourites
+        'favourites': favourites,
+        'mentions': mentions
     }
 
-    print("Saving %d statuses and %d favourites" % (
+    print("Saving %d statuses, %d favourites, and %d mentions" % (
         len(statuses),
-        len(favourites)))
+        len(favourites),
+        len(mentions)))
 
     core.save(status_file, data)

@@ -23,9 +23,14 @@ def main():
     parser_content.add_argument("--append-all", dest='append', action='store_const',
                                 const=True, default=False,
                                 help='download all toots and append to existing archive')
-    parser_content.add_argument("--no-favourites", dest='skip_favourites', action='store_const',
+    parser_content.add_argument("--no-favourites", dest='skip_favourites',
+                                action='store_const',
                                 const=True, default=False,
                                 help='skip download of favourites')
+    parser_content.add_argument("--with-mentions", dest='with_mentions',
+                                action='store_const',
+                                const=True, default=False,
+                                help='download mentions (notifications where you are mentioned)')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
@@ -49,9 +54,9 @@ def main():
                                 const=True, default=False,
                                 help='reverse output, oldest first')
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites'],
+                                choices=['statuses', 'favourites', 'mentions'],
                                 default='statuses',
-                                help='export statuses or favourites')
+                                help='export statuses, favourites, or mentions')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.add_argument("pattern", nargs='*',

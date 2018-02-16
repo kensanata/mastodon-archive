@@ -74,7 +74,16 @@ If this is taking too long, consider skipping your favourites:
 $ mastodon-archive archive --no-favourites kensanata@dice.camp
 ```
 
-You will end up with three new files:
+If you want a better picture of conversations, you can also include
+mentions. Mentions are notifications of statuses in which you were
+mentioned as opposed to statuses of yours that were favoured or
+boosted by others.
+
+```
+$ mastodon-archive archive --with-mentions kensanata@dice.camp
+```
+
+No matter what you did, You will end up with three new files:
 
 `dice.camp.client.secret` is where the client secret for this instance
 is stored. `dice.camp.user.kensanata.secret` is where the
@@ -181,7 +190,7 @@ protect your backslashes and questionmarks.
 $ mastodon-archive text kensanata@dice.camp house 'rule\b'
 ```
 
-You can also search your favourites:
+You can also search your favourites or your mentions:
 
 ```
 $ mastodon-archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
