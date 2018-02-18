@@ -280,6 +280,12 @@ Where as it might be possible to favour all your favourites again,
 there is no way to repost all those toots. You will have a copy in
 your archive, but there is no way to restore these to your instance.
 
+**But why?** I might want to keep a copy of my toots, but I don't
+think they have much value going back months and years. I never read
+through years of tweeting history! This only benefits your enemies,
+never your friends. So I want to expire my toots. We can always write
+a blog post about the good stuff.
+
 You can expire your toots using the `expire` command and providing the
 `--older-than` option. This option specifies the number of weeks to
 keep on the server. Anything older than that is deleted or unfavoured.
