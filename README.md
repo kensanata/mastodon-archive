@@ -402,7 +402,7 @@ this will take at least 20 minutes to complete.
 Expiring |#######                         | 301/1236
 ```
 
-🔥 If you are experimenting with a expiry, you'll need to give the app
+🔥 If you are experimenting with expiry, you'll need to give the app
 write permissions. If you then delete the user secret file, hoping to
 start with a clean slate when archiving, you'll be asked to authorize
 the app again, but somehow Mastodon remembers that you have already
