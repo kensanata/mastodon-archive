@@ -424,6 +424,7 @@ The data we have in our archive file is a hash with three keys:
 1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
 2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 3. `favourites` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
+4. `mentions` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 
 If you want to understand the details and the nested nature of these
 data structures, you need to look at the Mastodon API documentation.
