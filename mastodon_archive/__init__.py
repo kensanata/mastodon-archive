@@ -88,7 +88,7 @@ if and only if they are in your archive''')
                                 default='statuses',
                                 help='delete statuses or unfavour favourites')
     parser_content.add_argument("--older-than", dest='weeks',
-                                metavar='N', type=int, default=4,
+                                metavar='N', type=float, default=4,
                                 help='expire toots older than this many weeks')
     parser_content.add_argument("--confirmed", dest='confirmed', action='store_const',
                                 const=True, default=False,
