@@ -162,3 +162,18 @@ def all_accounts():
             if m:
                 users.append("%s@%s" % m.group(2, 1))
         return users
+
+def keep(statuses, weeks):
+    """
+    Return all statuses newer than some weeks
+    """
+
+    delta = datetime.timedelta(weeks = weeks)
+    cutoff = datetime.datetime.today() - delta
+
+    def matches(status):
+        created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
+        return created >= cutoff
+
+    return list(filter(matches, statuses))
+

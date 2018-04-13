@@ -16,7 +16,6 @@
 import sys
 import os.path
 import textwrap
-from datetime import timedelta, datetime
 from . import core
 
 def boosts(statuses):
@@ -67,20 +66,6 @@ def print_tags(statuses, max, include_boosts):
     print(textwrap.fill(" ".join(
         ["#"+tag+"("+str(count[tag])+")" for tag in most[0:max]])))
 
-def keep(statuses, weeks):
-    """
-    Return all statuses newer than some weeks
-    """
-
-    delta = timedelta(weeks = weeks)
-    cutoff = datetime.today() - delta
-
-    def matches(status):
-        created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
-        return created >= cutoff
-
-    return list(filter(matches, statuses))
-    
 def report(args):
     """
     Report on your toots and favourites
@@ -99,8 +84,8 @@ def report(args):
         print("Considering the last "
               + str(args.weeks)
               + " weeks")
-        statuses = keep(data["statuses"], args.weeks)
-        favourites = keep(data["favourites"], args.weeks)
+        statuses = core.keep(data["statuses"], args.weeks)
+        favourites = core.keep(data["favourites"], args.weeks)
     
     if "statuses" in data:
         print("Statuses:".ljust(20), str(len(statuses)).rjust(6))
