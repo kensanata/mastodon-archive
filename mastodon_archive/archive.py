@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
-# Copyright (C) 2017  Steve Ivy <steveivy@gmail.com>
+# Copyright (C) 2017-2018  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017       Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,6 +26,7 @@ def archive(args):
     append = args.append
     skip_favourites = args.skip_favourites
     with_mentions = args.with_mentions
+    with_followers = args.with_followers
 
     (username, domain) = args.user.split("@")
 
@@ -165,16 +166,31 @@ need to delete is this file:
         mentions = keep_mentions(notifications)
         mentions.extend(data["mentions"])
 
+    if not with_followers:
+        print("Skipping followers")
+        if data is None or not "followers" in data:
+            followers = []
+        else:
+            followers = data["followers"]
+    else:
+        print("Get followers (this may take a while)")
+        followers = mastodon.account_followers(user.id)
+        followers = mastodon.fetch_remaining(
+            first_page = followers)
+        data["followers"] = followers
+
     data = {
         'account': user,
         'statuses': statuses,
         'favourites': favourites,
-        'mentions': mentions
+        'mentions': mentions,
+        'followers': followers
     }
 
-    print("Saving %d statuses, %d favourites, and %d mentions" % (
+    print("Saving %d statuses, %d favourites, %d mentions, and %d followers" % (
         len(statuses),
         len(favourites),
-        len(mentions)))
+        len(mentions),
+        len(followers)))
 
     core.save(status_file, data)

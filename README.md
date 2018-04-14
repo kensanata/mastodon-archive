@@ -19,6 +19,7 @@ if you're curious.
 - [Reporting](#reporting)
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
+- [Followers](#followers)
 - [Documentation](#documentation)
 - [Development](#development)
 - [Processing using jq](#processing-using-jq)
@@ -416,6 +417,41 @@ Settings → Authorized apps and revoke your authorization for
 mastodon-archive. Now you can try the authorization URL again and you
 will only get read permissions instead of both read and write
 permissions.
+
+# Followers
+
+This is work in progress. I'm actually not sure where I want to go
+with this. Right now it lists all your followers that haven't
+interacted with you. If a toot of theirs mentions you, then that
+counts as an interaction. Favouring and boosting does not count. By
+default, this looks at the last twelve weeks. In order for this to
+work, you need an archive containing both mentions and followers.
+
+```
+$ mastodon-archive archive --with-mentions --with-followers kensanata@dice.camp
+Loading existing archive
+Get user info
+Get new statuses
+Fetched a total of 0 new toots
+Get new favourites
+Fetched a total of 0 new toots
+Get new notifications
+Fetched a total of 2 new toots
+Get followers (this may take a while)
+Saving 659 statuses, 376 favourites, 478 mentions, and 107 followers
+```
+
+Now you're ready to determine the list of lurkers:
+
+```
+$ mastodon-archive followers kensanata@dice.camp
+Considering the last 12 weeks
+...
+```
+
+As I said, this is work in progress and I don't really know where I'm
+going with this. More
+[on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
 
 # Documentation
 

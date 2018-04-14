@@ -20,6 +20,7 @@ from . import html
 from . import media
 from . import expire
 from . import report
+from . import followers
 
 def main():
     parser = argparse.ArgumentParser(
@@ -46,6 +47,10 @@ def main():
                                 action='store_const',
                                 const=True, default=False,
                                 help='download mentions (notifications where you are mentioned)')
+    parser_content.add_argument("--with-followers", dest='with_followers',
+                                action='store_const',
+                                const=True, default=False,
+                                help='download followers')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
@@ -135,6 +140,26 @@ if and only if they are in your archive''')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=report.report)
+
+
+    parser_content = subparsers.add_parser(
+        name='followers',
+        help='''find inactive followers''')
+    parser_content.add_argument("--block", dest='block', action='store_const',
+                                const=True, default=False,
+                                help='...and block them')
+    parser_content.add_argument("--all", dest='all', action='store_const',
+                                const=True, default=False,
+                                help='consider all toots (ignore --newer-than)')
+    parser_content.add_argument("--newer-than", dest='weeks',
+                                metavar='N', type=int, default=12,
+                                help='require interaction within this many weeks (default is 12)')
+    parser_content.add_argument("--pace", dest='pace', action='store_const',
+                                const=True, default=False,
+                                help='avoid timeouts and pace requests')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=followers.followers)
 
 
     args = parser.parse_args()

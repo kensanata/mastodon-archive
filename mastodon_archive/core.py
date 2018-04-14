@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017-2018  Alex Schroeder <alex@gnu.org>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -172,7 +172,7 @@ def keep(statuses, weeks):
     cutoff = datetime.datetime.today() - delta
 
     def matches(status):
-        created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
+        created = datetime.datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
         return created >= cutoff
 
     return list(filter(matches, statuses))
