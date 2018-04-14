@@ -84,5 +84,7 @@ def followers(args):
 
     else:
         accounts = find_lurkers(data["followers"], data["mentions"])
-        for account in accounts:
-            print("%s" % account["acct"])
+        for account in sorted(accounts, key=lambda account:
+                              account["display_name"] or account["username"]):
+            print("%s <%s>" % (account["display_name"] or account["username"],
+                               account["acct"]))
