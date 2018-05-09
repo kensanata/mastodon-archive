@@ -7,6 +7,16 @@ with or without media. Take a look at an
 [example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
 if you're curious.
 
+Note that Mastodon
+[https://github.com/tootsuite/mastodon/releases/tag/v2.3.0 v2.3.0]
+added an account archive download feature: "Every 7 days you are able
+to request a full archive of your toots. The toots are exported in
+ActivityPub JSON format alongside the media files attached to them,
+your avatar and header images as well as the private key of your
+account used for signing content." If all you want to do is have a
+backup of your data, perhaps that is enough and you don't need this
+tool.
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -39,8 +49,8 @@ $ pip3 install mastodon-archive
 ```
 
 If this is the first tool you installed using `pip` then perhaps it
-installed `mastodon-archive` in a dictory that's not on your `PATH`. I
-have had to add the following to my `~/.bashrc` file:
+installed `mastodon-archive` in a directory that's not on your `PATH`.
+I had to add the following to my `~/.bashrc` file:
 
 ```bash
 export PATH=$PATH:$HOME/.local/bin
