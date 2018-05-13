@@ -70,25 +70,22 @@ def login(args, scopes = ['read']):
 
     if not os.path.isfile(user_secret):
 
-        print("Log in")
         mastodon = Mastodon(
             client_id = client_secret,
             api_base_url = url)
 
-        url = mastodon.auth_request_url(
-            client_id = client_secret,
-            scopes=scopes)
-
-        print("Visit the following URL and authorize the app:")
-        print(url)
-
-        print("Then paste the access token here:")
-        token = sys.stdin.readline().rstrip()
+        print("We need your credentials just this once to log in.")
+        sys.stdout.write("Email: ")
+        sys.stdout.flush()
+        email = sys.stdin.readline().rstrip()
+        sys.stdout.write("Password: ")
+        sys.stdout.flush()
+        password = sys.stdin.readline().rstrip()
 
         # on the very first login, --pace has no effect
         mastodon.log_in(
-            username = username,
-            code = token,
+            username = email,
+            password = password,
             to_file = user_secret,
             scopes=scopes)
 
