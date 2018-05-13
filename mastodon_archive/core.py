@@ -66,6 +66,7 @@ def login(args, scopes = ['read']):
         Mastodon.create_app(
             'mastodon-archive',
             api_base_url = url,
+            scopes=scopes,
             to_file = client_secret)
 
     if not os.path.isfile(user_secret):
@@ -87,7 +88,6 @@ def login(args, scopes = ['read']):
 
         # on the very first login, --pace has no effect
         mastodon.log_in(
-            username = username,
             code = token,
             to_file = user_secret,
             scopes=scopes)
