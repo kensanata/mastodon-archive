@@ -51,7 +51,7 @@ def login(args, scopes = ['read']):
     Login to your Mastodon account
     """
 
-    pace = args.pace
+    pace = hasattr(args, 'pace') and args.pace
 
     (username, domain) = args.user.split("@")
 

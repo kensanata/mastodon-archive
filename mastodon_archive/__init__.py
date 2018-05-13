@@ -21,6 +21,7 @@ from . import media
 from . import expire
 from . import report
 from . import followers
+from . import login
 
 def main():
     parser = argparse.ArgumentParser(
@@ -162,6 +163,14 @@ if and only if they are in your archive''')
     parser_content.set_defaults(command=followers.followers)
 
 
+    parser_content = subparsers.add_parser(
+        name='login',
+        help='login to the instance for testing purposes')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=login.login)
+
+    
     args = parser.parse_args()
 
     try:
