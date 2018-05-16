@@ -71,7 +71,8 @@ def login(args, scopes = ['read']):
 
     if not os.path.isfile(user_secret):
 
-        print("Log in")
+        print("This app needs access to your Mastodon account.")
+
         mastodon = Mastodon(
             client_id = client_secret,
             api_base_url = url)
@@ -86,11 +87,36 @@ def login(args, scopes = ['read']):
         print("Then paste the access token here:")
         token = sys.stdin.readline().rstrip()
 
-        # on the very first login, --pace has no effect
-        mastodon.log_in(
-            code = token,
-            to_file = user_secret,
-            scopes=scopes)
+        try:
+            # on the very first login, --pace has no effect
+            mastodon.log_in(
+                code = token,
+                to_file = user_secret,
+                scopes=scopes)
+
+        except MastodonIllegalArgumentError as e:
+
+            print("Sadly, that did not work. On some sites, this login mechanism")
+            print("(namely OAuth) seems to be broken. There is an alternative")
+            print("if you are willing to trust us with your password just this")
+            print("once. We need it just this once in order to get an access")
+            print("token. We won't save it. If you don't want to try this, use")
+            print("Ctrl+C to quit. If you want to try it, please provide your")
+            print("login details.")
+
+            sys.stdout.write("Email: ")
+            sys.stdout.flush()
+            email = sys.stdin.readline().rstrip()
+            sys.stdout.write("Password: ")
+            sys.stdout.flush()
+            password = sys.stdin.readline().rstrip()
+
+            # on the very first login, --pace has no effect
+            mastodon.log_in(
+                username = email,
+                password = password,
+                to_file = user_secret,
+                scopes=scopes)
 
     else:
 
@@ -176,4 +202,3 @@ def keep(statuses, weeks):
         return created >= cutoff
 
     return list(filter(matches, statuses))
-
