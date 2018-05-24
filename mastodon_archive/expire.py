@@ -75,6 +75,7 @@ def expire(args):
     if confirmed:
 
         bar = Bar('Expiring', max = len(statuses))
+        error = ''
 
         for status in statuses:
             bar.next()
@@ -89,10 +90,15 @@ def expire(args):
                     delete(mastodon, collection, status)
                 elif "not found" in str(e):
                     status["deleted"] = True
+                elif "Name or service not known" in str(e):
+                    error = "Error: the instance name is either misspelled or offline"
                 else:
                     print(e, file=sys.stderr)
 
         bar.finish()
+
+        if error:
+            print(error, file=sys.stderr)
 
         core.save(status_file, data)
 

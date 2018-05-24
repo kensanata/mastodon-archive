@@ -45,11 +45,18 @@ def archive(args):
     try:
         user = mastodon.account_verify_credentials()
     except Exception as e:
-        print(e, file=sys.stderr)
         if "access token was revoked" in str(e):
             core.deauthorize(args)
+             # retry and exit without an error
             archive(args)
             sys.exit(0)
+        elif "Name or service not known" in str(e):
+            print("Error: the instance name is either misspelled or offline",
+              file=sys.stderr)
+        else:
+            print(e, file=sys.stderr)
+        # exit in either case
+        sys.exit(1)
 
     def find_id(list, id):
         """Return the list item whose id attribute matches."""
