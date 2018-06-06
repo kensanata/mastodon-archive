@@ -102,12 +102,12 @@ def main():
         help='''delete older toots from the server and unfavour favourites
 if and only if they are in your archive''')
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites'],
+                                choices=['statuses', 'favourites', 'mentions'],
                                 default='statuses',
-                                help='delete statuses or unfavour favourites')
+                                help='delete statuses, unfavour favourites, or clear mention notifications')
     parser_content.add_argument("--older-than", dest='weeks',
                                 metavar='N', type=float, default=4,
-                                help='expire toots older than this many weeks')
+                                help='expire anything older than this many weeks')
     parser_content.add_argument("--confirmed", dest='confirmed', action='store_const',
                                 const=True, default=False,
                                 help='perform the expiration on the server')

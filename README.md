@@ -286,10 +286,11 @@ By default only your toots are considered for the hashtags. Use `--include-boost
 # Expiring your toots and favourites
 
 **Warning**: This is a destructive operation. You will delete your
-toots on your instance, or unfavour your favourites on your instance.
-Where as it might be possible to favour all your favourites again,
-there is no way to repost all those toots. You will have a copy in
-your archive, but there is no way to restore these to your instance.
+toots on your instance, or unfavour your favourites, or dismiss your
+notifications on your instance. Where as it might be possible to
+favour all your favourites again, there is no way to repost all those
+toots. You will have a copy in your archive, but there is no way to
+restore these to your instance.
 
 **But why?** I might want to keep a copy of my toots, but I don't
 think they have much value going back months and years. I never read
@@ -300,8 +301,9 @@ a blog post about the good stuff.
 You can expire your toots using the `expire` command and providing the
 `--older-than` option. This option specifies the number of weeks to
 keep on the server. Anything older than that is deleted or unfavoured.
-If you use `--older-than 0`, then *all* your toots will be deleted or
-*all* your favourites will be unfavoured.
+If you use `--older-than 0`, then *all* your toots will be deleted, or
+*all* your favourites will be unfavoured, or *all* your notifications
+will be dismissed.
 
 ```
 ~/src/mastodon-backup $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org

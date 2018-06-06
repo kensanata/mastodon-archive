@@ -19,22 +19,37 @@ import os.path
 import math
 from progress.bar import Bar
 from datetime import timedelta, datetime
+import html2text
+import textwrap
 from . import core
+
+h = html2text.HTML2Text()
+h.ignore_links = True
+
+def text(status):
+    text = textwrap.fill(h.handle(status["content"])).lstrip();
+    text = text.replace("\n", " ")
+    if len(text) > 50:
+        text = text[0:50] + '...'
+    return "%s \"%s\"" % (status["created_at"][0:10], text)
 
 def delete(mastodon, collection, status):
     """
-    Delete toot or unfavour favourite and mark it as deleted.
-    The "record not found" error is handled elsewhere.
+    Delete toot, unfavour favourite, or dismiss notification and mark
+    it as deleted. The "record not found" error is handled elsewhere.
     """
     if collection == 'statuses':
         mastodon.status_delete(status["id"]);
     elif collection == 'favourites':
         mastodon.status_unfavourite(status["id"])
+    elif collection == 'mentions':
+        mastodon.notifications_dismiss(status["id"])
     status["deleted"] = True
 
 def expire(args):
     """
-    Expire toots: delete toots and unfavour favourites older than a few weeks
+    Expire toots: delete toots, unfavour favourites, or dismiss
+    notifications older than a few weeks
     """
 
     confirmed = args.confirmed
@@ -69,8 +84,8 @@ def expire(args):
         sys.exit(3)
     elif (True or n_statuses > 300):
         estimated_time = math.floor((n_statuses - 1) / 300) * 5
-        print("Considering the default rate limit of 300 requests per five minutes and having {} statuses,\n"
-              "this will take at least {} minutes to complete.".format(n_statuses, estimated_time))
+        print("Considering the default rate limit of 300 requests per five minutes\n"
+              "and having {} items, this will take at least {} minutes to complete.".format(n_statuses, estimated_time))
 
     if confirmed:
 
@@ -106,12 +121,8 @@ def expire(args):
 
         for status in statuses:
             if collection == 'statuses':
-                print ("Delete: %s \"%s\"" % (
-                    status["created_at"][0:10],
-                    status["content"][0:60] +
-                    ('...' if len(status["content"]) > 60 else '')))
+                print("Delete: " + text(status))
             elif collection == 'favourites':
-                print ("Unfavour: %s \"%s\"" % (
-                    status["created_at"][0:10],
-                    status["content"][0:60] +
-                    ('...' if len(status["content"]) > 60 else '')))
+                print("Unfavour: " + text(status))
+            elif collection == 'mentions':
+                print("Dismiss: " + text(status))
