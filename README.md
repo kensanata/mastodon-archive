@@ -328,47 +328,6 @@ Then paste the access token here:
 Expiring |################################| 1/1
 ```
 
-These toots will remain in your archive. And now you have a problem if
-you deleted *all* the toots from your instance using `--older-than 0`
-because when you try to archive your toots a while later, the app will
-attempt to fetch toots up to the last one in your archive, but you
-deleted it, so it can't be found.
-
-```
-$ mastodon-archive archive kensanata@social.nasqueron.org
-Loading existing archive
-Get user info
-Get new statuses
-Error: I did not find the last toot we have in our archive.
-Perhaps it was deleted?
-
-If you have expired all the toots on your server, then this is
-expected. In this case you need to use the --append-all option to make
-sure we download all the toots on the server and append them to the
-archive.
-
-If you have never expired any toots and you just manually deleted or
-unfavoured a toot online which happens to be the last one in the
-archive, you could try to edit the archive file and delete the latest
-toot or latest favourite and try the archive command again.
-
-If you're not sure, you probably want to export the toots from your
-archive, rename the file and restart from scratch. The archive you
-need to delete is this file:
-social.nasqueron.org.user.kensanata.json
-```
-
-So that's what you need to use:
-
-```
-$ mastodon-archive archive --append-all kensanata@social.nasqueron.org
-Loading existing archive
-Get user info
-Get statuses (this may take a while)
-Get favourites (this may take a while)
-Saving 1 statuses and 1 favourites
-```
-
 # Troubleshooting
 
 🔥 If you are archiving a ton of toots and you run into a General API

@@ -37,9 +37,6 @@ def main():
     parser_content = subparsers.add_parser(
         name='archive',
         help='archive your toots and favourites')
-    parser_content.add_argument("--append-all", dest='append', action='store_const',
-                                const=True, default=False,
-                                help='download all toots and append to existing archive')
     parser_content.add_argument("--no-favourites", dest='skip_favourites',
                                 action='store_const',
                                 const=True, default=False,
