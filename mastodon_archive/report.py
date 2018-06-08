@@ -16,6 +16,7 @@
 import sys
 import os.path
 import textwrap
+import unicodedata
 from . import core
 
 def boosts(statuses):
@@ -66,6 +67,30 @@ def print_tags(statuses, max, include_boosts):
     print(textwrap.fill(" ".join(
         ["#"+tag+"("+str(count[tag])+")" for tag in most[0:max]])))
 
+def emoji(statuses):
+    """
+    Count all the emoji in statuses
+    """
+    count = {}
+    for item in statuses:
+        for char in item["content"]:
+            if unicodedata.category(char) == 'So':
+                if char in count:
+                    count[char] += 1
+                else:
+                    count[char] = 1
+    return count
+
+def print_emoji(statuses, min = 10, max_num = 30):
+    """
+    Print emoji used in statuses, sorted by frequency
+    """
+    print("Most frequeny Emoji:")
+    count = emoji(statuses)
+    count = {k: v for k, v in count.items() if v >= min }
+    most = sorted(count.keys(), key = lambda emoji: -count[emoji])
+    print(textwrap.fill(" ".join([emoji for emoji in most[0:max_num]])))
+
 def report(args):
     """
     Report on your toots and favourites
@@ -95,6 +120,10 @@ def report(args):
         print()
         print_tags(statuses, args.top, args.include_boosts)
 
+        if args.with_emoji:
+            print()
+            print_emoji(statuses)
+            
     if "statuses" in data and "favourites" in data:
         print()
         
