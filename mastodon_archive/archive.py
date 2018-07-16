@@ -139,13 +139,13 @@ def archive(args):
         else:
             mentions = data["mentions"]
     elif data is None or not "mentions" in data or len(data["mentions"]) == 0:
-        print("Get mentions (this may take a while)")
+        print("Get notifications and look for mentions (this may take a while)")
         notifications = mastodon.notifications()
         notifications = mastodon.fetch_remaining(
             first_page = notifications)
         mentions = keep_mentions(notifications)
     else:
-        print("Get new notifications")
+        print("Get new notifications and look for mentions")
         is_mention = lambda x: "type" in x and x["type"] == "mention"
         mentions = complete(data["mentions"], mastodon.notifications(), is_mention)
 

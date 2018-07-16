@@ -88,7 +88,9 @@ $ mastodon-archive archive --no-favourites kensanata@dice.camp
 If you want a better picture of conversations, you can also include
 mentions. Mentions are notifications of statuses in which you were
 mentioned as opposed to statuses of yours that were favoured or
-boosted by others.
+boosted by others. Note that if you used to *dismiss* notifications
+using the "Clear notifications" menu, then no mentions will be found
+as mentions are simply a particular kind of notification.
 
 ```
 $ mastodon-archive archive --with-mentions kensanata@dice.camp
