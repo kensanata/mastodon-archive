@@ -94,7 +94,7 @@ def login(args, scopes = ['read']):
                 to_file = user_secret,
                 scopes=scopes)
 
-        except MastodonIllegalArgumentError as e:
+        except Exception as e:
 
             print("Sadly, that did not work. On some sites, this login mechanism")
             print("(namely OAuth) seems to be broken. There is an alternative")
