@@ -54,6 +54,13 @@ def expire(args):
 
     confirmed = args.confirmed
     collection = args.collection
+    delete_others = args.delete_others
+
+    if (delete_others and collection != 'mentions'):
+        print("The --delete-others option can only be used "
+              "together with --collection mentions.",
+              file=sys.stderr)
+        sys.exit(4)
 
     (username, domain) = args.user.split('@')
 
@@ -81,13 +88,12 @@ def expire(args):
     if (n_statuses == 0):
         print("No statuses are older than %d weeks" % args.weeks,
               file=sys.stderr)
-        sys.exit(3)
-    elif (True or n_statuses > 300):
+    elif (n_statuses > 300):
         estimated_time = math.floor((n_statuses - 1) / 300) * 5
         print("Considering the default rate limit of 300 requests per five minutes\n"
               "and having {} items, this will take at least {} minutes to complete.".format(n_statuses, estimated_time))
 
-    if confirmed:
+    if confirmed and n_statuses > 0:
 
         bar = Bar('Expiring', max = len(statuses))
         error = ''
@@ -117,7 +123,7 @@ def expire(args):
 
         core.save(status_file, data)
 
-    else:
+    elif n_statuses > 0:
 
         for status in statuses:
             if collection == 'statuses':
@@ -126,3 +132,66 @@ def expire(args):
                 print("Unfavour: " + text(status))
             elif collection == 'mentions':
                 print("Dismiss: " + text(status))
+
+    if delete_others:
+        print('Getting other notifications')
+
+        # unlike above where we're getting the created_at value from
+        # the JSON file where the date comes in iso format... see
+        # core.save
+        def others(notifications):
+            return [x for x in notifications
+                    if x.type != "mention"
+                    and x["created_at"].replace(tzinfo = None) < cutoff]
+
+        mastodon = core.login(args)
+        notifications = mastodon.notifications()
+        notifications = mastodon.fetch_remaining(
+            first_page = notifications)
+        notifications = others(notifications)
+
+        n_notifications = len(notifications)
+
+        if (n_notifications == 0):
+            print("No other notifications are older than %d weeks" % args.weeks,
+                  file=sys.stderr)
+        elif (n_notifications > 300):
+            estimated_time = math.floor((n_notifications - 1) / 300) * 5
+            print("Considering the default rate limit of 300 requests per five minutes\n"
+                  "and having {} items, this will take at least {} minutes to complete.".format(n_notifications, estimated_time))
+
+        if confirmed and n_notifications > 0:
+
+            bar = Bar('Dismissing', max = n_notifications)
+            error = ''
+
+            for notification in notifications:
+                bar.next()
+                try:
+                    mastodon.notifications_dismiss(notification["id"])
+                except Exception as e:
+                    if "authorized scopes" in str(e):
+                        print("\nWe need to authorize the app to make changes to your account.")
+                        core.deauthorize(args)
+                        mastodon = core.readwrite(args)
+                        # retry
+                        mastodon.notifications_dismiss(notification["id"])
+                    elif "not found" in str(e):
+                        pass
+                    elif "Name or service not known" in str(e):
+                        error = "Error: the instance name is either misspelled or offline"
+                    else:
+                        print(e, file=sys.stderr)
+
+            bar.finish()
+
+            if error:
+                print(error, file=sys.stderr)
+
+        elif n_notifications > 0:
+
+            for notification in notifications:
+                print("Dismiss: "
+                      + notification["created_at"].strftime("%Y-%m-%d")
+                      + " " + notification["account"]["acct"]
+                      + " " + notification["type"])

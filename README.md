@@ -332,6 +332,19 @@ Then paste the access token here:
 Expiring |################################| 1/1
 ```
 
+After a while you'll notice that archiving mentions takes more and
+more time. The reason is when expiring mentions, the tool goes through
+all your notifications and looks at those of the type "mention" and
+expires them if they are old enough. There are other types of
+notifications, however: "follow", "favourite", and "reblog" (at the
+time of this writing). As these are not archived, we also don't expire
+them. Thus, the list of notifications to look through when archiving
+keeps growing unless you use the "Clear notifications" menu in the
+Mastodon web client. Alternatively, you can use the
+`--delete-other-notifications` option together with `--collection
+mentions` and then the tool will dismiss all the older other
+notifications for you.
+
 # Troubleshooting
 
 🔥 If you are archiving a ton of toots and you run into a General API

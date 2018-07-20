@@ -100,7 +100,19 @@ def main():
     parser_content = subparsers.add_parser(
         name='expire',
         help='''delete older toots from the server and unfavour favourites
-if and only if they are in your archive''')
+        if and only if they are in your archive''',
+        epilog='''There is one problem you need to be aware of: if you expiring
+        mentions, then the tool goes through all your notifications
+        and looks at those of the type mention, and expires them if
+        they are old enough. There are other types of notifications,
+        however: follow, favourite, and reblog (at the time of this
+        writing). As these are not archived, we also don't expire
+        them. Thus, the list of notifications to look through keeps
+        growing unless you use the "Clear notifications" menu in the
+        Mastodon web client. Alternatively, you can use the
+        --delete-other-notifications option together with
+        --collection mentions.''')
+
     parser_content.add_argument("--collection", dest='collection',
                                 choices=['statuses', 'favourites', 'mentions'],
                                 default='statuses',
@@ -108,8 +120,11 @@ if and only if they are in your archive''')
     parser_content.add_argument("--older-than", dest='weeks',
                                 metavar='N', type=float, default=4,
                                 help='expire anything older than this many weeks')
-    parser_content.add_argument("--confirmed", dest='confirmed', action='store_const',
-                                const=True, default=False,
+    parser_content.add_argument("--delete-other-notifications", dest='delete_others',
+                                action='store_const', const=True, default=False,
+                                help='clear follow, favourite, and reblog notifications')
+    parser_content.add_argument("--confirmed", dest='confirmed',
+                                action='store_const', const=True, default=False,
                                 help='perform the expiration on the server')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
