@@ -66,7 +66,7 @@ def login(args, scopes = ['read']):
         Mastodon.create_app(
             'mastodon-archive',
             api_base_url = url,
-            scopes=scopes,
+            scopes = scopes,
             to_file = client_secret)
 
     if not os.path.isfile(user_secret):
@@ -79,7 +79,7 @@ def login(args, scopes = ['read']):
 
         url = mastodon.auth_request_url(
             client_id = client_secret,
-            scopes=scopes)
+            scopes = scopes)
 
         print("Visit the following URL and authorize the app:")
         print(url)
@@ -92,7 +92,7 @@ def login(args, scopes = ['read']):
             mastodon.log_in(
                 code = token,
                 to_file = user_secret,
-                scopes=scopes)
+                scopes = scopes)
 
         except Exception as e:
 
@@ -116,7 +116,7 @@ def login(args, scopes = ['read']):
                 username = email,
                 password = password,
                 to_file = user_secret,
-                scopes=scopes)
+                scopes = scopes)
 
     else:
 
