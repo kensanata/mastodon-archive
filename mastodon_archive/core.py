@@ -34,7 +34,16 @@ def readwrite(args):
     read-only token. If this happens, you need to deauthorize and try
     again.
     """
-    return login(args, scopes = ['read', 'write'])
+    try:
+        # this is what we expect
+        return login(args, scopes = ['read', 'write'])
+    except Exception as e:
+        # on some instances, there's this problem with getting a
+        # bigger scope than requested, so just do it again and hope
+        # for the best... (dealing with MastodonAPIError: Granted
+        # scopes "follow read write" differ from requested scopes
+        # "read write".)
+        return login(args, scopes = ['follow', 'read', 'write'])
 
 def deauthorize(args):
     """
