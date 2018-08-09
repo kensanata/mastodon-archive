@@ -8,7 +8,7 @@ with or without media. Take a look at an
 if you're curious.
 
 Note that Mastodon
-[https://github.com/tootsuite/mastodon/releases/tag/v2.3.0 v2.3.0]
+[v2.3.0](https://github.com/tootsuite/mastodon/releases/tag/v2.3.0)
 added an account archive download feature: "Every 7 days you are able
 to request a full archive of your toots. The toots are exported in
 ActivityPub JSON format alongside the media files attached to them,
@@ -18,9 +18,9 @@ backup of your data, perhaps that is enough and you don't need this
 tool.
 
 Please report issues on the
-[https://alexschroeder.ch/software/Mastodon_Archive Software Wiki].
+[Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
 You can get the latest sources
-[https://alexschroeder.ch/cgit/mastodon-archive/about/ from the author’s site].
+[from the author’s site](https://alexschroeder.ch/cgit/mastodon-archive/about/).
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
