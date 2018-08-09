@@ -80,7 +80,8 @@ def expire(args):
     def matches(status):
         created = datetime.strptime(status["created_at"][0:10], "%Y-%m-%d")
         deleted = "deleted" in status and status["deleted"] == True
-        return created < cutoff and not deleted
+        pinned = "pinned" in status and status["pinned"] == True
+        return created < cutoff and not deleted and not pinned
 
     statuses = list(filter(matches, data[collection]))
     n_statuses = len(statuses)
