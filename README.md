@@ -17,6 +17,11 @@ account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
 tool.
 
+Please report issues on the
+[https://alexschroeder.ch/software/Mastodon_Archive Software Wiki].
+You can get the latest sources
+[https://alexschroeder.ch/cgit/mastodon-archive/about/ from the author’s site].
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
