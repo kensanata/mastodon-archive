@@ -110,12 +110,12 @@ def archive(args):
     
     if data is None or not "statuses" in data or len(data["statuses"]) == 0:
         print("Get all statuses (this may take a while)")
-        statuses = mastodon.account_statuses(user["id"])
+        statuses = mastodon.account_statuses(user["id"], limit=100)
         statuses = mastodon.fetch_remaining(
             first_page = statuses)
     else:
         print("Get new statuses")
-        statuses = complete(data["statuses"], mastodon.account_statuses(user["id"]))
+        statuses = complete(data["statuses"], mastodon.account_statuses(user["id"], limit=100))
 
     if skip_favourites:
         print("Skipping favourites")
@@ -140,14 +140,14 @@ def archive(args):
             mentions = data["mentions"]
     elif data is None or not "mentions" in data or len(data["mentions"]) == 0:
         print("Get notifications and look for mentions (this may take a while)")
-        notifications = mastodon.notifications()
+        notifications = mastodon.notifications(limit=100)
         notifications = mastodon.fetch_remaining(
             first_page = notifications)
         mentions = keep_mentions(notifications)
     else:
         print("Get new notifications and look for mentions")
         is_mention = lambda x: "type" in x and x["type"] == "mention"
-        mentions = complete(data["mentions"], mastodon.notifications(), is_mention)
+        mentions = complete(data["mentions"], mastodon.notifications(limit=100), is_mention)
 
     if not with_followers:
         print("Skipping followers")
@@ -157,7 +157,7 @@ def archive(args):
             followers = data["followers"]
     else:
         print("Get followers (this may take a while)")
-        followers = mastodon.account_followers(user.id)
+        followers = mastodon.account_followers(user.id, limit=100)
         followers = mastodon.fetch_remaining(
             first_page = followers)
         data["followers"] = followers
