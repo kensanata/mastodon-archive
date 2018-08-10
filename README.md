@@ -66,7 +66,7 @@ export PATH=$PATH:$HOME/.local/bin
 
 When using the app for the first time, you will have to authorize it:
 
-```
+```text
 $ mastodon-archive archive kensanata@dice.camp
 Registering app
 Log in
@@ -87,7 +87,7 @@ toots per five minutes.
 
 If this is taking too long, consider skipping your favourites:
 
-```
+```text
 $ mastodon-archive archive --no-favourites kensanata@dice.camp
 ```
 
@@ -98,7 +98,7 @@ boosted by others. Note that if you used to *dismiss* notifications
 using the "Clear notifications" menu, then no mentions will be found
 as mentions are simply a particular kind of notification.
 
-```
+```text
 $ mastodon-archive archive --with-mentions kensanata@dice.camp
 ```
 
@@ -125,7 +125,7 @@ separate command, however.
 
 Assuming you already made an archive of your toots:
 
-```
+```text
 $ mastodon-archive media kensanata@dice.camp
 44 urls in your archive (half of them are previews)
 34 files already exist
@@ -150,7 +150,7 @@ both sources need to be in the same directory, see
 
 Assuming you already made an archive of your toots:
 
-```
+```text
 $ mastodon-archive text kensanata@dice.camp
 [lots of other toots]
 Alex Schroeder 🐉 @kensanata 2017-11-14T22:21:50.599000+00:00
@@ -166,7 +166,7 @@ But in the three campaigns I run, it’s all OSR right now.
 Generating a text file just means redirection the output to a text
 file:
 
-```
+```text
 $ mastodon-archive text kensanata@dice.camp > statuses.txt
 ```
 
@@ -174,7 +174,7 @@ If you're working with text, you might expect the first toot to be at
 the top and the last toot to be at the bottom. In this case, you need
 to reverse the list:
 
-```
+```text
 $ mastodon-archive text --reverse kensanata@dice.camp | head
 ```
 
@@ -188,14 +188,14 @@ raw status content. In other words, the status contains all the HTML
 and problably starts with a `<p>`, which is then removed in the
 output.
 
-```
+```text
 $ mastodon-archive text kensanata@dice.camp house
 ```
 
 You can provide multiple regular expressions and they will all be
 checked:
 
-```
+```text
 $ mastodon-archive text kensanata@dice.camp house rule
 ```
 
@@ -205,20 +205,20 @@ Remember basic
 alternatives, just to pick some useful ones. Use single quotes to
 protect your backslashes and questionmarks.
 
-```
+```text
 $ mastodon-archive text kensanata@dice.camp house 'rule\b'
 ```
 
 You can also search your favourites or your mentions:
 
-```
+```text
 $ mastodon-archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
 ```
 
 Dates are in ISO format (e.g. `2017-11-19T14:00`). I usually only care
 about year and month, though:
 
-```
+```text
 $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
 
@@ -226,7 +226,7 @@ $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(
 
 Assuming you already made an archive of your toots:
 
-```
+```text
 $ mastodon-archive html kensanata@dice.camp
 ```
 
@@ -235,7 +235,7 @@ This will create numbered HTML files starting with
 
 You can change the number of toots per page using an option:
 
-```
+```text
 $ mastodon-archive html --toots-per-page 100 kensanata@dice.camp
 ```
 
@@ -246,7 +246,7 @@ be broken.
 
 You can also generate a file for your favourites:
 
-```
+```text
 $ mastodon-archive html --collection favourites kensanata@dice.camp
 ```
 
@@ -261,7 +261,7 @@ your favourites will refer to the media files in your media directory.
 
 Some numbers, including your ten most used hashtags:
 
-```
+```text
 $ mastodon-archive report kensanata@dice.camp
 Considering the last 12 weeks
 Statuses:               296
@@ -314,7 +314,7 @@ If you use `--older-than 0`, then *all* your toots will be deleted, or
 *all* your favourites will be unfavoured, or *all* your notifications
 will be dismissed.
 
-```
+```text
 ~/src/mastodon-backup $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
 This is a dry run and nothing will be expired.
 Instead, we'll just list what would have happened.
@@ -328,7 +328,7 @@ the `--confirmed` option to proceed.
 And one more thing: since this requires the permission to *write* to
 your account, you will have to reauthorize the app.
 
-```
+```text
 $ mastodon-archive expire --collection favourites --older-than 0 \
   --confirmed kensanata@social.nasqueron.org
 Log in
@@ -357,7 +357,7 @@ notifications for you.
 🔥 If you are archiving a ton of toots and you run into a General API
 problem, use the `--pace` option. This is what the problem looks like:
 
-```
+```text
 $ mastodon-archive archive kensanata@dice.camp
 ...
 Get statuses (this may take a while)
@@ -368,7 +368,7 @@ mastodon.Mastodon.MastodonAPIError: General API problem.
 
 Solution:
 
-```
+```text
 $ mastodon-archive archive --pace kensanata@dice.camp
 ```
 
@@ -381,7 +381,7 @@ is 300 requests per five minutes, so when more than 300 toots are to
 be deleted, the app simply has to wait for five minutes before
 continuing. It takes time.
 
-```
+```text
 $ mastodon-archive expire --confirm kensanata@octodon.social
 Loading existing archive
 Expiring |                                | 1/1236
@@ -420,7 +420,7 @@ counts as an interaction. Favouring and boosting does not count. By
 default, this looks at the last twelve weeks. In order for this to
 work, you need an archive containing both mentions and followers.
 
-```
+```text
 $ mastodon-archive archive --with-mentions --with-followers kensanata@dice.camp
 Loading existing archive
 Get user info
@@ -436,7 +436,7 @@ Saving 659 statuses, 376 favourites, 478 mentions, and 107 followers
 
 Now you're ready to determine the list of lurkers:
 
-```
+```text
 $ mastodon-archive followers kensanata@dice.camp
 Considering the last 12 weeks
 ...
@@ -450,7 +450,7 @@ going with this. More
 
 I have a shell script called `backup-mastodon` which does the following:
 
-```
+```text
 #!/bin/sh
 mkdir -p ~/Documents/Mastodon/
 cd ~/Documents/Mastodon/ || exit
@@ -526,13 +526,13 @@ The following command will take all your favourites and create a map
 with the keys `time` and `message` for each one of them, and put it
 all in an array.
 
-```
+```text
 $ jq '[.favourites[] | {time: .account.username, message: .content}]' < dice.camp.user.kensanata.json
 ```
 
 Example output, assuming I had only a single favourite:
 
-```
+```text
 [
   {
     "time": "andrhia",
@@ -549,7 +549,7 @@ Now that you have token files, you can explore the Mastodon API using
 
 Get a single status:
 
-```
+```text
 curl --silent --show-error \
      --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
      https://dice.camp/api/v1/statuses/99005111284322450
@@ -560,7 +560,7 @@ Extract the account id from your archive using `jq` and use `echo` to
 Then use the id to get some statuses from the account and use `jq` to
 print the status ids:
 
-```
+```text
 ID=$(eval echo $(jq .account.id < dice.camp.user.kensanata.json))
 curl --silent --show-error \
      --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
