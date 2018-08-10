@@ -450,7 +450,7 @@ going with this. More
 
 I have a shell script called `backup-mastodon` which does the following:
 
-```text
+```sh
 #!/bin/sh
 mkdir -p ~/Documents/Mastodon/
 cd ~/Documents/Mastodon/ || exit
@@ -526,13 +526,13 @@ The following command will take all your favourites and create a map
 with the keys `time` and `message` for each one of them, and put it
 all in an array.
 
-```text
+```sh
 $ jq '[.favourites[] | {time: .account.username, message: .content}]' < dice.camp.user.kensanata.json
 ```
 
 Example output, assuming I had only a single favourite:
 
-```text
+```json
 [
   {
     "time": "andrhia",
@@ -549,7 +549,7 @@ Now that you have token files, you can explore the Mastodon API using
 
 Get a single status:
 
-```text
+```sh
 curl --silent --show-error \
      --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
      https://dice.camp/api/v1/statuses/99005111284322450
@@ -560,7 +560,7 @@ Extract the account id from your archive using `jq` and use `echo` to
 Then use the id to get some statuses from the account and use `jq` to
 print the status ids:
 
-```text
+```sh
 ID=$(eval echo $(jq .account.id < dice.camp.user.kensanata.json))
 curl --silent --show-error \
      --header "Authorization: Bearer "$(cat dice.camp.user.kensanata.secret) \
