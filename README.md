@@ -35,6 +35,7 @@ You can get the latest sources
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
 - [Followers](#followers)
+- [Example Setup](#example-setup)
 - [Documentation](#documentation)
 - [Development](#development)
 - [Processing using jq](#processing-using-jq)
@@ -443,6 +444,46 @@ Considering the last 12 weeks
 As I said, this is work in progress and I don't really know where I'm
 going with this. More
 [on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
+
+# Example Setup
+
+I have a shell script called `backup-mastodon` which does the following:
+
+```
+#!/bin/sh
+mkdir -p ~/Documents/Mastodon/
+cd ~/Documents/Mastodon/ || exit
+
+accounts=<<EOF
+kensanata@octodon.social
+kensanata@dice.camp
+kensanata@tabletop.social
+EOF
+
+echo Archive Statuses, Favourites, Mentions
+for acc in $accounts; do
+    echo "$acc"
+    mastodon-archive archive --with-mentions "$acc"
+done
+
+echo Expiring Statuses
+for acc in $accounts; do
+    echo "$acc"
+    mastodon-archive expire --older-than 8 --collection statuses --confirm "$acc"
+done
+
+echo Expiring Favourites
+for acc in $accounts; do
+    echo "$acc"
+    mastodon-archive expire --older-than 8 --collection favourites --confirm "$acc"
+done
+
+echo Dismissing Notifications
+for acc in $accounts; do
+    echo "$acc"
+    mastodon-archive expire --older-than 8 --collection mentions --delete-other-notifications --confirm "$acc"
+done
+```
 
 # Documentation
 
