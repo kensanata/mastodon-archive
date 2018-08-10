@@ -87,7 +87,7 @@ def expire(args):
     n_statuses = len(statuses)
 
     if (n_statuses == 0):
-        print("No statuses are older than %d weeks" % args.weeks,
+        print("No " + collection + " are older than %d weeks" % args.weeks,
               file=sys.stderr)
     elif (n_statuses > 300):
         estimated_time = math.floor((n_statuses - 1) / 300) * 5
