@@ -304,7 +304,8 @@ restore these to your instance.
 think they have much value going back months and years. I never read
 through years of tweeting history! This only benefits your enemies,
 never your friends. So I want to expire my toots. We can always write
-a blog post about the good stuff.
+a blog post about the good stuff. You can read more about this [on my
+blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
 You can expire your toots using the `expire` command and providing the
 `--older-than` option. This option specifies the number of weeks to
