@@ -146,7 +146,7 @@ def expire(args):
                     and x["created_at"].replace(tzinfo = None) < cutoff]
 
         mastodon = core.login(args)
-        notifications = mastodon.notifications()
+        notifications = mastodon.notifications(limit=100)
         notifications = mastodon.fetch_remaining(
             first_page = notifications)
         notifications = others(notifications)
