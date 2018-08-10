@@ -454,11 +454,7 @@ I have a shell script called `backup-mastodon` which does the following:
 mkdir -p ~/Documents/Mastodon/
 cd ~/Documents/Mastodon/ || exit
 
-accounts=<<EOF
-kensanata@octodon.social
-kensanata@dice.camp
-kensanata@tabletop.social
-EOF
+accounts="kensanata@octodon.social kensanata@dice.camp kensanata@tabletop.social"
 
 echo Archive Statuses, Favourites, Mentions
 for acc in $accounts; do
