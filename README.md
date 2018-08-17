@@ -307,6 +307,12 @@ never your friends. So I want to expire my toots. We can always write
 a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
+**Alternatives**: Check out [forget](https://forget.codl.fr/about/),
+which is a web app that only expires your toots without archiving the.
+Depending on your needs, that might be enough?
+
+Anyway, back to *Mastodon Archive*. 🙂
+
 You can expire your toots using the `expire` command and providing the
 `--older-than` option. This option specifies the number of weeks to
 keep on the server. Anything older than that is deleted or unfavoured.
