@@ -223,6 +223,29 @@ about year and month, though:
 $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
 
+Sometimes you only remember something about a *thread*. Let's say you
+asked a question a while back but now you can't remember the answer
+you got back then. First, find the question:
+
+```text
+$ mastodon-archive text kensanata@dice.camp rules
+Alex Schroeder 🐉 @kensanata 2018-05-28T21:19:27.483000+00:00
+https://dice.camp/@kensanata/100109016572069901
+...
+```
+
+Using the URL, you can now search the archive for some context:
+
+```text
+$ mastodon-archive context kensanata@dice.camp https://dice.camp/@kensanata/100109016572069901
+```
+
+This shows the same information clicking on the toot shows you in the
+web client: all its ancestors and all its descendants. Obviously, if
+these toots are not in your archive, we can't find them. You'll have
+to click on the links and hope they're still around.
+
+
 # Generating a HTML file
 
 Assuming you already made an archive of your toots:
