@@ -466,7 +466,7 @@ There are two prerequisites, however:
 1. you need to add the people you're following to the archive
 2. you need to add the mentions to the archive (this can take a long time)
 
-```
+```text
 $ mastodon-archive archive --with-following --with-mentions kensanata@dice.camp
 Loading existing archive
 Get user info
@@ -486,7 +486,7 @@ Saving 932 statuses, 527 favourites, 657 mentions, 107 followers, and 192 follow
 
 Given this data, you can now list the people we're interested in:
 
-```
+```text
 $ mastodon-archive following kensanata@dice.camp
 Considering the last 12 weeks
 ...
@@ -495,7 +495,7 @@ Considering the last 12 weeks
 All these people that never mentioned you: do you reallu want to
 follow them all? If so:
 
-```
+```text
 $ mastodon-archive following --unfollow kensanata@dice.camp
 Considering the last 12 weeks
 Unfollowing |################################| 1/125
