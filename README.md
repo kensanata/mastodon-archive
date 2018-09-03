@@ -30,6 +30,7 @@ You can get the latest sources
 - [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
 - [Searching your archive](#searching-your-archive)
+- [Show context for a toot](#show-context-for-a-toot)
 - [Generating a HTML file](#generating-a-html-file)
 - [Reporting](#reporting)
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
@@ -222,6 +223,9 @@ about year and month, though:
 ```text
 $ mastodon-archive text --collection favourites kensanata@dice.camp bird '2017-(07|08|09|10|11)'
 ```
+
+
+# Show context for a toot
 
 Sometimes you only remember something about a *thread*. Let's say you
 asked a question a while back but now you can't remember the answer
