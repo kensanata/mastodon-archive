@@ -16,6 +16,7 @@
 import argparse
 from . import archive
 from . import text
+from . import context
 from . import html
 from . import media
 from . import expire
@@ -85,6 +86,16 @@ def main():
     parser_content.add_argument("pattern", nargs='*',
                                 help='regular expressions used to filter output')
     parser_content.set_defaults(command=text.text)
+
+
+    parser_content = subparsers.add_parser(
+        name='context',
+        help='show a toot in context (i.e. with its ancestors and its descendants')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.add_argument("url",
+                                help='URL of the toot to be included')
+    parser_content.set_defaults(command=context.context)
 
 
     parser_content = subparsers.add_parser(
