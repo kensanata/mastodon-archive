@@ -45,6 +45,15 @@ def readwrite(args):
         # "read write".)
         return login(args, scopes = ['follow', 'read', 'write'])
 
+def readwritefollow(args):
+    """
+    Login to your Mastodon account with read, write and follow permissions.
+    Note that you will get an error when your authorization token is a
+    read-only token. If this happens, you need to deauthorize and try
+    again.
+    """
+    return login(args, scopes = ['follow', 'read', 'write'])
+
 def deauthorize(args):
     """
     Deauthorize the account. We do this by deleting the file

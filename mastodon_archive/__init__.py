@@ -21,6 +21,7 @@ from . import media
 from . import expire
 from . import report
 from . import followers
+from . import following
 from . import login
 
 def main():
@@ -48,7 +49,11 @@ def main():
     parser_content.add_argument("--with-followers", dest='with_followers',
                                 action='store_const',
                                 const=True, default=False,
-                                help='download followers')
+                                help='download followers (people following you)')
+    parser_content.add_argument("--with-following", dest='with_following',
+                                action='store_const',
+                                const=True, default=False,
+                                help='download following (the people you follow)')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
@@ -160,7 +165,7 @@ def main():
 
     parser_content = subparsers.add_parser(
         name='followers',
-        help='''find inactive followers''')
+        help='''find followers who never mention you''')
     parser_content.add_argument("--block", dest='block', action='store_const',
                                 const=True, default=False,
                                 help='...and block them')
@@ -179,13 +184,33 @@ def main():
 
 
     parser_content = subparsers.add_parser(
+        name='following',
+        help='''find people you are following but who never mention you''')
+    parser_content.add_argument("--unfollow", dest='unfollow', action='store_const',
+                                const=True, default=False,
+                                help='...and unfollow them')
+    parser_content.add_argument("--all", dest='all', action='store_const',
+                                const=True, default=False,
+                                help='consider all toots (ignore --newer-than)')
+    parser_content.add_argument("--newer-than", dest='weeks',
+                                metavar='N', type=int, default=12,
+                                help='require mention within this many weeks (default is 12)')
+    parser_content.add_argument("--pace", dest='pace', action='store_const',
+                                const=True, default=False,
+                                help='avoid timeouts and pace requests')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=following.following)
+
+
+    parser_content = subparsers.add_parser(
         name='login',
         help='login to the instance for testing purposes')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=login.login)
 
-    
+
     args = parser.parse_args()
 
     try:

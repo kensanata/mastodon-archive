@@ -41,6 +41,7 @@ def archive(args):
     skip_favourites = args.skip_favourites
     with_mentions = args.with_mentions
     with_followers = args.with_followers
+    with_following = args.with_following
 
     (username, domain) = args.user.split("@")
 
@@ -66,7 +67,7 @@ def archive(args):
             print(e, file=sys.stderr)
         # exit in either case
         sys.exit(1)
-          
+
     def complete(statuses, page, func = None):
         """
         Why aren't we using Mastodon.fetch_remaining(first_page)? It
@@ -107,7 +108,7 @@ def archive(args):
 
     def keep_mentions(notifications):
         return [x.status for x in notifications if x.type == "mention"]
-    
+
     if data is None or not "statuses" in data or len(data["statuses"]) == 0:
         print("Get all statuses (this may take a while)")
         statuses = mastodon.account_statuses(user["id"], limit=100)
@@ -162,18 +163,33 @@ def archive(args):
             first_page = followers)
         data["followers"] = followers
 
+    if not with_following:
+        print("Skipping following")
+        if data is None or not "following" in data:
+            following = []
+        else:
+            following = data["following"]
+    else:
+        print("Get following (this may take a while)")
+        following = mastodon.account_following(user.id, limit=100)
+        following = mastodon.fetch_remaining(
+            first_page = following)
+        data["following"] = following
+
     data = {
         'account': user,
         'statuses': statuses,
         'favourites': favourites,
         'mentions': mentions,
-        'followers': followers
+        'followers': followers,
+        'following': following,
     }
 
-    print("Saving %d statuses, %d favourites, %d mentions, and %d followers" % (
+    print("Saving %d statuses, %d favourites, %d mentions, %d followers, and %d following" % (
         len(statuses),
         len(favourites),
         len(mentions),
-        len(followers)))
+        len(followers),
+        len(following)))
 
     core.save(status_file, data)

@@ -35,6 +35,7 @@ You can get the latest sources
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
 - [Followers](#followers)
+- [Following](#following)
 - [Example Setup](#example-setup)
 - [Documentation](#documentation)
 - [Development](#development)
@@ -451,6 +452,65 @@ Considering the last 12 weeks
 As I said, this is work in progress and I don't really know where I'm
 going with this. More
 [on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
+
+# Following
+
+Assume you're on the fediverse just for the conversation. You're not
+actually interested in following anybody who never talks to you: no
+journalists, no famous people, no pundits. You just want to follow
+regular people who interact with you. You can list the people you're
+following who never mentioned you, and you can unfollow them all!
+
+There are two prerequisites, however:
+
+1. you need to add the people you're following to the archive
+2. you need to add the mentions to the archive (this can take a long time)
+
+```
+$ mastodon-archive archive --with-following --with-mentions kensanata@dice.camp
+Loading existing archive
+Get user info
+Get new statuses
+X
+Added a total of 11 new items
+Get new favourites
+X
+Added a total of 7 new items
+Get new notifications and look for mentions
+.....
+Added a total of 7 new items
+Skipping followers
+Get following (this may take a while)
+Saving 932 statuses, 527 favourites, 657 mentions, 107 followers, and 192 following
+```
+
+Given this data, you can now list the people we're interested in:
+
+```
+$ mastodon-archive following kensanata@dice.camp
+Considering the last 12 weeks
+...
+```
+
+All these people that never mentioned you: do you reallu want to
+follow them all? If so:
+
+```
+$ mastodon-archive following --unfollow kensanata@dice.camp
+Considering the last 12 weeks
+Unfollowing |################################| 1/125
+We need to authorize the app to make changes to your account.
+Registering app
+This app needs access to your Mastodon account.
+Visit the following URL and authorize the app:
+[long URL here]
+Then paste the access token here:
+[access token here]
+```
+
+Note that the application needs the permission to unfollow people in
+your name, which is why you need to authorize it again.
+
 
 # Example Setup
 

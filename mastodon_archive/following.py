@@ -28,9 +28,9 @@ def is_lurker(account, mentions):
 def find_lurkers(followers, mentions):
     return [x for x in followers if is_lurker(x, mentions)]
 
-def followers(args):
+def following(args):
     """
-    List followers who never mention you
+    List people you're following but who never mention you
     """
 
     (username, domain) = args.user.split('@')
@@ -44,8 +44,8 @@ def followers(args):
         print("You need to run 'mastodon-archive archive --with-mentions'",
               file=sys.stderr)
         error = 5
-    if "followers" not in data or len(data["followers"]) == 0:
-        print("You need to run 'mastodon-archive archive --with-followers'",
+    if "following" not in data or len(data["following"]) == 0:
+        print("You need to run 'mastodon-archive archive --with-following'",
               file=sys.stderr)
         error = 6
     if error > 0:
@@ -60,21 +60,21 @@ def followers(args):
               + " weeks")
         mentions = core.keep(data["mentions"], args.weeks)
 
-    if args.block:
+    if args.unfollow:
         mastodon = core.readwrite(args)
-        accounts = find_lurkers(data["followers"], data["mentions"])
+        accounts = find_lurkers(data["following"], data["mentions"])
 
-        bar = Bar('Blocking', max = len(accounts))
+        bar = Bar('Unfollowing', max = len(accounts))
 
         for account in accounts:
             bar.next()
             try:
-                mastodon.account_block(account["id"])
+                mastodon.account_unfollow(account["id"])
             except Exception as e:
                 if "authorized scopes" in str(e):
                     print("\nWe need to authorize the app to make changes to your account.")
                     core.deauthorize(args)
-                    mastodon = core.readwrite(args)
+                    mastodon = core.readwritefollow(args)
                     # retry
                     mastodon.account_block(account["id"])
                 else:
@@ -83,7 +83,7 @@ def followers(args):
         bar.finish()
 
     else:
-        accounts = find_lurkers(data["followers"], data["mentions"])
+        accounts = find_lurkers(data["following"], data["mentions"])
         for account in sorted(accounts, key=lambda account:
                               account["display_name"] or account["username"]):
             print("%s <%s>" % (account["display_name"] or account["username"],
