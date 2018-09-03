@@ -54,6 +54,9 @@ def deauthorize(args):
     user_secret = domain + '.user.' + username + '.secret'
     if os.path.isfile(user_secret):
         os.remove(user_secret)
+    client_secret = domain + '.client.secret'
+    if os.path.isfile(client_secret):
+        os.remove(client_secret)
 
 def login(args, scopes = ['read']):
     """
