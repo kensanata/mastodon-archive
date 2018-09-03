@@ -21,6 +21,17 @@ import json
 import glob
 import re
 
+def parse(account):
+    """
+    Parse account into username and domain.
+    """
+    try:
+        (username, domain) = account.split('@')
+        return username, domain;
+    except ValueError:
+        print("The account has to have the form username@domain", file=sys.stderr)
+        sys.exit(3)
+
 def read(args):
     """
     Login to your Mastodon account with read-only permissions.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017-2018  Alex Schroeder <alex@gnu.org>
 # Copyright (C) 2017  Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
@@ -29,7 +29,7 @@ def text(args):
     reverse = args.reverse
     patterns = args.pattern
 
-    (username, domain) = args.user.split('@')
+    (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
     data = core.load(status_file, required = True, quiet = True)
