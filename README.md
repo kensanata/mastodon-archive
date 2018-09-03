@@ -492,8 +492,8 @@ Considering the last 12 weeks
 ...
 ```
 
-All these people that never mentioned you: do you reallu want to
-follow them all? If so:
+All these people that never mentioned you: do you really want to
+follow them all? If you don't, here's how to unfollow them:
 
 ```text
 $ mastodon-archive following --unfollow kensanata@dice.camp
