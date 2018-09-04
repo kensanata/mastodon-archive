@@ -73,6 +73,11 @@ def context(args):
 
     # add ancestors
     id = found["in_reply_to_id"]
+
+    if id not in index:
+        print("The status at the provided URL/URI had no context in your archive", file=sys.stderr)
+        sys.exit(5)
+
     while id in index:
         status = index[id];
         result.insert(0, status)
