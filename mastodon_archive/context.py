@@ -74,17 +74,17 @@ def context(args):
     # add ancestors
     id = found["in_reply_to_id"]
 
-    if id not in index:
-        print("The status at the provided URL/URI had no context in your archive", file=sys.stderr)
-        sys.exit(5)
-
     while id in index:
         status = index[id];
         result.insert(0, status)
         id = status["in_reply_to_id"]
 
     # add descendants
-    ids = children[found["id"]]
+    try:
+        ids = children[found["id"]]
+    except:
+        print("The status at the provided URL/URI had no context in your archive", file=sys.stderr)
+        sys.exit(5)
     print(ids)
     while ids:
         id = ids.pop(0)
