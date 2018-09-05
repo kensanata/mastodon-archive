@@ -82,15 +82,16 @@ def context(args):
     # add descendants
     try:
         ids = children[found["id"]]
+        print(ids)
+        while ids:
+            id = ids.pop(0)
+            result.append(index[id])
+            if id in children:
+                ids.extend(children[id])
     except:
-        print("The status at the provided URL/URI had no context in your archive", file=sys.stderr)
-        sys.exit(5)
-    print(ids)
-    while ids:
-        id = ids.pop(0)
-        result.append(index[id])
-        if id in children:
-            ids.extend(children[id])
+        if not result:
+            print("The status at the provided URL/URI had no context in your archive", file=sys.stderr)
+            sys.exit(5)
 
     for status in result:
         str = '';
