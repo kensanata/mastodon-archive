@@ -336,7 +336,7 @@ a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
 **Alternatives**: Check out [forget](https://forget.codl.fr/about/),
-which is a web app that only expires your toots without archiving the.
+which is a web app that only expires your toots without archiving them.
 Depending on your needs, that might be enough?
 
 Anyway, back to *Mastodon Archive*. 🙂
