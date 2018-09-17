@@ -335,9 +335,12 @@ never your friends. So I want to expire my toots. We can always write
 a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
-**Alternatives**: Check out [forget](https://forget.codl.fr/about/),
-which is a web app that only expires your toots without archiving them.
-Depending on your needs, that might be enough?
+**Alternatives**: Check out [forget](https://forget.codl.fr/about/)
+which is a web app that only expires your toots without archiving
+theme.
+[MastoPurgee](https://github.com/ThomasLeister/mastopurge/blob/master/README.md)
+does the same thing but it's a stand-alone binary. Depending on your
+needs, these might be good enough.
 
 Anyway, back to *Mastodon Archive*. 🙂
 
