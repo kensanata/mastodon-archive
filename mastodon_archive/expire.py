@@ -39,7 +39,10 @@ def delete(mastodon, collection, status):
     it as deleted. The "record not found" error is handled elsewhere.
     """
     if collection == 'statuses':
-        mastodon.status_delete(status["id"]);
+        if status["reblog"]:
+            mastodon.status_unreblog(status["id"])
+        else:
+            mastodon.status_delete(status["id"])
     elif collection == 'favourites':
         mastodon.status_unfavourite(status["id"])
     elif collection == 'mentions':
