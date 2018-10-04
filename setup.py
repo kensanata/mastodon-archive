@@ -1,9 +1,14 @@
 from setuptools import setup
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='mastodon_archive',
-    version='1.0.0',
+    version='1.1.0',
     description="Utility for backing up your Mastodon content",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Alex Schroeder",
     author_email="alex@gnu.org",
     url='https://github.com/kensanata/mastodon-backup#mastodon-archive',
