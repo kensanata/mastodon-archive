@@ -237,11 +237,19 @@ def keep(statuses, weeks):
 
 def whitelist(domain, username):
     file_name = domain + '.user.' + username + '.whitelist.txt'
+    whitelist = set()
     if os.path.isfile(file_name):
         with open(file_name, mode = 'r', encoding = 'utf-8') as fp:
-            whitelist = set(fp.read().splitlines())
+            for line in fp:
+                # kensanata
+                # kensanata@dice.camp
+                # Alex Schroeder <kensanata@dice.camp>
+                m = re.search(r"([a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+)", line)
+                if not m:
+                    m = re.search(r"([a-zA-Z0-9.-]+)", line)
+                if m:
+                    whitelist.add(m.group(1))
         print("%d accounts are on the whitelist" % len(whitelist))
-        return whitelist;
     else:
         print("There is no whitelist")
-    return set()
+    return whitelist
