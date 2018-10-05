@@ -37,6 +37,7 @@ You can get the latest sources
 - [Troubleshooting](#troubleshooting)
 - [Followers](#followers)
 - [Following](#following)
+- [Whitelist](#whitelist)
 - [Example Setup](#example-setup)
 - [Documentation](#documentation)
 - [Development](#development)
@@ -484,27 +485,7 @@ As I said, this is work in progress and I don't really know where I'm
 going with this. More
 [on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
 
-## Whitelist
-
-You can have a whitelist of people you want to be exempt from the
-above. Create a text file a nime like the following:
-`dice.camp.user.kensanata.whitelist.txt`.
-
-That is: `<your domain>.user.<your account>.whitelist.txt`.
-
-There, list the accounts you want to have in your whitelist, one per
-line.
-
-Using `wc -l` to count the lines in my output, here's how you can see
-that it works:
-
-```text
-$ mastodon-archive followers kensanata@dice.camp | wc -l
-58
-$ echo linkskywalker@soc.ialis.me >> dice.camp.user.kensanata.whitelist.txt
-$ mastodon-archive followers kensanata@dice.camp | wc -l
-57
-```
+This command supports the [whitelist](#Whitelist).
 
 # Following
 
@@ -564,6 +545,29 @@ Then paste the access token here:
 Note that the application needs the permission to unfollow people in
 your name, which is why you need to authorize it again.
 
+This command supports the [whitelist](#Whitelist).
+
+# Whitelist
+
+You can have a whitelist of people you want to be exempt from some
+commands. Create a text file a nime like the following:
+`dice.camp.user.kensanata.whitelist.txt`.
+
+That is: `<your domain>.user.<your account>.whitelist.txt`.
+
+There, list the accounts you want to have in your whitelist, one per
+line.
+
+Using `wc -l` to count the lines in my output, here's how you can see
+that it works:
+
+```text
+$ mastodon-archive followers kensanata@dice.camp | wc -l
+58
+$ echo linkskywalker@soc.ialis.me >> dice.camp.user.kensanata.whitelist.txt
+$ mastodon-archive followers kensanata@dice.camp | wc -l
+57
+```
 
 # Example Setup
 
