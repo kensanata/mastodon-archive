@@ -43,7 +43,7 @@ def archive(args):
     with_followers = args.with_followers
     with_following = args.with_following
 
-    (username, domain) = args.user.split("@")
+    (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
     data = core.load(status_file)
