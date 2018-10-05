@@ -556,7 +556,22 @@ commands. Create a text file with a name like the following:
 That is: `<your domain>.user.<your account>.whitelist.txt`.
 
 There, list the accounts you want to have in your whitelist, one per
-line.
+line. All of these formats should work:
+
+```text
+kensanata
+kensanata@dice.camp
+Alex Schroeder <kensanata@dice.camp>
+```
+
+To verify your whitelist, use the whitelist command:
+
+```text
+$ mastodon-archive whitelist kensanata@dice.camp
+2 accounts are on the whitelist
+kensanata@dice.camp
+kensanata
+```
 
 Using `wc -l` to count the lines in my output, here's how you can see
 that it works:
