@@ -24,6 +24,7 @@ from . import report
 from . import followers
 from . import following
 from . import whitelist
+from . import mutuals
 from . import login
 
 def main():
@@ -213,6 +214,17 @@ def main():
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=following.following)
+
+
+    parser_content = subparsers.add_parser(
+        name='mutuals',
+        help='''find people you are following and who follow you back''')
+    parser_content.add_argument("--pace", dest='pace', action='store_const',
+                                const=True, default=False,
+                                help='avoid timeouts and pace requests')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=mutuals.mutuals)
 
 
     parser_content = subparsers.add_parser(

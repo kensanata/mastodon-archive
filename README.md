@@ -584,6 +584,30 @@ $ mastodon-archive followers kensanata@dice.camp | wc -l
 57
 ```
 
+# Mutuals
+
+How do you go about creating a whitelist, though? It's hard! You could
+start with the list of people that are following you back, perhaps?
+Here's a command to do just that:
+
+```text
+$ mastodon-archive mutuals kensanata@dice.camp
+Get user info
+...
+```
+
+We don't currently store the relationship status in our archive so
+that's why this command requires a live connection. We do have the
+list of people we are *following* in our archive, so we use that. If
+you haven't done so, you need to create an archive using the
+`--with-following` option before you can use the `mutuals` command.
+
+```text
+$ mastodon-archive archive --with-following kensanata@dice.camp
+Loading existing archive
+...
+```
+
 # Example Setup
 
 I have a shell script called `backup-mastodon` which does the following:
