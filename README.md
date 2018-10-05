@@ -485,7 +485,7 @@ As I said, this is work in progress and I don't really know where I'm
 going with this. More
 [on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
 
-This command supports the [whitelist](#Whitelist).
+This command supports the [whitelist](#whitelist).
 
 # Following
 
@@ -545,7 +545,7 @@ Then paste the access token here:
 Note that the application needs the permission to unfollow people in
 your name, which is why you need to authorize it again.
 
-This command supports the [whitelist](#Whitelist).
+This command supports the [whitelist](#whitelist).
 
 # Whitelist
 
