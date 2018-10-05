@@ -38,6 +38,7 @@ You can get the latest sources
 - [Followers](#followers)
 - [Following](#following)
 - [Whitelist](#whitelist)
+- [Mutuals](#mutuals)
 - [Example Setup](#example-setup)
 - [Documentation](#documentation)
 - [Development](#development)
