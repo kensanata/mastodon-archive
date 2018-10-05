@@ -550,7 +550,7 @@ This command supports the [whitelist](#whitelist).
 # Whitelist
 
 You can have a whitelist of people you want to be exempt from some
-commands. Create a text file a nime like the following:
+commands. Create a text file with a name like the following:
 `dice.camp.user.kensanata.whitelist.txt`.
 
 That is: `<your domain>.user.<your account>.whitelist.txt`.
