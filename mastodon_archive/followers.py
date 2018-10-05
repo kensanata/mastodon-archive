@@ -62,14 +62,7 @@ def followers(args):
               + " weeks")
         mentions = core.keep(data["mentions"], args.weeks)
 
-    whitelist = set()
-    file_name = domain + '.user.' + username + '.whitelist.txt'
-    if os.path.isfile(file_name):
-        with open(file_name, mode = 'r', encoding = 'utf-8') as fp:
-            whitelist = set(fp.read().splitlines())
-        print("%d accounts are on the whitelist" % len(whitelist))
-    else:
-        print("There is no whitelist")
+    whitelist = core.whitelist(domain, username)
 
     if args.block:
         mastodon = core.readwrite(args)
