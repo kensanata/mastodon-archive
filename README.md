@@ -55,7 +55,7 @@ dependencies:
 
 ```bash
 # Python 3
-$ pip3 install mastodon-archive
+pip3 install mastodon-archive
 ```
 
 If this is the first tool you installed using `pip` then perhaps it
@@ -64,6 +64,15 @@ I had to add the following to my `~/.bashrc` file:
 
 ```bash
 export PATH=$PATH:$HOME/.local/bin
+```
+
+🔥 If you're getting an error that ends with `Command "python setup.py
+egg_info" failed with error code 1 ...` you might have to install the
+setup tools. Try the following:
+
+```bash
+pip3 install --user setuptools
+pip3 install mastodon-archive
 ```
 
 # Making an archive
