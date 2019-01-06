@@ -14,9 +14,10 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import os
+import sys
 import json
+import time
 import urllib.request
 from progress.bar import Bar
 from urllib.parse import urlparse
@@ -25,6 +26,8 @@ def media(args):
     """
     Download all the media files linked to from your archive
     """
+
+    pace = hasattr(args, 'pace') and args.pace
 
     (username, domain) = args.user.split('@')
 
@@ -73,6 +76,8 @@ def media(args):
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
+            if pace:
+                time.sleep(1)
 
     bar.finish()
 
