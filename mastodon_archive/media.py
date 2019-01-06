@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017  Alex Schroeder <alex@gnu.org>
-# Copyright (C) 2017  Steve Ivy <steveivy@gmail.com>
+# Copyright (C) 2017–2019  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017       Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -54,7 +54,8 @@ def media(args):
 
     errors = 0
 
-    for url in urls:
+    # start downloading the missing files from the back
+    for url in reversed(urls):
         bar.next()
         path = urlparse(url).path
         file_name = media_dir + path
