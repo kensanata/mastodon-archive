@@ -43,7 +43,7 @@ def text(args):
                       status["account"]["display_name"],
                       status["account"]["username"],
                       status["created_at"]]:
-                if re.search(pattern,s) is not None:
+                if re.search(pattern, s, flags=re.IGNORECASE) is not None:
                     found = True
                     continue
             if not found:
