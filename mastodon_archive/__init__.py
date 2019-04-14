@@ -19,6 +19,7 @@ from . import text
 from . import context
 from . import html
 from . import media
+from . import split
 from . import expire
 from . import report
 from . import followers
@@ -116,6 +117,19 @@ def main():
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=html.html)
+
+    parser_content = subparsers.add_parser(
+        name='split',
+        help='split an archive into two')
+    parser_content.add_argument("--older-than", dest='weeks',
+                                metavar='N', type=float, default=4,
+                                help='split anything older than this many weeks')
+    parser_content.add_argument("--confirmed", dest='confirmed',
+                                action='store_const', const=True, default=False,
+                                help='save the data after splitting')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=split.split)
 
 
     parser_content = subparsers.add_parser(

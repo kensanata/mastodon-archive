@@ -27,6 +27,7 @@ You can get the latest sources
 
 - [Installation](#installation)
 - [Making an archive](#making-an-archive)
+- [Splitting an archive](#splitting-an-archive)
 - [Downloading media files](#downloading-media-files)
 - [Generating a text file](#generating-a-text-file)
 - [Searching your archive](#searching-your-archive)
@@ -129,6 +130,55 @@ without your media attachments). If this file exists, only the missing
 toots will be downloaded the next time you run the app. If you suspect
 a problem and want to make sure that everything is downloaded again,
 you need to remove this file.
+
+# Splitting an archive
+
+If you keep adding your archive, it eventually grows very large. When
+it reaches hundreds of megabytes, consider *splitting* it.
+
+```
+$ ls -lh *.json
+-rw-r--r-- 1 alex alex 120M Apr 14 21:50 octodon.social.user.kensanata.json
+```
+
+You can provide an `--older-than` option to specify the number of
+weeks you want to keep. The default is four weeks.
+
+If you don't provide the `--confirmed` option, this is a dry run.
+
+```
+$ mastodon-archive split --older-than=10 kensanata@octodon.social
+This is a dry run and nothing will be moved.
+Instead, we'll just list what would have happened.
+Use --confirmed to actually do it.
+Loading existing archive
+Older than 2019-02-03 22:11:48.253408
+statuses: 10623
+favourites: 11233
+mentions: 10773
+Would have saved this to octodon.social.user.kensanata.0.json
+```
+
+When you do the split, the files are saved.
+
+```
+$ mastodon-archive split --older-than=10 --confirmed kensanata@octodon.social
+Loading existing archive
+Older than 2019-02-03 22:11:59.668432
+statuses: 10623
+favourites: 11233
+mentions: 10773
+Saving octodon.social.user.kensanata.json
+Saving octodon.social.user.kensanata.0.json
+```
+
+Verify the result:
+
+```
+$ ls -lh *.json
+-rw-r--r-- 1 alex alex 107M Apr 14 22:12 octodon.social.user.kensanata.0.json
+-rw-r--r-- 1 alex alex  13M Apr 14 22:12 octodon.social.user.kensanata.json
+```
 
 # Downloading media files
 
