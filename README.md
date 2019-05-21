@@ -398,12 +398,27 @@ blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
 **Alternatives**: Check out [forget](https://forget.codl.fr/about/)
 which is a web app that only expires your toots without archiving
-theme.
+them.
 [MastoPurgee](https://github.com/ThomasLeister/mastopurge/blob/master/README.md)
 does the same thing but it's a stand-alone binary. Depending on your
 needs, these might be good enough.
 
 Anyway, back to *Mastodon Archive*. 🙂
+
+Sadly, I have some bad news for you: this has been rate limited to
+[30 statuses per 30 minutes](https://mastodon.social/@Gargron/101588449409740014)!
+😭
+
+No, really! See the [merge request](https://github.com/tootsuite/mastodon/pull/10042).
+This is terrible. Expiry basically only works if you run it every time
+you have posted 30 statuses or so, in the long run. If you don't, be
+prepared for a *long* wait! 😴
+
+In order to not go crazy, the code catches an interrupt (such as you
+pressing `Ctrl-C`) and saves the data even though it hasn't finished
+expiring your statuses.
+
+Anyway, enough complaining. How do you do it?
 
 You can expire your toots using the `expire` command and providing the
 `--older-than` option. This option specifies the number of weeks to
