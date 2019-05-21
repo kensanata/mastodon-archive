@@ -113,7 +113,6 @@ def expire(args):
         signal.signal(signal.SIGINT, signal_handler)
 
         for status in statuses:
-            bar.next()
             try:
                 delete(mastodon, collection, status)
             except Exception as e:
@@ -129,6 +128,7 @@ def expire(args):
                     error = "Error: the instance name is either misspelled or offline"
                 else:
                     print(e, file=sys.stderr)
+            bar.next()
 
         bar.finish()
 
