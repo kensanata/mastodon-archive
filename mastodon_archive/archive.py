@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2017-2018  Alex Schroeder <alex@gnu.org>
+# Copyright (C) 2017-2019  Alex Schroeder <alex@gnu.org>
 # Copyright (C) 2017       Steve Ivy <steveivy@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify it under
@@ -18,7 +18,7 @@ import sys
 import os.path
 from . import core
 
-def progress_bar(chars="oOUX."):
+def progress_bar(chars="▏▎▍▌▋▊▉█"):
     """
     Return a progress bar updater which you can then call.
     """
