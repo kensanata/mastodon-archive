@@ -82,36 +82,52 @@ def login(args, scopes = ['read']):
     """
     Login to your Mastodon account
     """
-
     pace = hasattr(args, 'pace') and args.pace
+    app = App(args.user, scopes)
+    return app.login(pace)
 
-    (username, domain) = args.user.split("@")
 
-    url = 'https://' + domain
-    client_secret = domain + '.client.secret'
-    user_secret = domain + '.user.' + username + '.secret'
-    mastodon = None
+class App:
+    """
+    Client application to register, authorize and login with your Mastodon
+    account.
+    """
 
-    if not os.path.isfile(client_secret):
+    def __init__(self, user, scopes=('read'), name="mastodon-archive"):
 
+        self.username, self.domain = user.split("@")
+        self.url = "https://" + self.domain
+        self.name = name
+        self.scopes = scopes
+        self.client_secret = self.domain + ".client.secret"
+        self.user_secret = self.domain + ".user." + self.username + ".secret"
+
+    def register(self):
+        """
+        Register application and saves client secret.
+        """
         print("Registering app")
         Mastodon.create_app(
-            'mastodon-archive',
-            api_base_url = url,
-            scopes = scopes,
-            to_file = client_secret)
+            self.name,
+            api_base_url=self.url,
+            scopes=self.scopes,
+            to_file=self.client_secret
+        )
 
-    if not os.path.isfile(user_secret):
-
+    def authorize(self):
+        """
+        Tries to authorize via OAuth API, and save access token. If it fails
+        fallsback to username and password.
+        """
+        url = self.url
+        client_secret = self.client_secret
+        user_secret = self.user_secret
+        scopes = self.scopes
         print("This app needs access to your Mastodon account.")
 
-        mastodon = Mastodon(
-            client_id = client_secret,
-            api_base_url = url)
+        mastodon = Mastodon(client_id=client_secret, api_base_url=url)
 
-        url = mastodon.auth_request_url(
-            client_id = client_secret,
-            scopes = scopes)
+        url = mastodon.auth_request_url(client_id=client_secret, scopes=scopes)
 
         print("Visit the following URL and authorize the app:")
         print(url)
@@ -121,12 +137,9 @@ def login(args, scopes = ['read']):
 
         try:
             # on the very first login, --pace has no effect
-            mastodon.log_in(
-                code = token,
-                to_file = user_secret,
-                scopes = scopes)
+            mastodon.log_in(code=token, to_file=user_secret, scopes=scopes)
 
-        except Exception as e:
+        except Exception:
 
             print("Sadly, that did not work. On some sites, this login mechanism")
             print("(namely OAuth) seems to be broken. There is an alternative")
@@ -145,34 +158,53 @@ def login(args, scopes = ['read']):
 
             # on the very first login, --pace has no effect
             mastodon.log_in(
-                username = email,
-                password = password,
-                to_file = user_secret,
-                scopes = scopes)
+                username=email,
+                password=password,
+                to_file=user_secret,
+                scopes=scopes
+            )
 
-    else:
+        return mastodon
 
-        if pace:
+    def login(self, pace=False):
+        """
+        Register app, authorize and return an instance of ``Mastodon``
+        """
+        url = self.url
+        client_secret = self.client_secret
+        user_secret = self.user_secret
 
-            # in case the user kept running into a General API problem
-            mastodon = Mastodon(
-                client_id = client_secret,
-                access_token = user_secret,
-                api_base_url = url,
-                ratelimit_method='pace',
-                ratelimit_pacefactor=0.9,
-                request_timeout=300)
+        if not os.path.isfile(client_secret):
+            self.register()
+
+        if not os.path.isfile(user_secret):
+            mastodon = self.authorize()
 
         else:
 
-            # the defaults are ratelimit_method='wait',
-            # ratelimit_pacefactor=1.1, request_timeout=300
-            mastodon = Mastodon(
-                client_id = client_secret,
-                access_token = user_secret,
-                api_base_url = url)
+            if pace:
 
-    return mastodon
+                # in case the user kept running into a General API problem
+                mastodon = Mastodon(
+                    client_id=client_secret,
+                    access_token=user_secret,
+                    api_base_url=url,
+                    ratelimit_method="pace",
+                    ratelimit_pacefactor=0.9,
+                    request_timeout=300
+                )
+
+            else:
+
+                # the defaults are ratelimit_method='wait',
+                # ratelimit_pacefactor=1.1, request_timeout=300
+                mastodon = Mastodon(
+                    client_id=client_secret,
+                    access_token=user_secret,
+                    api_base_url=url
+                )
+
+        return mastodon
 
 def load(file_name, required = False, quiet = False):
     """
