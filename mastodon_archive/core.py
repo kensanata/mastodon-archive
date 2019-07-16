@@ -67,16 +67,10 @@ def readwritefollow(args):
 
 def deauthorize(args):
     """
-    Deauthorize the account. We do this by deleting the file
-    containing the authorization token.
+    Deauthorize the account.
     """
-    (username, domain) = args.user.split("@")
-    user_secret = domain + '.user.' + username + '.secret'
-    if os.path.isfile(user_secret):
-        os.remove(user_secret)
-    client_secret = domain + '.client.secret'
-    if os.path.isfile(client_secret):
-        os.remove(client_secret)
+    app = App(args.user)
+    app.deauthorize()
 
 def login(args, scopes=('read',)):
     """
@@ -165,6 +159,17 @@ class App:
             )
 
         return mastodon
+
+    def deauthorize(self):
+        """
+        Deauthorize by deleting the file containing the authorization token.
+        """
+        user_secret = self.user_secret
+        client_secret = self.client_secret
+        if os.path.isfile(user_secret):
+            os.remove(user_secret)
+        if os.path.isfile(client_secret):
+            os.remove(client_secret)
 
     def login(self, pace=False):
         """
