@@ -78,7 +78,7 @@ def deauthorize(args):
     if os.path.isfile(client_secret):
         os.remove(client_secret)
 
-def login(args, scopes = ['read']):
+def login(args, scopes=('read',)):
     """
     Login to your Mastodon account
     """
@@ -93,7 +93,7 @@ class App:
     account.
     """
 
-    def __init__(self, user, scopes=('read'), name="mastodon-archive"):
+    def __init__(self, user, scopes=('read',), name="mastodon-archive"):
 
         self.username, self.domain = user.split("@")
         self.url = "https://" + self.domain
