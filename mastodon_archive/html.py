@@ -44,12 +44,12 @@ body {
         -ms-text-size-adjust: none;
         text-size-adjust: none;
         -webkit-tap-highlight-color: transparent;
-        max-width: 80ex;
 }
 .column {
         background: #282c37;
         padding: 10px;
-        margin: 10px;
+        margin: auto;
+        max-width: 80ex;
 }
 h1 {
         color: #fff;
