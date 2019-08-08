@@ -19,6 +19,8 @@ import sys
 import json
 import time
 import urllib.request
+from urllib.error import HTTPError
+from urllib.error import URLError
 from progress.bar import Bar
 from urllib.parse import urlparse
 
@@ -70,9 +72,14 @@ def media(args):
                     url, data=None,
                     headers={'User-Agent': 'Mastodon-Archive/1.2 '
                              '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
-                with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
+                try:
+                  with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
                     data = response.read()
                     fp.write(data)
+                except HTTPError as he:
+                  print("\nFailed to open " + url + " during a media request.")
+                except URLError as ue:
+                  print("\nFailed to open " + url + " during a media request.")
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
