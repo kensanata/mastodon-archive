@@ -83,6 +83,10 @@ def main():
         help='download media referred to by toots in your archive')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
+    parser_content.add_argument("--collection", dest='collection',
+                                choices=['statuses', 'favourites'],
+                                default='statuses',
+                                help='export statuses or favourites')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')

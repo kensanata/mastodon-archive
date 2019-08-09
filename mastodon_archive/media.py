@@ -45,7 +45,7 @@ def media(args):
         data = json.load(fp)
 
     urls = []
-    for status in data["statuses"]:
+    for status in data[args.collection]:
         attachments = status["media_attachments"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
