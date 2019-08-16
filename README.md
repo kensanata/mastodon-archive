@@ -78,7 +78,7 @@ pip3 install mastodon-archive
 
 # Making an archive
 
-When using the app for the first time, you will have to authorize it:
+When using the app for the first time, you have to authorize it:
 
 ```text
 $ mastodon-archive archive kensanata@dice.camp
