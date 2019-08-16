@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import sys
 import os.path
 import html2text
@@ -50,7 +51,12 @@ def text(args):
                 return False
         return True
 
-    statuses = data[collection]
+    if collection == "all":
+        statuses = itertools.chain.from_iterable(
+            data[collection] for collection in ["statuses", "favourites", "mentions"]
+        )
+    else:
+        statuses = data[collection]
 
     if len(patterns) > 0:
         statuses = list(filter(matches, statuses))

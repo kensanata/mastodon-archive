@@ -104,7 +104,7 @@ def main():
                                 const=True, default=False,
                                 help='reverse output, oldest first')
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites', 'mentions'],
+                                choices=['statuses', 'favourites', 'mentions', 'all'],
                                 default='statuses',
                                 help='export statuses, favourites, or mentions')
     parser_content.add_argument("user",
