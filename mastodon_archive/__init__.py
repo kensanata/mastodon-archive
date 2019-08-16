@@ -59,6 +59,10 @@ def main():
                                 action='store_const',
                                 const=True, default=False,
                                 help='download following (the people you follow)')
+    parser_content.add_argument("--no-stopping", dest='stopping',
+                                action='store_const',
+                                const=False, default=True,
+                                help='do not stop after seeing 10 duplicates')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')

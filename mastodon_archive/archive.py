@@ -42,6 +42,7 @@ def archive(args):
     with_mentions = args.with_mentions
     with_followers = args.with_followers
     with_following = args.with_following
+    stopping = args.stopping
 
     (username, domain) = core.parse(args.user)
 
@@ -83,26 +84,40 @@ def archive(args):
         obviously.
         """
         seen = { str(status["id"]): status for status in statuses }
-        count = 0
         progress = progress_bar()
-        while len(page) > 0:
-            progress()
-            for item in page:
-                status = item
-                # possibly a notification containing a status
-                if "status" in item:
-                    status = item["status"]
-                if status and "id" in status:
-                    id = str(status["id"])
-                    if not id in seen:
-                        if func is None or func(item):
-                            seen["id"] = status
-                            statuses.append(status)
-                            count = count + 1
-            page = mastodon.fetch_next(page)
-            if page is None:
-                break
-        print()
+
+        # define function such that we can return from the inner and
+        # from the outer loop
+        def process(page):
+            count = 0
+            duplicates = 0
+            while len(page) > 0:
+                progress()
+                for item in page:
+                    status = item
+                    # possibly a notification containing a status
+                    if "status" in item:
+                        status = item["status"]
+                    if status and "id" in status:
+                        id = str(status["id"])
+                        if not id in seen:
+                            if func is None or func(item):
+                                seen["id"] = status
+                                statuses.append(status)
+                                count = count + 1
+                        else:
+                            duplicates = duplicates + 1
+                            if duplicates > 10 and stopping:
+                                print() # at the end of the progress bar
+                                print("Seen 10 duplicates, stopping now.")
+                                print("Use --no-stopping to prevent this.")
+                                return count
+                page = mastodon.fetch_next(page)
+                if page is None:
+                    print() # at the end of the progress bar
+                    return count
+
+        count = process(page)
         print("Added a total of %d new items" % count)
         return statuses
 
