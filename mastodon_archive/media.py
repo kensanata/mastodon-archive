@@ -70,7 +70,7 @@ def media(args):
             try:
                 req = urllib.request.Request(
                     url, data=None,
-                    headers={'User-Agent': 'Mastodon-Archive/1.2 '
+                    headers={'User-Agent': 'Mastodon-Archive/1.3 '
                              '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
                 try:
                   with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
