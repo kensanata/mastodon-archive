@@ -176,7 +176,6 @@ def archive(args):
         followers = mastodon.account_followers(user.id, limit=100)
         followers = mastodon.fetch_remaining(
             first_page = followers)
-        data["followers"] = followers
 
     if not with_following:
         print("Skipping following")
@@ -189,7 +188,6 @@ def archive(args):
         following = mastodon.account_following(user.id, limit=100)
         following = mastodon.fetch_remaining(
             first_page = following)
-        data["following"] = following
 
     data = {
         'account': user,
