@@ -42,7 +42,7 @@ def delete(mastodon, collection, status):
     """
     if collection == 'statuses':
         if status["reblog"]:
-            mastodon.status_unreblog(status["id"])
+            mastodon.status_unreblog(status["reblog"]["id"])
         else:
             mastodon.status_delete(status["id"])
     elif collection == 'favourites':
