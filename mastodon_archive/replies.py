@@ -20,13 +20,13 @@ from . import core
 
 def replies(args):
     """
-    Archiev the statuses you replied to
+    Archive the statuses you replied to
     """
 
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file)
+    data = core.load(status_file, required = True)
 
     mastodon = core.login(args)
 
