@@ -28,6 +28,7 @@ from . import following
 from . import whitelist
 from . import mutuals
 from . import login
+from . import fix
 
 def main():
     parser = argparse.ArgumentParser(
@@ -271,6 +272,15 @@ def main():
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=whitelist.print_whitelist)
 
+    parser_content = subparsers.add_parser(
+        name='fix-boosts',
+        help='''mark all the boosts as not deleted (triggering their deletion)''')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.add_argument("--confirmed", dest='confirmed',
+                                action='store_const', const=True, default=False,
+                                help='perform the change on the archive')
+    parser_content.set_defaults(command=fix.fix_boosts)
 
     parser_content = subparsers.add_parser(
         name='login',
