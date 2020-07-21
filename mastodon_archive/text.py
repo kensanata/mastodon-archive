@@ -61,8 +61,7 @@ def text(args):
     if len(patterns) > 0:
         statuses = list(filter(matches, statuses))
 
-    if reverse:
-        statuses = reversed(statuses)
+    statuses = sorted(statuses, reverse=reverse, key=lambda status: status["created_at"])
 
     for status in statuses:
         str = '';
