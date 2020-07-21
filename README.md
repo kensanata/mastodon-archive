@@ -182,10 +182,6 @@ $ ls -lh *.json
 
 # Downloading media files
 
-By default, media you uploaded and media of statuses you added your
-favourites are not part of your archive. You can download it using a
-separate command, however.
-
 Assuming you already made an archive of your toots:
 
 ```text
@@ -193,6 +189,13 @@ $ mastodon-archive media kensanata@dice.camp
 44 urls in your archive (half of them are previews)
 34 files already exist
 Downloading |################################| 10/10
+```
+By default, media you uploaded and media of statuses you added your
+favourites are not part of your archive. To download these too,
+specify the favourites collection:
+
+```text
+$ mastodon-archive media --collection favourites kensanata@dice.camp
 ```
 
 You will end up with a new directory, `dice.camp.user.kensanata`. It
