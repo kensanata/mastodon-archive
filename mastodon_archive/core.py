@@ -244,7 +244,7 @@ def load(file_name, required=False, quiet=False, combine=False):
                 archived_data = _json_load(archive)
 
                 for collection in ["statuses", "favourites", "mentions"]:
-                    data[collection] = archived_data[collection] + data[collection]
+                    data[collection].extend(archived_data[collection])
 
         return data
 
