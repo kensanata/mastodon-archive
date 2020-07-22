@@ -211,7 +211,7 @@ class App:
 
         return mastodon
 
-def load(file_name, required = False, quiet = False):
+def load(file_name, required=False, quiet=False, combine=False):
     """
     Load the JSON data from a file.
     """
@@ -221,10 +221,33 @@ def load(file_name, required = False, quiet = False):
         sys.exit(2)
 
     if os.path.isfile(file_name) and os.path.getsize(file_name) > 0:
-        if not quiet:
-            print("Loading existing archive")
-        with open(file_name, mode = 'r', encoding = 'utf-8') as fp:
-            return json.load(fp)
+
+        def _json_load(fname):
+            if not quiet:
+                print("Loading existing archive:", fname)
+
+            with open(fname, mode='r', encoding='utf-8') as fp:
+                return json.load(fp)
+
+        data = _json_load(file_name)
+        if combine:
+            # Load latest archive first to keep chronological order
+            archives = list(
+                reversed(glob.glob(file_name.replace(".json", ".*.json")))
+            )
+
+            if required and not archives:
+                print("Warning: No split archives to combine", file=sys.stderr)
+
+            # Merge dictionaries loaded from JSON archives
+            for archive in archives:
+                archived_data = _json_load(archive)
+
+                for collection in ["statuses", "favourites", "mentions"]:
+                    data[collection] = archived_data[collection] + data[collection]
+
+        return data
+
     return None
 
 def save(file_name, data):

@@ -29,11 +29,12 @@ def text(args):
     collection = args.collection
     reverse = args.reverse
     patterns = args.pattern
+    combine = args.combine
 
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True, quiet = True)
+    data = core.load(status_file, required=True, quiet=True, combine=combine)
 
     def matches(status):
         if status["reblog"] is not None:

@@ -104,6 +104,9 @@ def main():
     parser_content.add_argument("--reverse", dest='reverse', action='store_const',
                                 const=True, default=False,
                                 help='reverse output, oldest first')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine JSON files, in case of split archives")
     parser_content.add_argument("--collection", dest='collection',
                                 choices=['statuses', 'favourites', 'mentions', 'all'],
                                 default='statuses',
