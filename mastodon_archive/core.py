@@ -20,6 +20,7 @@ import datetime
 import json
 import glob
 import re
+import shutil
 
 def parse(account):
     """
@@ -261,7 +262,21 @@ def save(file_name, data):
         else None)
 
     if os.path.isfile(file_name):
-        os.replace(file_name, file_name + '~')
+        backup_file = file_name + '~'
+        print("Backing up", file_name, "to", backup_file)
+        if os.path.isfile(backup_file):
+            ans = ""
+            while ans.lower() not in ("y", "n", "yes", "no"):
+                ans = input(
+                    "Backup: {} exists! Overwrite (yes/no)? ".format(backup_file)
+                )
+
+            if ans.lower()[0] == "y":
+                shutil.copy2(file_name, backup_file)
+            else:
+                print("Exiting to avoid overwriting backup.", file=sys.stderr)
+                sys.exit(0)
+
     with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
         data = json.dump(data, fp, indent = 2, default = date_handler)
 
