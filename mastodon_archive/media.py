@@ -35,14 +35,7 @@ def media(args):
 
     status_file = domain + '.user.' + username + '.json'
     media_dir = domain + '.user.' + username
-
-    if not os.path.isfile(status_file):
-
-        print("You need to create an archive, first", file=sys.stderr)
-        sys.exit(2)
-
-    with open(status_file, mode = 'r', encoding = 'utf-8') as fp:
-        data = json.load(fp)
+    data = core.load(status_file, required=True, quiet=True, combine=args.combine)
 
     urls = []
     for status in data[args.collection]:

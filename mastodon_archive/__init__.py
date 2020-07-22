@@ -88,6 +88,9 @@ def main():
         help='download media referred to by toots in your archive')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine JSON files, in case of split archives")
     parser_content.add_argument("--collection", dest='collection',
                                 choices=['statuses', 'favourites'],
                                 default='statuses',
@@ -131,6 +134,9 @@ def main():
     parser_content = subparsers.add_parser(
         name='html',
         help='export toots and media in the archive as static HTML')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine JSON files, in case of split archives")
     parser_content.add_argument("--collection", dest='collection',
                                 choices=['statuses', 'favourites'],
                                 default='statuses',
@@ -197,6 +203,9 @@ def main():
     parser_content = subparsers.add_parser(
         name='report',
         help='''report some numbers about your toots and favourites''')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine JSON files, in case of split archives")
     parser_content.add_argument("--all", dest='all', action='store_const',
                                 const=True, default=False,
                                 help='consider all toots (ignore --newer-than)')
@@ -278,6 +287,9 @@ def main():
     parser_content = subparsers.add_parser(
         name='fix-boosts',
         help='''mark all the boosts as not deleted (triggering their deletion)''')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine JSON files, in case of split archives")
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.add_argument("--confirmed", dest='confirmed',

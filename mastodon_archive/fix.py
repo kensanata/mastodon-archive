@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
+import shutil
 import sys
 from . import core
 
@@ -32,7 +33,7 @@ def fix_boosts(args):
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True)
+    data = core.load(status_file, required=True, combine=args.combine)
     n = 0
 
     for status in data["statuses"]:
@@ -45,8 +46,11 @@ def fix_boosts(args):
                 print(str(n) + " " + status["reblog"]["url"])
 
     if confirmed and n > 0:
+        backup_file = status_file + ".bak"
+        print("Backing up", status_file, "to", backup_file)
+        shutil.copy2(status_file, backup_file)
 
-        print("Saving " + status_file)
+        print("Saving updated data to", status_file)
         core.save(status_file, data)
 
     elif confirmed:
