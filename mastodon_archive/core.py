@@ -236,7 +236,7 @@ def load(file_name, required=False, quiet=False, combine=False):
                 reversed(glob.glob(file_name.replace(".json", ".*.json")))
             )
 
-            if required and not archives:
+            if required and not quiet and not archives:
                 print("Warning: No split archives to combine", file=sys.stderr)
 
             # Merge dictionaries loaded from JSON archives
