@@ -38,7 +38,7 @@ def followers(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True, quiet = True)
+    data = core.load(status_file, required=True, quiet=True, combine=True)
 
     # Print both error messages if the data is missing
     error = 0

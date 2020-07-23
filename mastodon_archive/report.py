@@ -99,7 +99,7 @@ def report(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True, quiet = True)
+    data = core.load(status_file, required=True, quiet=True, combine=args.combine)
 
     if args.all:
         print("Considering the entire archive")
@@ -111,7 +111,7 @@ def report(args):
               + " weeks")
         statuses = core.keep(data["statuses"], args.weeks)
         favourites = core.keep(data["favourites"], args.weeks)
-    
+
     if "statuses" in data:
         print("Statuses:".ljust(20), str(len(statuses)).rjust(6))
         print("Boosts:".ljust(20), str(boosts(statuses)).rjust(6))
@@ -123,10 +123,10 @@ def report(args):
         if args.with_emoji:
             print()
             print_emoji(statuses)
-            
+
     if "statuses" in data and "favourites" in data:
         print()
-        
+
     if "favourites" in data:
         print("Favourites:".ljust(20), str(len(favourites)).rjust(6))
         print("Boosts:".ljust(20), str(boosts(favourites)).rjust(6))
