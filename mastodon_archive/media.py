@@ -43,8 +43,9 @@ def media(args):
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
         for attachment in attachments:
-                for url in [attachment["preview_url"], attachment["url"]]:
-                        urls.append(url)
+            for url in [attachment["preview_url"], attachment["url"]]:
+                if url is not None:
+                    urls.append(url)
 
     print("%d urls in your backup (half of them are previews)" % len(urls))
 
