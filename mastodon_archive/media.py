@@ -38,16 +38,19 @@ def media(args):
     data = core.load(status_file, required=True, quiet=True, combine=args.combine)
 
     urls = []
+    preview_urls_count=0
     for status in data[args.collection]:
         attachments = status["media_attachments"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
         for attachment in attachments:
-            for url in [attachment["preview_url"], attachment["url"]]:
-                if url is not None:
-                    urls.append(url)
+                if attachment["preview_url"]:
+                        urls.append(attachment["preview_url"])
+                        preview_urls_count += 1
+                if attachment["url"]:
+                        urls.append(attachment["url"])
 
-    print("%d urls in your backup (half of them are previews)" % len(urls))
+    print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
     bar = Bar('Downloading', max = len(urls))
 
