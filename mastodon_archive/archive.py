@@ -116,6 +116,8 @@ def archive(args):
                 if page is None:
                     print() # at the end of the progress bar
                     return count
+            # if len(page) was 0
+            return count
 
         count = process(page)
         print("Added a total of %d new items" % count)
