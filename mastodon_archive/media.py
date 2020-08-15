@@ -23,6 +23,7 @@ from urllib.error import HTTPError
 from urllib.error import URLError
 from progress.bar import Bar
 from urllib.parse import urlparse
+from . import core
 
 def media(args):
     """
