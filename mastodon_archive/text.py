@@ -42,6 +42,7 @@ def text(args):
         for pattern in patterns:
             found = False
             for s in [status["content"],
+                      status["spoiler_text"],
                       status["account"]["display_name"],
                       status["account"]["username"],
                       status["created_at"]]:
@@ -74,6 +75,7 @@ def text(args):
             status["account"]["username"],
             status["created_at"]))
         str += status["url"] + "\n"
+        str += "CW: %s\n" % status["spoiler_text"]
         str += html2text.html2text(status["content"])
         # This forces UTF-8 independent of terminal capabilities, thus
         # avoiding problems with LC_CTYPE=C and other such issues.
