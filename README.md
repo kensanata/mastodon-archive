@@ -399,12 +399,10 @@ never your friends. So I want to expire my toots. We can always write
 a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
-**Alternatives**: Check out [forget](https://forget.codl.fr/about/)
-which is a web app that only expires your toots without archiving
-them.
-[MastoPurgee](https://github.com/ThomasLeister/mastopurge/blob/master/README.md)
-does the same thing but it's a stand-alone binary. Depending on your
-needs, these might be good enough.
+**Alternatives**: Check out [forget](https://forget.codl.fr/about/) (a
+web app), [ephemtoot](https://ephemetoot.hugh.run/) (a Python script),
+or [MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
+These tools expire your toots without archiving them.
 
 Anyway, back to *Mastodon Archive*. 🙂
 
