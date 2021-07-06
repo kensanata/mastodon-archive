@@ -95,13 +95,6 @@ def expire(args):
     if (n_statuses == 0):
         print("No " + collection + " are older than %d weeks" % args.weeks,
               file=sys.stderr)
-    elif (n_statuses > 30 and collection == 'statuses'):
-        print("Considering the default rate limit of 30 requests per 30 minutes\n"
-              "and having {} {}, this will take at least as many minutes to do.\n"
-              . format(n_statuses, collection))
-        mastodon.ratelimit_method = 'pace'
-    else:
-        mastodon.ratelimit_method = 'wait'
 
     if confirmed and n_statuses > 0:
 
