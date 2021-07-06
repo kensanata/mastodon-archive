@@ -20,6 +20,7 @@ import os.path
 import html2text
 import re
 from . import core
+from urllib.parse import urlparse
 
 def text(args):
     """
@@ -33,6 +34,7 @@ def text(args):
 
     (username, domain) = core.parse(args.user)
 
+    media_dir = domain + '.user.' + username
     status_file = domain + '.user.' + username + '.json'
     data = core.load(status_file, required=True, quiet=True, combine=combine)
 
@@ -73,8 +75,18 @@ def text(args):
             status["account"]["display_name"],
             status["account"]["username"],
             status["created_at"]))
-        str += status["url"] + "\n"
-        str += html2text.html2text(status["content"])
+        str += "🔗 " + status["url"] + "\n"
+        str += html2text.html2text(status["content"]).strip() + "\n"
+        for attachment in status["media_attachments"]:
+            # should we check attachment["preview_url"] as well?
+            for url in [attachment["url"]]:
+                path = urlparse(url).path
+                file_name = media_dir + path
+                if os.path.isfile(file_name):
+                    str += "🖻 " + file_name + "\n"
+                elif url not in str:
+                    str += "🔗 " + url + "\n"
+        str += "\n"
         # This forces UTF-8 independent of terminal capabilities, thus
         # avoiding problems with LC_CTYPE=C and other such issues.
         # This works well when redirecting output to a file, which
