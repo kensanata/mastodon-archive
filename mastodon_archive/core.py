@@ -262,6 +262,8 @@ def load(file_name, required=False, quiet=False, combine=False):
                 for collection in ["statuses", "favourites", "mentions"]:
                     data[collection].extend(archived_data[collection])
 
+        data["statuses"].sort(key=lambda x: x["created_at"], reverse=True)
+
         return data
 
     return None
