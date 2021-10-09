@@ -41,6 +41,27 @@ def meow(args):
     media_dir = domain + ".user." + username
     media_files = []
 
+    def use_local_file_if_exists(url):
+        """
+        Checks if we have the file, in which case returns the relative path, so
+        that Meow knows to look it up in the local storage. Otherwise, returns
+        the URL, so Meow will try to load it remotely. Adds relative paths to
+        media_files to serve them to Meow.
+        """
+
+        nonlocal media_files
+
+        path = urlparse(url).path
+        if path in media_files:
+            return path
+
+        file_name = media_dir + path
+        if os.path.isfile(file_name):
+            media_files.append(path)
+            return path
+        else:
+            return url
+
     for collection in ["statuses", "favourites"]:
         for status in data[collection]:
             attachments = status["media_attachments"]
@@ -48,18 +69,10 @@ def meow(args):
                 attachments = status["reblog"]["media_attachments"]
             for attachment in attachments:
                 if attachment["url"]:
-                    path = urlparse(attachment["url"]).path
-                    if path in media_files:
-                        continue
+                    attachment["url"] = use_local_file_if_exists(attachment["url"])
 
-                    # If we have it locally, set it to a relative path so Meow
-                    # known to look in its local database. Otherwise, it'll
-                    # still try to load the remote image.
-
-                    file_name = media_dir + path
-                    if os.path.isfile(file_name):
-                        attachment["url"] = path
-                        media_files.append(path)
+    for picture in ["avatar", "header"]:
+        data["account"][picture] = use_local_file_if_exists(data["account"][picture])
 
     data["files"] = media_files
 
