@@ -365,8 +365,8 @@ including all the media in your archive, if you archived it:
 $ mastodon-archive meow kensanata@dice.camp
 ```
 
-One this is done, open Meow with the “Mastodon Archive Import URL” and
-it will pull the archived data from the local web server you just
+Once this is done, open Meow with the “Mastodon Archive Import URL” and
+it pulls the archived data from the local web server you just
 started:
 
 ```text
