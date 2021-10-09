@@ -144,7 +144,8 @@ def expire(args):
                 print("Dismiss: " + text(status))
 
     if delete_others:
-        print('Getting other notifications')
+        print('Dismissing other notifications')
+        progress = core.progress_bar()
 
         # unlike above where we're getting the created_at value from
         # the JSON file where the date comes in iso format... see
@@ -156,52 +157,40 @@ def expire(args):
 
         mastodon = core.login(args)
         notifications = mastodon.notifications(limit=100)
-        notifications = mastodon.fetch_remaining(
-            first_page = notifications)
-        notifications = others(notifications)
-
-        n_notifications = len(notifications)
-
-        if (n_notifications == 0):
-            print("No other notifications are older than %d weeks" % args.weeks,
-                  file=sys.stderr)
-        elif (n_notifications > 300):
-            estimated_time = math.floor((n_notifications - 1) / 300) * 5
-            print("Considering the default rate limit of 300 requests per five minutes\n"
-                  "and having {} items, this will take at least {} minutes to complete.".format(n_notifications, estimated_time))
-
-        if confirmed and n_notifications > 0:
-
-            bar = Bar('Dismissing', max = n_notifications)
-            error = ''
-
-            for notification in notifications:
-                bar.next()
-                try:
-                    mastodon.notifications_dismiss(notification["id"])
-                except Exception as e:
-                    if "authorized scopes" in str(e):
-                        print("\nWe need to authorize the app to make changes to your account.")
-                        core.deauthorize(args)
-                        mastodon = core.readwrite(args)
-                        # retry
+        total = 0
+        dismissed = 0
+        while (notifications):
+            progress()
+            total += len(notifications)
+            for notification in others(notifications):
+                if confirmed:
+                    try:
                         mastodon.notifications_dismiss(notification["id"])
-                    elif "not found" in str(e):
-                        pass
-                    elif "Name or service not known" in str(e):
-                        error = "Error: the instance name is either misspelled or offline"
-                    else:
-                        print(e, file=sys.stderr)
+                        dismissed += 1
+                    except Exception as e:
+                        if "authorized scopes" in str(e):
+                            print("\nWe need to authorize the app to make changes to your account.")
+                            core.deauthorize(args)
+                            mastodon = core.readwrite(args)
+                            # retry
+                            mastodon.notifications_dismiss(notification["id"])
+                            dismissed += 1
+                        elif "not found" in str(e):
+                            pass
+                        elif "Name or service not known" in str(e):
+                            error = "Error: the instance name is either misspelled or offline"
+                        else:
+                            print(e, file=sys.stderr)
+                else:
+                    print("Dismiss "
+                          # + str(notification["id"])
+                          + " " + notification["created_at"].strftime("%Y-%m-%d")
+                          + " " + notification["account"]["acct"]
+                          + " " + notification["type"])
 
-            bar.finish()
+            notifications = mastodon.fetch_next(notifications)
 
-            if error:
-                print(error, file=sys.stderr)
+        if error:
+            print(error, file=sys.stderr)
 
-        elif n_notifications > 0:
-
-            for notification in notifications:
-                print("Dismiss: "
-                      + notification["created_at"].strftime("%Y-%m-%d")
-                      + " " + notification["account"]["acct"]
-                      + " " + notification["type"])
+        print('Dismissed %d of %d notifications' % (n, total))
