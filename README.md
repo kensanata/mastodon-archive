@@ -349,6 +349,41 @@ toots.
 Note that both the HTML file with your statuses and the HTML file with
 your favourites will refer to the media files in your media directory.
 
+# Meow
+
+[Meow](https://purr.neocities.org/) is a viewer for Mastodon export
+files (gratis but not free software). Such files contain all of one's
+toots, stars and bookmarks. It can also process your archives created
+with this tool. Meow runs locally in your browser and needs access to
+your archive. This is accomplished by serving the archive via a local
+web server.
+
+Here’s how to serve your archive, locally, for Meow to access,
+including all the media in your archive, if you archived it:
+
+```text
+$ mastodon-archive meow kensanata@dice.camp
+```
+
+One this is done, open Meow with the “Mastodon Archive Import URL” and
+it will pull the archived data from the local web server you just
+started:
+
+```text
+https://purr.neocities.org/mastodon-archive-import/
+```
+
+Known limitations:
+
+* If a media file doesn't exist locally, Meow generally tries to load
+  it from the remote server. One notable exception is profile pictures
+  and banners — Meow uses fallback versions as Mastodon Archive
+  doesn't save them.
+
+* Boosts and favorites use post contents and media from the backup,
+  but not user profiles (because of how Meow works internally), those
+  are fetched from their instances.
+
 # Reporting
 
 Some numbers, including your ten most used hashtags:
