@@ -88,7 +88,7 @@ def archive(args):
                         if not id in seen:
                             if func is None or func(item):
                                 seen["id"] = status
-                                statuses.append(status)
+                                statuses.insert(count, status)
                                 count = count + 1
                         else:
                             duplicates = duplicates + 1
