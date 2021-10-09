@@ -26,9 +26,6 @@ server_port = 13523
 meow_origin = "https://purr.neocities.org"
 meow_open_path = meow_origin + "/mastodon-archive-import/"
 
-import_complete = False
-bar = False
-
 def meow(args):
     """
     Find and serve all archive files for Meow.
@@ -76,14 +73,19 @@ def meow(args):
 
     data["files"] = media_files
 
-    global bar
+    import_complete = False
+    def not_completed():
+        nonlocal import_complete
+        return not import_complete
+
+    bar = False
     if len(media_files) > 0:
         bar = Bar("Exporting files", max = len(media_files) + 1)
 
     class Handler(http.server.BaseHTTPRequestHandler):
         def do_GET(self):
-            global import_complete
-            global bar
+            nonlocal import_complete
+            nonlocal bar
 
             query = parse_qs(urlparse(self.path).query)
 
@@ -121,10 +123,6 @@ def meow(args):
 
         def log_message(self, format, *args):
             return
-
-    def not_completed():
-        global import_complete
-        return not import_complete
 
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("127.0.0.1", server_port), Handler) as httpd:
