@@ -377,8 +377,7 @@ Known limitations:
 
 * If a media file doesn't exist locally, Meow generally tries to load
   it from the remote server. One notable exception is profile pictures
-  and banners — Meow uses fallback versions as Mastodon Archive
-  doesn't save them.
+  and banners — you need to download your media to see them.
 
 * Boosts and favorites use post contents and media from the backup,
   but not user profiles (because of how Meow works internally), those
