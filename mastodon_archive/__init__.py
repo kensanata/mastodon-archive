@@ -29,6 +29,7 @@ from . import whitelist
 from . import mutuals
 from . import login
 from . import fix
+from . import meow
 
 def main():
     parser = argparse.ArgumentParser(
@@ -303,6 +304,16 @@ def main():
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=login.login)
+
+    parser_content = subparsers.add_parser(
+        name='meow',
+        help='import your backup into Meow, a browser-based export viewer (see https://purr.neocities.org/about/)')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.add_argument("--combine",
+                                action="store_true",
+                                help="combine archives in case they are split")
+    parser_content.set_defaults(command=meow.meow)
 
 
     args = parser.parse_args()
