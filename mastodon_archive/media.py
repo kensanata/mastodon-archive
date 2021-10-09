@@ -51,6 +51,11 @@ def media(args):
                 if attachment["url"]:
                         urls.append(attachment["url"])
 
+    # these two are always available; if the user didn't set it, will link to a
+    # placeholder image
+    for picture in ["avatar", "header"]:
+        urls.append(data["account"][picture])
+
     print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
     bar = Bar('Downloading', max = len(urls))
