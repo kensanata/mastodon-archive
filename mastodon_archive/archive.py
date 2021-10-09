@@ -18,21 +18,6 @@ import sys
 import os.path
 from . import core
 
-def progress_bar(chars="▏▎▍▌▋▊▉█"):
-    """
-    Return a progress bar updater which you can then call.
-    """
-    n = 0
-    def progress():
-        nonlocal n
-        if n != 0:
-            sys.stdout.write("\b")
-        sys.stdout.write(chars[n])
-        sys.stdout.flush()
-        n = (n + 1) % len(chars)
-
-    return progress
-
 def archive(args):
     """
     Archive your toots and favourites from your Mastodon account
@@ -84,7 +69,7 @@ def archive(args):
         obviously.
         """
         seen = { str(status["id"]): status for status in statuses }
-        progress = progress_bar()
+        progress = core.progress_bar()
 
         # define function such that we can return from the inner and
         # from the outer loop

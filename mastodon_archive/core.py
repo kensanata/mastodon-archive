@@ -22,6 +22,21 @@ import glob
 import re
 import shutil
 
+def progress_bar(chars="▏▎▍▌▋▊▉█"):
+    """
+    Return a progress bar updater which you can then call.
+    """
+    n = 0
+    def progress():
+        nonlocal n
+        if n != 0:
+            sys.stdout.write("\b")
+        sys.stdout.write(chars[n])
+        sys.stdout.flush()
+        n = (n + 1) % len(chars)
+
+    return progress
+
 def parse(account):
     """
     Parse account into username and domain.
