@@ -157,6 +157,7 @@ def expire(args):
 
         mastodon = core.login(args)
         notifications = mastodon.notifications(limit=100)
+        error = ''
         total = 0
         dismissed = 0
         while (notifications):
@@ -193,4 +194,4 @@ def expire(args):
         if error:
             print(error, file=sys.stderr)
 
-        print('Dismissed %d of %d notifications' % (n, total))
+        print('Dismissed %d of %d notifications' % (dismissed, total))

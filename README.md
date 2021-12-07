@@ -842,7 +842,7 @@ curl --silent --show-error \
 
 # Alternatives
 
-There are two kinds of alternatives:
+There are three kinds of alternatives:
 
 1. Solutions that extract your public toots from your profile, e.g.
    [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
@@ -859,3 +859,11 @@ There are two kinds of alternatives:
    toots, not *all* of them.
 
     * [Mastotool "Atom"](https://github.com/kensanata/mastotool)
+
+3. Solutions that make use of the official Mastodon downloads.
+
+    * [Mastodon Data Viewer](https://github.com/blackle/mastodon-data-viewer.py)
+	  is a viewer for Mastodon backup data written in Python. It
+	  creates a local server that you can use to browse the data.
+	  Designed for large (>40,000) toot archives. This tool only takes
+	  official Mastodon backups.
