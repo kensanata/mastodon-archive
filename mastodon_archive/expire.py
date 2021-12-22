@@ -37,19 +37,21 @@ def text(status):
 
 def delete(mastodon, collection, status):
     """
-    Delete toot, unfavour favourite, or dismiss notification and mark
-    it as deleted. The "record not found" error is handled elsewhere.
+    Delete toot or unfavour favourite and mark it as deleted. The
+    "record not found" error is handled elsewhere. Mentions cannot be
+    dismissed because mastodon.notifications_dismiss requires a
+    notification id, not a status id.
     """
     if collection == 'statuses':
         if status["reblog"]:
             mastodon.status_unreblog(status["reblog"]["id"])
+            status["deleted"] = True
         else:
             mastodon.status_delete(status["id"])
+            status["deleted"] = True
     elif collection == 'favourites':
         mastodon.status_unfavourite(status["id"])
-    elif collection == 'mentions':
-        mastodon.notifications_dismiss(status["id"])
-    status["deleted"] = True
+        status["deleted"] = True
 
 def expire(args):
     """
@@ -88,71 +90,86 @@ def expire(args):
         pinned = "pinned" in status and status["pinned"] == True
         return created < cutoff and not deleted and not pinned
 
-    statuses = list(filter(matches, data[collection]))
-    n_statuses = len(statuses)
-    shuffle(statuses)
+    if collection != "mentions":
 
-    if (n_statuses == 0):
-        print("No " + collection + " are older than %d weeks" % args.weeks,
-              file=sys.stderr)
+        statuses = list(filter(matches, data[collection]))
+        n_statuses = len(statuses)
+        shuffle(statuses)
 
-    if confirmed and n_statuses > 0:
+        if (n_statuses == 0):
+            print(f"No {collection} are older than {args.weeks} weeks",
+                  file=sys.stderr)
 
-        bar = Bar('Expiring', max = len(statuses))
-        error = ''
+        if confirmed and n_statuses > 0:
 
-        def signal_handler(signal, frame):
-            print("\nYou pressed Ctrl+C! Saving data before exiting!")
-            core.save(status_file, data)
-            sys.exit(0)
+            bar = Bar('Expiring', max = len(statuses))
+            error = ''
 
-        signal.signal(signal.SIGINT, signal_handler)
+            def signal_handler(signal, frame):
+                print("\nYou pressed Ctrl+C! Saving data before exiting!")
+                core.save(status_file, data)
+                sys.exit(0)
 
-        for status in statuses:
-            try:
-                delete(mastodon, collection, status)
-            except Exception as e:
-                if "authorized scopes" in str(e):
-                    print("\nWe need to authorize the app to make changes to your account.")
-                    core.deauthorize(args)
-                    mastodon = core.readwrite(args)
-                    # retry
+            signal.signal(signal.SIGINT, signal_handler)
+
+            for status in statuses:
+                try:
                     delete(mastodon, collection, status)
-                elif "not found" in str(e):
-                    status["deleted"] = True
-                elif "Name or service not known" in str(e):
-                    error = "Error: the instance name is either misspelled or offline"
-                else:
-                    print(e, file=sys.stderr)
-            bar.next()
+                except Exception as e:
+                    if "authorized scopes" in str(e):
+                        print("\nWe need to authorize the app to make changes to your account.")
+                        core.deauthorize(args)
+                        mastodon = core.readwrite(args)
+                        # retry
+                        delete(mastodon, collection, status)
+                    elif "not found" in str(e):
+                        status["deleted"] = True
+                    elif "Name or service not known" in str(e):
+                        error = "Error: the instance name is either misspelled or offline"
+                    else:
+                        print(e, file=sys.stderr)
+                        bar.next()
 
-        bar.finish()
+            bar.finish()
 
-        if error:
-            print(error, file=sys.stderr)
+            if error:
+                print(error, file=sys.stderr)
 
-        core.save(status_file, data)
+            core.save(status_file, data)
 
-    elif n_statuses > 0:
+        elif n_statuses > 0:
 
-        for status in statuses:
-            if collection == 'statuses':
-                print("Delete: " + text(status))
-            elif collection == 'favourites':
-                print("Unfavour: " + text(status))
-            elif collection == 'mentions':
-                print("Dismiss: " + text(status))
+            for status in statuses:
+                if collection == 'statuses':
+                    print("Delete: " + text(status))
+                elif collection == 'favourites':
+                    print("Unfavour: " + text(status))
 
-    if delete_others:
-        print('Dismissing other notifications')
+    if collection == "mentions":
+
+        if delete_others:
+            print('Dismissing mentions and other notifications')
+        else:
+            print('Dismissing mentions')
+
         progress = core.progress_bar()
 
-        # unlike above where we're getting the created_at value from
-        # the JSON file where the date comes in iso format... see
-        # core.save
-        def others(notifications):
+        # only consider statuses with an id (no idea what the others are)
+        statuses = list(filter(lambda x: "id" in x, data[collection]))
+        n_statuses = len(statuses)
+        print("Mentions already archived: " + str(n_statuses))
+
+        # create a dictionary for fast lookup of archived statuses that mention us
+        ids = { x["id"]: True for x in statuses }
+
+        # The date format here is slightly different. We expire
+        # notifications if we have the status is a mention in our
+        # archive, or if the status is not a mention and
+        # --delete-others was used -- and if if it is older than the
+        # cutoff period, of course.
+        def matches(notifications):
             return [x for x in notifications
-                    if x.type != "mention"
+                    if (x.id in ids if x.type == "mention" else delete_others)
                     and x["created_at"].replace(tzinfo = None) < cutoff]
 
         mastodon = core.login(args)
@@ -163,7 +180,7 @@ def expire(args):
         while (notifications):
             progress()
             total += len(notifications)
-            for notification in others(notifications):
+            for notification in matches(notifications):
                 if confirmed:
                     try:
                         mastodon.notifications_dismiss(notification["id"])
@@ -183,7 +200,7 @@ def expire(args):
                         else:
                             print(e, file=sys.stderr)
                 else:
-                    print("Dismiss "
+                    print("Dismiss"
                           # + str(notification["id"])
                           + " " + notification["created_at"].strftime("%Y-%m-%d")
                           + " " + notification["account"]["acct"]
@@ -194,4 +211,4 @@ def expire(args):
         if error:
             print(error, file=sys.stderr)
 
-        print('Dismissed %d of %d notifications' % (dismissed, total))
+        print(f"Dismissed {dismissed} of {total} notifications")
