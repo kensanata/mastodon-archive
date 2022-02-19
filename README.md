@@ -15,7 +15,9 @@ ActivityPub JSON format alongside the media files attached to them,
 your avatar and header images as well as the private key of your
 account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
-tool.
+tool. Use something like
+[mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
+to browse the archive.
 
 Please report issues on the
 [Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
