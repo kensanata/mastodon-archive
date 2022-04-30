@@ -52,22 +52,24 @@ def media(args):
             card = status["reblog"]["card"]
         for attachment in attachments:
                 if attachment["preview_url"]:
-                        urls.append(attachment["preview_url"])
+                        urls.append((attachment["preview_url"], attachment["preview_remote_url"]))
                         preview_urls_count += 1
                 if attachment["url"]:
-                        urls.append(attachment["url"])
+                        urls.append((attachment["url"], attachment["remote_url"]))
         if account["avatar"]:
-                urls.append(account["avatar"])
+                urls.append((account["avatar"], None))
         for emoji in emojis:
                 if emoji["url"]:
-                        urls.append(emoji["url"])
+                        urls.append((emoji["url"], None))
         if card and card["image"]:
-                urls.append(card["image"])
+                urls.append((card["image"], None))
+
+    urls = list(dict.fromkeys(urls))
 
     # these two are always available; if the user didn't set it, will link to a
     # placeholder image
     for picture in ["avatar", "header"]:
-        urls.append(data["account"][picture])
+        urls.append((data["account"][picture], None))
 
     print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
@@ -77,26 +79,16 @@ def media(args):
 
     # start downloading the missing files from the back
     for url in reversed(urls):
-        print("Downloading " + url)
         bar.next()
+        remoteurl = url[1]
+        url = url[0]
         path = urlparse(url).path
         file_name = media_dir + path
         if not os.path.isfile(file_name):
             dir_name =  os.path.dirname(file_name)
             os.makedirs(dir_name, exist_ok = True)
             try:
-                req = urllib.request.Request(
-                    url, data=None,
-                    headers={'User-Agent': 'Mastodon-Archive/1.3 '
-                             '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
-                try:
-                  with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
-                    data = response.read()
-                    fp.write(data)
-                except HTTPError as he:
-                  print("\nFailed to open " + url + " during a media request.")
-                except URLError as ue:
-                  print("\nFailed to open " + url + " during a media request.")
+                download(url, remoteurl, file_name)
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
@@ -107,3 +99,22 @@ def media(args):
 
     if errors > 0:
         print("%d downloads failed" % errors)
+
+def download(url, remoteurl, file_name):
+    print("Downloading " + url)
+    req = urllib.request.Request(
+        url, data=None,
+        headers={'User-Agent': 'Mastodon-Archive/1.3 '
+                    '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
+    try:
+        with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
+          data = response.read()
+          fp.write(data)
+    except HTTPError as he:
+        print("\nFailed to open " + url + " during a media request.")
+        if remoteurl:
+            download(remoteurl, None, file_name)
+    except URLError as ue:
+        print("\nFailed to open " + url + " during a media request.")
+        if remoteurl:
+            download(remoteurl, None, file_name)
