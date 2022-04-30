@@ -39,6 +39,7 @@ def context(args):
 
     for collection in ["statuses",
                        "favourites",
+                       "bookmarks",
                        "mentions"]:
         statuses = data[collection];
         print("Indexing %d %s..." % (len(statuses), collection))

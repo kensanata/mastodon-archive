@@ -49,6 +49,10 @@ def main():
                                 action='store_const',
                                 const=True, default=False,
                                 help='skip download of favourites')
+    parser_content.add_argument("--no-bookmarks", dest='skip_bookmarks',
+                                action='store_const',
+                                const=True, default=False,
+                                help='skip download of bookmarks')
     parser_content.add_argument("--with-mentions", dest='with_mentions',
                                 action='store_const',
                                 const=True, default=False,
@@ -93,9 +97,9 @@ def main():
                                 action="store_true",
                                 help="combine archives in case they are split")
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites'],
+                                choices=['statuses', 'favourites', 'bookmarks'],
                                 default='statuses',
-                                help='export statuses or favourites')
+                                help='export statuses, favourites or bookmarks')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
@@ -112,9 +116,9 @@ def main():
                                 action="store_true",
                                 help="combine archives in case they are split")
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites', 'mentions', 'all'],
+                                choices=['statuses', 'favourites', 'bookmarks', 'mentions', 'all'],
                                 default='statuses',
-                                help='export statuses, favourites, or mentions')
+                                help='export statuses, favourites, bookmarks or mentions')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.add_argument("pattern", nargs='*',
@@ -139,9 +143,9 @@ def main():
                                 action="store_true",
                                 help="combine archives in case they are split")
     parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites'],
+                                choices=['statuses', 'favourites', 'bookmarks'],
                                 default='statuses',
-                                help='export statuses or favourites')
+                                help='export statuses favourites or bookmarks')
     parser_content.add_argument("--toots-per-page", dest='toots',
                                 metavar='N', type=int, default=2000,
                                 help='how many toots per HTML page')

@@ -56,7 +56,7 @@ def text(args):
 
     if collection == "all":
         statuses = itertools.chain.from_iterable(
-            data[collection] for collection in ["statuses", "favourites", "mentions"]
+            data[collection] for collection in ["statuses", "favourites", "bookmarks", "mentions"]
         )
     else:
         statuses = data[collection]

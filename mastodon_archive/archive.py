@@ -24,6 +24,7 @@ def archive(args):
     """
 
     skip_favourites = args.skip_favourites
+    skip_bookmarks = args.skip_bookmarks
     with_mentions = args.with_mentions
     with_followers = args.with_followers
     with_following = args.with_following
@@ -135,6 +136,21 @@ def archive(args):
         print("Get new favourites")
         favourites = complete(data["favourites"], mastodon.favourites())
 
+    if skip_bookmarks:
+        print("Skipping bookmarks")
+        if data is None or not "bookmarks" in data:
+            bookmarks = []
+        else:
+            bookmarks = data["bookmarks"]
+    elif data is None or not "bookmarks" in data or len(data["bookmarks"]) == 0:
+        print("Get bookmarks (this may take a while)")
+        bookmarks = mastodon.bookmarks()
+        bookmarks = mastodon.fetch_remaining(
+            first_page = bookmarks)
+    else:
+        print("Get new bookmarks")
+        bookmarks = complete(data["bookmarks"], mastodon.bookmarks())
+
     if not with_mentions:
         print("Skipping mentions")
         if data is None or not "mentions" in data:
@@ -180,14 +196,16 @@ def archive(args):
         'account': user,
         'statuses': statuses,
         'favourites': favourites,
+        'bookmarks': bookmarks,
         'mentions': mentions,
         'followers': followers,
         'following': following,
     }
 
-    print("Saving %d statuses, %d favourites, %d mentions, %d followers, and %d following" % (
+    print("Saving %d statuses, %d favourites, %d bookmarks, %d mentions, %d followers, and %d following" % (
         len(statuses),
         len(favourites),
+        len(bookmarks),
         len(mentions),
         len(followers),
         len(following)))

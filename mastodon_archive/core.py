@@ -259,7 +259,7 @@ def load(file_name, required=False, quiet=False, combine=False):
             for archive in archives:
                 archived_data = _json_load(archive)
 
-                for collection in ["statuses", "favourites", "mentions"]:
+                for collection in ["statuses", "favourites", "bookmarks", "mentions"]:
                     data[collection].extend(archived_data[collection])
 
         data["statuses"].sort(key=lambda x: x["created_at"], reverse=True)

@@ -81,7 +81,7 @@ def transform_media_urls(data, func):
     """
     Calls func on each media file URL and sets the latter to the result.
     """
-    for collection in ["statuses", "favourites"]:
+    for collection in ["statuses", "favourites", "bookmarks"]:
         for status in data[collection]:
             attachments = status["media_attachments"]
             if status["reblog"] is not None:
