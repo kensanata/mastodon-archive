@@ -86,6 +86,10 @@ a:hover {
 .wrapper {
         padding-top: 10px;
         border-top: 1px solid #393f4f;
+        position: relative;
+}
+.status {
+        padding-left: 78px;
 }
 .boosted a {
         color: #606984;
@@ -95,6 +99,7 @@ a:hover {
 }
 .boosted {
         padding-bottom: 10px;
+        padding-left: 78px;
 }
 .meta a {
         color: #fff;
@@ -112,9 +117,16 @@ a:hover {
         display: block;
         float: right;
 }
+.meta img {
+        height: 48px;
+        position: absolute;
+        left: 10px;
+        border-radius: 4px;
+}
 .media {
         margin-top: 8px;
         margin-bottom: 8px;
+        margin-left: 78px;
         height: 110px;
         overflow: hidden;
 }
@@ -203,6 +215,7 @@ boost_template = '''\
 status_template = '''\
 <div class="status">
 <div class="meta">
+<img src="%s">
 <strong class="name"><a href="%s">%s</a></strong>
 <span class="nick">@%s</span>
 <a class="time" href="%s">%s</a>
@@ -248,6 +261,7 @@ def write_status(fp, media_dir, status):
 
     user = status["account"]
     info = status_template % (
+        file_url(media_dir, user["avatar"]),
         user["url"],
         user["display_name"],
         user["acct"],
