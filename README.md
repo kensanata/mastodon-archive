@@ -1,7 +1,7 @@
 # Mastodon Archive
 
 This tool allows you to make an archive of your statuses, your
-favourites and the media in both your statuses and your favourites.
+favourites, bookmarks and the media in both your statuses, your favourites and your bookmarks.
 From this archive, you can generate a simple text file, or a HTML file
 with or without media. Take a look at an
 [example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
@@ -101,10 +101,10 @@ This can differ from instance to instance and is subject to change."
 Thus, if every request gets 20 toots, then we can get at most 6000
 toots per five minutes.
 
-If this is taking too long, consider skipping your favourites:
+If this is taking too long, consider skipping your favourites and bookmarks:
 
 ```text
-$ mastodon-archive archive --no-favourites kensanata@dice.camp
+$ mastodon-archive archive --no-favourites --no-bookmarks kensanata@dice.camp
 ```
 
 If you want a better picture of conversations, you can also include
@@ -193,11 +193,16 @@ $ mastodon-archive media kensanata@dice.camp
 Downloading |################################| 10/10
 ```
 By default, media you uploaded and media of statuses you added your
-favourites are not part of your archive. To download these too,
+favourites or bookmarks are not part of your archive. To download these too,
 specify the favourites collection:
 
 ```text
 $ mastodon-archive media --collection favourites kensanata@dice.camp
+```
+specify the bookmarks collection:
+
+```text
+$ mastodon-archive media --collection bookmarks kensanata@dice.camp
 ```
 
 You will end up with a new directory, `dice.camp.user.kensanata`. It
@@ -277,7 +282,7 @@ protect your backslashes and questionmarks.
 $ mastodon-archive text kensanata@dice.camp house 'rule\b'
 ```
 
-You can also search your favourites or your mentions:
+You can also search your favourites, your bookmarks or your mentions:
 
 ```text
 $ mastodon-archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
@@ -763,6 +768,7 @@ The data we have in our archive file is a hash with three keys:
 1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
 2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 3. `favourites` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
+3. `bookmarks` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 4. `mentions` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 
 If you want to understand the details and the nested nature of these
