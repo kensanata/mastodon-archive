@@ -250,7 +250,7 @@ def write_status(fp, media_dir, status):
     info = status_template % (
         user["url"],
         user["display_name"],
-        user["username"],
+        user["acct"],
         status["url"],
         dateutil.parser.parse(
             status["created_at"]).strftime(
