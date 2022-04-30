@@ -20,7 +20,7 @@ from . import core
 
 def archive(args):
     """
-    Archive your toots and favourites from your Mastodon account
+    Archive your toots, favourites, and bookmarks from your Mastodon account
     """
 
     skip_favourites = args.skip_favourites

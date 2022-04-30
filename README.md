@@ -415,8 +415,8 @@ Top 10 hashtags:
 ```
 
 You can specify a different time number of weeks to consider using
-`--newer-than N` or use `--all` to consider all your statuses and
-favourites.
+`--newer-than N` or use `--all` to consider all your statuses,
+favourites and bookmarks.
 
 You can list a different number of hashtags using `--top N` and you
 can list all of them by using `--top -1`. This might result in a very
@@ -739,7 +739,7 @@ accounts="kensanata@octodon.social kensanata@dice.camp kensanata@tabletop.social
 echo Archive Statuses, Favourites, Mentions
 for acc in $accounts; do
     echo "$acc"
-    mastodon-archive archive --with-mentions "$acc"
+    mastodon-archive archive --skip-bookmarks --with-mentions "$acc"
 done
 
 echo Expiring Statuses
