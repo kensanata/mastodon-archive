@@ -129,6 +129,7 @@ a:hover {
         margin-left: 78px;
         height: 110px;
         overflow: hidden;
+        height: 273.938px;
 }
 .media a {
         display: block;
@@ -137,17 +138,28 @@ a:hover {
         border: 1px solid #282c37;
         box-sizing: border-box;
         overflow: hidden;
+        height: 100%%;
+        width: 100%%;
+        cursor: zoom-in;
 }
-.more a {
-        max-width: 50%%;
-        max-height: 50%%;
+.tall {
+        width: 50%% !important;
+        height: 100%%;
         display: block;
 }
-/* http://jonrohan.codes/fieldnotes/vertically-center-clipped-image/ */
+.small {
+        width: 50%% !important;
+        height: 50%% !important;
+        display: block;
+}
 .media img {
-        position: relative;
-        top: 50%%;
-        transform: translateY(-50%%);
+        height: 100%%;
+        width: 100%%;
+        -o-object-fit: cover;
+        font-family: "object-fit:cover";
+        object-fit: cover;
+        object-position: center;
+        border-radius: 4px;
 }
 nav a, .content a {
         color: #d9e1e8;
@@ -227,12 +239,12 @@ status_template = '''\
 '''
 
 media_template = '''\
-<div class="media %s">
+<div class="media">
 %s</div>\
 '''
 
 preview_template = '''\
-<a href="%s"><img src="%s"/></a>
+<a href="%s" class="%s" style="padding: %s;"><img src="%s"/></a>
 '''
 
 wrapper_template = '''\
@@ -250,7 +262,7 @@ def file_url(media_dir, url1, url2=None):
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QsUETQjvc7YnAAAACZpVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVAgb24gYSBNYWOV5F9bAAADfElEQVRo3u1ZTUhUURg997sPy9TnDxk4IeqkmKghCKLBLNq2MCXQTXsXomFMIdK0EIoIskWLcNVKaFEulBIzxEgQLBRFXZmiaIOkboSe2Lv3tsg3+Hr96Mx7OhNzl/PuvHfPPd/5zvfdy5719Cj8B4Pwn4wkkCSQRAGilIIQ4q9zpJSQUrr6Xc2tF0kpQURgjGF2fh4zc3P4vLyMza0t27xzubkoKy1FoLYW532+yP/iBohhGHjR349P09M/qSaCUs7M/nVzE1vb23g/Po6zOTkItrcjPS0NnPOYvs9i9RGlFJ739eHj1BSI6EghY81va2nBxZKSmJiJidPvpon+wUHMzs1FwgsAGGN/3rkDz6z5T3t7sR4O/1NbnoUWA3AqJQXm/gKsHS7Iz0egrg7lZWXI1PUI6PmFBbwcGMDW9rbjXQ8eP8aznp4T1AhjICIIIVBVWYkbzc1IPX0apmnaQkXjHJXl5ai6dAmvBgbwbmzMwdSHiQlcrqmJSi+uiD0jPR3BtjZkZ2VFwkXTNMdCrQVer6/H6toaFpeWbJqamJxEoK7u+DVCRKiqqMD9UCgSQocRrJQSTQ0NNhBKKSyvrJyM2IkIvry8QwM4yM55ny++nD2alPm3rHbihnjUKiC8seEAl52VlVhFIxFhcGjIxiZjDDXV1VF7ybEz8t008SUcxsy+iR5k6drVq78ta+KOEdM0sbe3h4dPnjieNTU2QggRtX6OjREhBKSUCN69C8ZYZOeJCBeKinAlEIh/sVs7fbOz0waCc46c7Gzcam2N/w7RAtF2546ttOecI1PX0d3VFbUujg2IlBKcc7QGg7Zql3MOPSMD90MhKKVc8RVPgRARbodC4JzbQJxJTcWDe/dcA+GpRqSUeD08jG+GYauphBB41N3tWovrOSNEhDcjI46OsbOjw1Hixy0jUkqsh8OOEkTXdRTk5yfOuZZSCqtraw4gZSUliXVAp5TCzs6Oo5bK1PWY+vIT0Yhpmo6MpGmaK54RN9Vv4gPxoKHyViMAjN1dmx6EEDAMA17dKrHkjVWcDU9LlF9dnYhcd3TPnX1xacl2AEdEKPb7Uez3ewLGUyBvR0cj58La/imjv7AwcYBYYEwhbJlLKpUUezJrudGPaAeuBzTOQR46u+YViGK/39anW78lVPq1Fu0vLExsH/F60cmslQSSBHL08QPK53LVsfanXQAAAABJRU5ErkJggg=="
 
 def write_status(fp, media_dir, status):
-    boost = "";
+    boost = ""
     if status["reblog"] is not None:
         user = status["account"]
         displayname = user["display_name"]
@@ -284,12 +296,42 @@ def write_status(fp, media_dir, status):
     if len(attachments) > 0:
         previews = []
         for attachment in attachments:
+            size = ""
+            padding = "0"
+            if len(attachments) == 2:
+                size = "tall"
+                if len(previews) == 0:
+                    padding = "0 1px 0 0"
+                elif len(previews) == 1:
+                    padding = "0 0 0 1px"
+            if len(attachments) == 3:
+                if len(previews) == 0:
+                    padding = "0 1px 0 0"
+                    size="tall"
+                elif len(previews) == 1:
+                    padding = "0 0 1px 1px"
+                    size = "small"
+                elif len(previews) == 2:
+                    padding = "1px 0 0 1px"
+                    size = "small"
+            elif len(attachments) == 4:
+                size = "small"
+                if len(previews) == 0:
+                    padding = "0 1px 1px 0"
+                elif len(previews) == 1:
+                    padding = "0 0 1px 1px"
+                elif len(previews) == 2:
+                     padding = "1px 1px 0 0"
+                elif len(previews) == 3:
+                    padding = "1px 0 0 1px"
+
             previews.append(preview_template % (
                 file_url(media_dir, attachment["url"]),
+                size,
+                padding,
                 file_url(media_dir, attachment["preview_url"])))
 
         media = media_template % (
-                'more' if len(attachments) > 1 else 'one',
                 ''.join(previews))
 
     html = wrapper_template % (boost, info, media)
