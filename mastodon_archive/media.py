@@ -42,14 +42,25 @@ def media(args):
     preview_urls_count=0
     for status in data[args.collection]:
         attachments = status["media_attachments"]
+        account = status["account"]
+        emojis = status["emojis"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
+            account = status["reblog"]["account"]
+            emojis = status["reblog"]["emojis"]
         for attachment in attachments:
                 if attachment["preview_url"]:
                         urls.append(attachment["preview_url"])
                         preview_urls_count += 1
                 if attachment["url"]:
                         urls.append(attachment["url"])
+        if account["avatar"]:
+                urls.append(account["avatar"])
+        for emoji in emojis:
+                if emoji["url"]:
+                        urls.append(emoji["url"])
+        if status["card"] and status["card"]["url"]:
+                urls.append(status["card"]["url"])
 
     # these two are always available; if the user didn't set it, will link to a
     # placeholder image
