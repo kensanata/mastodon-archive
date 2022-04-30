@@ -44,10 +44,12 @@ def media(args):
         attachments = status["media_attachments"]
         account = status["account"]
         emojis = status["emojis"]
+        card = status["card"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
             account = status["reblog"]["account"]
             emojis = status["reblog"]["emojis"]
+            card = status["reblog"]["card"]
         for attachment in attachments:
                 if attachment["preview_url"]:
                         urls.append(attachment["preview_url"])
@@ -59,8 +61,8 @@ def media(args):
         for emoji in emojis:
                 if emoji["url"]:
                         urls.append(emoji["url"])
-        if status["card"] and status["card"]["url"]:
-                urls.append(status["card"]["url"])
+        if card and card["image"]:
+                urls.append(card["image"])
 
     # these two are always available; if the user didn't set it, will link to a
     # placeholder image
@@ -75,6 +77,7 @@ def media(args):
 
     # start downloading the missing files from the back
     for url in reversed(urls):
+        print("Downloading " + url)
         bar.next()
         path = urlparse(url).path
         file_name = media_dir + path
