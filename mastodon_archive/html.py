@@ -253,17 +253,24 @@ def write_status(fp, media_dir, status):
     boost = "";
     if status["reblog"] is not None:
         user = status["account"]
+        displayname = user["display_name"]
+        if not displayname:
+            displayname = user["username"]
         boost = boost_template % (
             user["url"],
-            user["display_name"])
+            displayname)
         # display the boosted status instead
         status = status["reblog"]
-
+        
     user = status["account"]
+    displayname = user["display_name"]
+    if not displayname:
+        displayname = user["username"]
+
     info = status_template % (
         file_url(media_dir, user["avatar"]),
         user["url"],
-        user["display_name"],
+        displayname,
         user["acct"],
         status["url"],
         dateutil.parser.parse(
