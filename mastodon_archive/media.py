@@ -61,6 +61,10 @@ def media(args):
         for emoji in emojis:
                 if emoji["url"]:
                         urls.append((emoji["url"], None))
+        if len(account["emojis"]) > 0:
+            for emoji in account["emojis"]:
+                if emoji["url"]:
+                        urls.append((emoji["url"], None))
         if card and card["image"]:
                 urls.append((card["image"], None))
 
