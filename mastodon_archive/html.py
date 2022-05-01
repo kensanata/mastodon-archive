@@ -16,6 +16,7 @@
 
 import sys
 import os.path
+from html import escape
 import html2text
 import datetime
 import dateutil.parser
@@ -87,6 +88,7 @@ a:hover {
         padding-top: 10px;
         border-top: 1px solid #393f4f;
         position: relative;
+        min-height: 59px;
 }
 .status {
         padding-left: 78px;
@@ -160,6 +162,50 @@ a:hover {
         object-fit: cover;
         object-position: center;
         border-radius: 4px;
+}
+.card {
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        border: 1px solid #393f4f;
+        border-radius: 4px;
+        margin: 14px 0 10px 78px;
+	font-size: 14px;
+	color: #606984;
+	text-decoration: none;
+	overflow: hidden;
+}
+
+.card img {
+        flex: 0 0 60px;
+        width: 100%%;
+	-o-object-fit: cover;
+	font-family: "object-fit:cover";
+	object-fit: cover;
+	background-size: cover;
+	background-position: 50%%;
+}
+.card div {
+        padding: 10px 8px 8px;
+        flex: 1 1 auto;
+}
+.card strong {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 5px;
+	color: #9baec8;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-decoration: none;
+}
+.card span {
+	display: block;
+	margin-top: 5px;
+	font-size: 13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 nav a, .content a {
         color: #d9e1e8;
@@ -249,8 +295,17 @@ preview_template = '''\
 
 wrapper_template = '''\
 <div class="wrapper">
-%s%s%s
+%s%s%s%s
 </div>
+'''
+
+card_template = '''\
+<a href="%s" class="card" target="_blank" rel="noopener noreferrer">
+<img src="%s" alt="">
+<div>
+<strong title="%s">%s</strong>
+<span>%s</span>
+</div></a>
 '''
 
 def file_url(media_dir, url1, url2=None):
@@ -260,20 +315,6 @@ def file_url(media_dir, url1, url2=None):
             if os.path.isfile(media_dir + path):
                 return media_dir + path
     return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4QsUETQjvc7YnAAAACZpVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVAgb24gYSBNYWOV5F9bAAADfElEQVRo3u1ZTUhUURg997sPy9TnDxk4IeqkmKghCKLBLNq2MCXQTXsXomFMIdK0EIoIskWLcNVKaFEulBIzxEgQLBRFXZmiaIOkboSe2Lv3tsg3+Hr96Mx7OhNzl/PuvHfPPd/5zvfdy5719Cj8B4Pwn4wkkCSQRAGilIIQ4q9zpJSQUrr6Xc2tF0kpQURgjGF2fh4zc3P4vLyMza0t27xzubkoKy1FoLYW532+yP/iBohhGHjR349P09M/qSaCUs7M/nVzE1vb23g/Po6zOTkItrcjPS0NnPOYvs9i9RGlFJ739eHj1BSI6EghY81va2nBxZKSmJiJidPvpon+wUHMzs1FwgsAGGN/3rkDz6z5T3t7sR4O/1NbnoUWA3AqJQXm/gKsHS7Iz0egrg7lZWXI1PUI6PmFBbwcGMDW9rbjXQ8eP8aznp4T1AhjICIIIVBVWYkbzc1IPX0apmnaQkXjHJXl5ai6dAmvBgbwbmzMwdSHiQlcrqmJSi+uiD0jPR3BtjZkZ2VFwkXTNMdCrQVer6/H6toaFpeWbJqamJxEoK7u+DVCRKiqqMD9UCgSQocRrJQSTQ0NNhBKKSyvrJyM2IkIvry8QwM4yM55ny++nD2alPm3rHbihnjUKiC8seEAl52VlVhFIxFhcGjIxiZjDDXV1VF7ybEz8t008SUcxsy+iR5k6drVq78ta+KOEdM0sbe3h4dPnjieNTU2QggRtX6OjREhBKSUCN69C8ZYZOeJCBeKinAlEIh/sVs7fbOz0waCc46c7Gzcam2N/w7RAtF2546ttOecI1PX0d3VFbUujg2IlBKcc7QGg7Zql3MOPSMD90MhKKVc8RVPgRARbodC4JzbQJxJTcWDe/dcA+GpRqSUeD08jG+GYauphBB41N3tWovrOSNEhDcjI46OsbOjw1Hixy0jUkqsh8OOEkTXdRTk5yfOuZZSCqtraw4gZSUliXVAp5TCzs6Oo5bK1PWY+vIT0Yhpmo6MpGmaK54RN9Vv4gPxoKHyViMAjN1dmx6EEDAMA17dKrHkjVWcDU9LlF9dnYhcd3TPnX1xacl2AEdEKPb7Uez3ewLGUyBvR0cj58La/imjv7AwcYBYYEwhbJlLKpUUezJrudGPaAeuBzTOQR46u+YViGK/39anW78lVPq1Fu0vLExsH/F60cmslQSSBHL08QPK53LVsfanXQAAAABJRU5ErkJggg=="
-
-def escape(s):
-    """
-    Replace special characters "&", "<" and ">" to HTML-safe sequences.
-    If the optional flag quote is true (the default), the quotation mark
-    characters, both double quote (") and single quote (') characters are also
-    translated.
-    """
-    s = s.replace("&", "&amp;") # Must be done first!
-    s = s.replace("<", "&lt;")
-    s = s.replace(">", "&gt;")
-    s = s.replace('"', "&quot;")
-    s = s.replace('\'', "&#x27;")
-    return s
 
 def write_status(fp, media_dir, status):
     boost = ""
@@ -306,6 +347,8 @@ def write_status(fp, media_dir, status):
 
     media = ''
     attachments = status["media_attachments"]
+    card = ''
+    card_content = status["card"]
 
     if len(attachments) > 0:
         previews = []
@@ -345,14 +388,22 @@ def write_status(fp, media_dir, status):
                 file_url(media_dir, attachment["url"]),
                 size,
                 padding,
-                file_url(media_dir, attachment["preview_url"]),
+                file_url(media_dir, attachment["preview_url"], attachment["url"]),
                 description,
                 description))
 
         media = media_template % (
                 ''.join(previews))
+    elif card_content is not None:
+            card = card_template % (
+                card_content["url"],
+                file_url(media_dir, card_content["image"]),
+                card_content["title"],
+                card_content["title"],
+                urlparse(card_content["url"]).netloc
+            )
 
-    html = wrapper_template % (boost, info, media)
+    html = wrapper_template % (boost, info, media, card)
     fp.write(html)
 
 def html_file(domain, username, collection, page):
