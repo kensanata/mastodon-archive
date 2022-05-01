@@ -334,6 +334,13 @@ def write_status(fp, media_dir, status):
     if not displayname:
         displayname = user["username"]
 
+    content = status["content"]
+
+    if status["spoiler_text"]:
+        content = "<p>%s</p>%s" % (
+            status["spoiler_text"],
+            status["content"])
+
     info = status_template % (
         file_url(media_dir, user["avatar"]),
         user["url"],
@@ -343,7 +350,7 @@ def write_status(fp, media_dir, status):
         dateutil.parser.parse(
             status["created_at"]).strftime(
                 "%Y-%m-%d %H:%M"),
-        status["content"])
+        content)
 
     media = ''
     attachments = status["media_attachments"]
@@ -400,8 +407,7 @@ def write_status(fp, media_dir, status):
                 file_url(media_dir, card_content["image"]),
                 card_content["title"],
                 card_content["title"],
-                urlparse(card_content["url"]).netloc
-            )
+                urlparse(card_content["url"]).netloc)
 
     html = wrapper_template % (boost, info, media, card)
     fp.write(html)
