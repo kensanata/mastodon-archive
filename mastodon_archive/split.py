@@ -56,6 +56,7 @@ def split(args):
 
     for collection in ["statuses",
                        "favourites",
+                       "bookmarks",
                        "mentions"]:
         statuses = list(filter(
             lambda status: datetime.strptime(status["created_at"][0:10], "%Y-%m-%d") >= cutoff,

@@ -53,6 +53,7 @@ def replies(args):
 
     for collection in ["statuses",
                        "favourites",
+                       "bookmarks",
                        "mentions",
                        "replies"]:
         if collection not in data:
