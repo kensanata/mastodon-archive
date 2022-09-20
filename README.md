@@ -426,6 +426,12 @@ By default only your toots are considered for the hashtags. Use `--include-boost
 
 # Expiring your toots and favourites
 
+**Somewhat deprecated**: Please note that Mastodon now offers
+Preferences → Automated post deletion. Just make sure that you never
+skip your backups and you should be fine. 😅
+
+Mastodon does not expire your favourites.
+
 **Warning**: This is a destructive operation. You will delete your
 toots on your instance, or unfavour your favourites, or dismiss your
 notifications on your instance. Where as it might be possible to
