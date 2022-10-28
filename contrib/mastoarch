@@ -1,25 +1,29 @@
 #!/bin/bash
 # Script to automate your Mastodon backup. Run it without any arguments to show its usage.
-# You can use this cript e.g. via Cron for automated backups of your Mastodon account.
+# © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
+#
+# You can use this script e.g. via Cron for automated backups of your Mastodon account.
 # A command for cron could be: "cd /path/to/mastoarch && ./mastoarch archive >/dev/null"
 
-# Put in your Mastodon handle here:
-myacc="Demo@server.tld"
-# whether to automatically check-in new data to your local git repo
-autogit=0
+# -----------------------------------------------------------------------------
+# Default options (can be overridden via command-line):
+myacc="Demo@server.tld" # Your (default) Mastodon handle
+autogit=0               # whether to automatically check-in new data to your local git repo
 
 # !!! ================================================================== !!!
 # !!! Do not change below this line unless you know what you're doing :) !!!
 # !!! ================================================================== !!!
 
-#
+# -----------------------------------------------------------------------------
 # Evaluate command-line options
 while getopts "a:g:" OPT; do
   case $OPT in
     a) myacc=$OPTARG ;;
     g) case "$OPTARG" in
          0|1) autogit=$OPTARG ;;
-         *) echo "! ignoring invalid value for autogit. -g must be 0 or 1." ; exit 1 ;;
+         *) echo "! invalid value '$OPTARG' for autogit. -g must be 0 or 1."
+            exit 1
+            ;;
        esac
        ;;
     *) $0 ; exit 1 ;;
@@ -27,18 +31,7 @@ while getopts "a:g:" OPT; do
 done
 shift $(($OPTIND - 1))
 
-#
-# sanity check
-if [[ "$myacc" = "Demo@server.tld" && -n "$1" ]]; then
-  echo
-  echo "You must configure your Mastodon-handle before running this script!"
-  echo
-  exit 1
-fi
-
-basename="${myacc##*@}.user.${myacc%%@*}"
-
-#
+# -----------------------------------------------------------------------------
 # show help
 syntax() {
   echo
@@ -61,6 +54,17 @@ syntax() {
   echo
 }
 
+# -----------------------------------------------------------------------------
+# sanity check
+if [[ "$myacc" = "Demo@server.tld" && -n "$1" ]]; then
+  syntax
+  echo "You must configure your Mastodon-handle before running this script,"
+  echo "or pass it via the '-a' option."
+  echo
+  exit 1
+fi
+
+# -----------------------------------------------------------------------------
 # get data from the instance
 function archive() {
   mastodon-archive archive --with-mentions --with-following "$myacc"
@@ -69,12 +73,14 @@ function archive() {
   mastodon-archive media --collection bookmarks "$myacc"
 }
 
+# -----------------------------------------------------------------------------
 # generate static html from gathered data
 function html() {
   mastodon-archive html "$myacc"
   mastodon-archive html --collection favourites "$myacc"
 }
 
+# -----------------------------------------------------------------------------
 # add changes to local git repo
 function save() {
   [[ ! -d .git ]] && {
@@ -90,15 +96,19 @@ function save() {
   fi
   [[ ${gitreply,,} = 'y' || ${gitreply,,} = 'j' ]] && {
     git add .
-    git commit -m "commit for backup after run at $(date +'%y-%m-%y %H:%M:%S')"
+    git commit -m "commit for backup after run for '$1' at $(date +'%y-%m-%y %H:%M:%S')"
   }
 }
 
+# -----------------------------------------------------------------------------
 # show some stats
 function report() {
+  basename="${myacc##*@}.user.${myacc%%@*}"
   echo
   echo "Account Statistics:"
   echo "==================="
+  echo
+  echo "Account: ${myacc}"
   echo
   mastodon-archive report --all "$myacc"
   echo
@@ -121,9 +131,9 @@ function report() {
 #===[ MAIN ]===
 # What to do?
 case "$1" in
-  archive) archive && save;;
-  html) html && save;;
-  backup) archive && html && save;;
+  archive) archive && save archive;;
+  html) html && save html;;
+  backup) archive && html && save backup;;
   report) report;;
   *) syntax;;
 esac

@@ -1,5 +1,6 @@
 #!/bin/bash
 # install mastodon-backup via Debian packages instead of PyPi dependencies
+# © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
 
 #
 # define temp dir and exit-on-error
@@ -17,14 +18,14 @@ trap cleanup ERR
 # ==============
 # ===[ Main ]===
 # ==============
-#
+# -----------------------------------------------------------------------------
 # install Debian packages
 echo
 echo "Installing required Debian packages via APT. You will need to provide your"
 echo "password for sudo here:"
 sudo apt install python3-progress python3-mastodon
 
-#
+# -----------------------------------------------------------------------------
 # check whether we need to update python3-mastodon
 echo
 echo "Let's see if your distribution had the recent version of python3-mastodon…"
@@ -45,7 +46,7 @@ else
   rm -rf $tmpdir
 fi
 
-#
+# -----------------------------------------------------------------------------
 # take care for the wrapper script
 echo
 echo "Looking for the wrapper script…"
@@ -63,7 +64,7 @@ EOF
   chmod o+x ../mastodon-archive.py
 fi
 
-#
+# -----------------------------------------------------------------------------
 # Finito
 bindir=$(dirname $(realpath .))
 echo
