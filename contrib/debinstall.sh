@@ -2,7 +2,7 @@
 # install mastodon-backup via Debian packages instead of PyPi dependencies
 # © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
 
-#
+# -----------------------------------------------------------------------------
 # define temp dir and exit-on-error
 function cleanup() {
   echo
@@ -39,7 +39,7 @@ else
   echo "Found version '$mver' – that's too old. Let's get v1.5.1 and replace the required files."
   echo "Downloading, extracting and copying (via sudo) files"
   cd $tmpdir
-  wget https://files.pythonhosted.org/packages/7c/80/f12b205fc529fff8e3245fe8e6cafb870f1783476449d3ea2a32b40928c5/Mastodon.py-1.5.1-py2.py3-none-any.whl
+  wget -q --show-progress https://files.pythonhosted.org/packages/7c/80/f12b205fc529fff8e3245fe8e6cafb870f1783476449d3ea2a32b40928c5/Mastodon.py-1.5.1-py2.py3-none-any.whl
   unzip Mastodon.py-1.5.1-py2.py3-none-any.whl
   sudo cp mastodon/__init__.py mastodon/Mastodon.py mastodon/streaming.py /usr/lib/python3/dist-packages/mastodon
   cd - >/dev/null
