@@ -31,8 +31,8 @@ echo "Let's see if your distribution had the recent version of python3-mastodon�
 mver="$(dpkg -l python3-mastodon |tail -n 1 |awk '{print $3}')"
 mver="${mver%%-*}"
 IFS='.'; arr=($mver); unset IFS
-typeset -i vercode=${arr[0]}+${arr[1]}*100+${arr[0]}*10000
-if [[ "$mver" -gt 10500 ]]; then    # we need at least v1.5.1 = 10501
+typeset -i vercode=${arr[2]}+${arr[1]}*100+${arr[0]}*10000
+if [[ $vercode -gt 10500 ]]; then    # we need at least v1.5.1 = 10501
   echo "Found version '$mver' – all is fine!"
 else
   echo "Found version '$mver' – that's too old. Let's get v1.5.1 and replace the required files."
