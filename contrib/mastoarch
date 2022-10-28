@@ -1,0 +1,112 @@
+#!/bin/bash
+# Script to automate your Mastodon backup. Run it without any arguments to show its usage.
+# You can use this cript e.g. via Cron for automated backups of your Mastodon account.
+# A command for cron could be: "cd /path/to/mastoarch && ./mastoarch archive >/dev/null"
+
+# Put in your Mastodon handle here:
+myacc="Demo@server.tld"
+# whether to automatically check-in new data to your local git repo
+autogit=0
+
+# !!! ================================================================== !!!
+# !!! Do not change below this line unless you know what you're doing :) !!!
+# !!! ================================================================== !!!
+
+if [[ "$myacc" = "Demo@server.tld" && -n "$1" ]]; then
+  echo
+  echo "You must configure your Mastodon-handle before running this script!"
+  echo
+  exit 1
+fi
+
+basename="${myacc##*@}.user.${myacc%%@*}"
+
+syntax() {
+  echo
+  echo "Mastodon Archiver"
+  echo "================="
+  echo
+  echo "Syntax:"
+  echo "  $0 archive|html|backup|report|help [autogit]"
+  echo
+  echo "archive: get data from the instance"
+  echo "html   : generate static html from gathered data"
+  echo "backup : archive & html"
+  echo "report : show some stats"
+  echo "help   : show this help page and exit"
+  echo
+  echo "autogit: whether to automatically check in changes to your local git (0|1)"
+  echo
+}
+
+# get data from the instance
+function archive() {
+  mastodon-archive archive --with-mentions --with-following "$myacc"
+  mastodon-archive replies "$myacc"
+  mastodon-archive media --collection favourites "$myacc"
+  mastodon-archive media --collection bookmarks "$myacc"
+}
+
+# generate static html from gathered data
+function html() {
+  mastodon-archive html "$myacc"
+  mastodon-archive html --collection favourites "$myacc"
+}
+
+# add changes to local git repo
+function save() {
+  [[ ! -d .git ]] && {
+    echo "No git repo found, skipping check-in."
+    echo "(Use 'git init' to create a repo.)"
+    return
+  }
+  if [[ $autogit -eq 1 ]]; then
+    gitreply=y
+  else
+    read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
+    echo
+  fi
+  [[ ${gitreply,,} = 'y' || ${gitreply,,} = 'j' ]] && {
+    git add .
+    git commit -m "commit for backup after run at $(date +'%y-%m-%y %H:%M:%S')"
+  }
+}
+
+# show some stats
+function report() {
+  echo
+  echo "Account Statistics:"
+  echo "==================="
+  echo
+  mastodon-archive report --all "$myacc"
+  echo
+  echo "Followers who follow us back:"
+  echo "-----------------------------"
+  mastodon-archive mutuals "$myacc" | grep -iv "Get user info"
+  echo
+  echo "$(mastodon-archive mutuals "$myacc" | grep -iv "Get user info" | wc -l) Followers follow us back."
+  echo
+  echo "Header info:"
+  echo "------------"
+  echo "Statuses: $(jq .account.statuses_count ${basename}.json)"
+  echo "Followers: $(jq .account.followers_count ${basename}.json)"
+  echo "Following: $(jq .account.following_count ${basename}.json)"
+  echo "Last status: $(jq .account.last_status_at ${basename}.json | awk -F \" '{print $2}' | awk -F T '{print $1}')"
+  echo "Account created: $(jq .account.created_at ${basename}.json | awk -F \" '{print $2}' | awk -F T '{print $1}')"
+  echo
+}
+
+#===[ MAIN ]===
+# autogit override?
+case "$2" in
+  0|1) autogit=$2
+esac
+
+# What to do?
+case "$1" in
+  archive) archive && save;;
+  html) html && save;;
+  backup) archive && html && save;;
+  report) report;;
+  *) syntax;;
+esac
