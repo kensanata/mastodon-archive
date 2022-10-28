@@ -12,6 +12,23 @@ autogit=0
 # !!! Do not change below this line unless you know what you're doing :) !!!
 # !!! ================================================================== !!!
 
+#
+# Evaluate command-line options
+while getopts "a:g:" OPT; do
+  case $OPT in
+    a) myacc=$OPTARG ;;
+    g) case "$OPTARG" in
+         0|1) autogit=$OPTARG ;;
+         *) echo "! ignoring invalid value for autogit. -g must be 0 or 1." ; exit 1 ;;
+       esac
+       ;;
+    *) $0 ; exit 1 ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+#
+# sanity check
 if [[ "$myacc" = "Demo@server.tld" && -n "$1" ]]; then
   echo
   echo "You must configure your Mastodon-handle before running this script!"
@@ -21,21 +38,26 @@ fi
 
 basename="${myacc##*@}.user.${myacc%%@*}"
 
+#
+# show help
 syntax() {
   echo
   echo "Mastodon Archiver"
   echo "================="
   echo
   echo "Syntax:"
-  echo "  $0 archive|html|backup|report|help [autogit]"
+  echo "  $0 [options] <command>"
   echo
-  echo "archive: get data from the instance"
-  echo "html   : generate static html from gathered data"
-  echo "backup : archive & html"
-  echo "report : show some stats"
-  echo "help   : show this help page and exit"
+  echo "Commands:"
+  echo "  archive: get data from the instance"
+  echo "  html   : generate static html from gathered data"
+  echo "  backup : archive & html"
+  echo "  report : show some stats"
+  echo "  help   : show this help page and exit"
   echo
-  echo "autogit: whether to automatically check in changes to your local git (0|1)"
+  echo "Options:"
+  echo "  -g <0|1>    : whether to automatically check in changes to your local git (0|1)"
+  echo "  -a <handle> : Mastodon handle (user) to process"
   echo
 }
 
@@ -97,11 +119,6 @@ function report() {
 }
 
 #===[ MAIN ]===
-# autogit override?
-case "$2" in
-  0|1) autogit=$2
-esac
-
 # What to do?
 case "$1" in
   archive) archive && save;;
