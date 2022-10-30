@@ -136,20 +136,24 @@ def archive(args):
         print("Get new favourites")
         favourites = complete(data["favourites"], mastodon.favourites())
 
-    if skip_bookmarks:
-        print("Skipping bookmarks")
-        if data is None or not "bookmarks" in data:
-            bookmarks = []
+    try:
+        if skip_bookmarks:
+            print("Skipping bookmarks")
+            if data is None or not "bookmarks" in data:
+                bookmarks = []
+            else:
+                bookmarks = data["bookmarks"]
+        elif data is None or not "bookmarks" in data or len(data["bookmarks"]) == 0:
+            print("Get bookmarks (this may take a while)")
+            bookmarks = mastodon.bookmarks()
+            bookmarks = mastodon.fetch_remaining(
+                first_page = bookmarks)
         else:
-            bookmarks = data["bookmarks"]
-    elif data is None or not "bookmarks" in data or len(data["bookmarks"]) == 0:
-        print("Get bookmarks (this may take a while)")
-        bookmarks = mastodon.bookmarks()
-        bookmarks = mastodon.fetch_remaining(
-            first_page = bookmarks)
-    else:
-        print("Get new bookmarks")
-        bookmarks = complete(data["bookmarks"], mastodon.bookmarks())
+            print("Get new bookmarks")
+            bookmarks = complete(data["bookmarks"], mastodon.bookmarks())
+    except AttributeError as e:
+        bookmarks = []
+        print("Skipping bookmarks since your Mastodon.py library is too old!")
 
     if not with_mentions:
         print("Skipping mentions")
