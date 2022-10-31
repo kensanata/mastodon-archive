@@ -84,12 +84,6 @@ fi
 
 # -----------------------------------------------------------------------------
 # Finito
-bindir=$(dirname $(realpath .))
 echo
-echo "All is prepared now. You either can…"
-echo "- run './mastodon-archive.py' from within '${bindir}',"
-echo "- add '${bindir}' to your '\$PATH' to be able to call it from anywhere, or"
-echo "- set up an 'alias mastodon-archive=\"${bindir}/mastodon-archive.py\"'"
-echo "for the same purpose."
-echo "Enjoy!"
+echo "If you saw no errors in the last step, all should be ready now. Enjoy!"
 echo
