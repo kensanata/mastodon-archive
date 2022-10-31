@@ -65,18 +65,25 @@ if [[ $vercode -gt 10500 ]]; then    # we need at least v1.5.1 = 10501
   echo "Found version '$mver' – all is fine!"
 else
   echo "Found version '$mver' – that's too old. Let's get v1.5.1 and replace the required files."
-  read -n 1 -p "Continue? (y/n) " REPLY
-  echo
-  if [[ "${REPLY,,}" = 'y' || "${REPLY,,}" = 'j' ]]; then
-    echo "Downloading, extracting and copying (via sudo) files"
-    cd $tmpdir
-    wget -q --show-progress https://files.pythonhosted.org/packages/7c/80/f12b205fc529fff8e3245fe8e6cafb870f1783476449d3ea2a32b40928c5/Mastodon.py-1.5.1-py2.py3-none-any.whl
-    unzip Mastodon.py-1.5.1-py2.py3-none-any.whl
-    sudo cp mastodon/__init__.py mastodon/Mastodon.py mastodon/streaming.py /usr/lib/python3/dist-packages/mastodon
-    cd - >/dev/null
+  if [[ -f /usr/lib/python3/dist-packages/mastodon/Mastodon.py ]]; then
+    read -n 1 -p "Continue? (y/n) " REPLY
+    echo
+    if [[ "${REPLY,,}" = 'y' || "${REPLY,,}" = 'j' ]]; then
+      echo "Downloading, extracting and copying (via sudo) files"
+      cd $tmpdir
+      wget -q --show-progress https://files.pythonhosted.org/packages/7c/80/f12b205fc529fff8e3245fe8e6cafb870f1783476449d3ea2a32b40928c5/Mastodon.py-1.5.1-py2.py3-none-any.whl
+      unzip Mastodon.py-1.5.1-py2.py3-none-any.whl
+      sudo cp mastodon/__init__.py mastodon/Mastodon.py mastodon/streaming.py /usr/lib/python3/dist-packages/mastodon
+      cd - >/dev/null
+    else
+      echo "Aborting on user request."
+      exit 10
+    fi
   else
-    echo "Aborting on user request."
-    exit 10
+    echo
+    echo "ERROR: Target directory '/usr/lib/python3/dist-packages/mastodon' was not found"
+    echo "(or did not contain a 'Mastodon.py')."
+    cleanup
   fi
   rm -rf $tmpdir
 fi
