@@ -26,13 +26,13 @@ trap cleanup ERR
 # -----------------------------------------------------------------------------
 # check whether we need to update python3-mastodon
 echo
-echo "Let's see if your distribution had the recent version of python3-mastodon…"
+echo "Let's see if your distribution had the recent version of python3-mastodon..."
 if [[ -f /etc/debian_versions ]]; then
   mver="$(dpkg -l python3-mastodon |tail -n 1 |awk '{print $3}')"
 elif [[ -f /etc/redhat_release || -f /etc/fedora-release ]]; then
   mver="$(yum info python3-Mastodon |grep -Ei '^Version' |awk '{print $3}')"
 else
-  read -n 1 -p "Could not find out whether your system is DEB or RPM based. Continue anyway? (y/n) " REPLY
+  read -n 1 -p "Could not determine whether your system is DEB or RPM based. Continue anyway? (y/n) " REPLY
   if [[ "${REPLY,,}" = 'y' || "${REPLY,,}" = 'j' ]]; then
     echo
     echo "Assuming package version 1.5.0 to continue."
