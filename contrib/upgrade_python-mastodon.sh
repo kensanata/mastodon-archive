@@ -10,10 +10,15 @@
 # -----------------------------------------------------------------------------
 # define temp dir and exit-on-error
 function cleanup() {
+  msg="${1:-"Something went wrong, aborting."}"
+  lvl=${2:-1}
+  [[ -n "${msg}" && "${msg}" != "-" ]] && {
+    echo
+    echo "${msg}"
+  }
   echo
-  echo "Something went wrong, aborting."
   rm -rf $tmpdir
-  exit 1
+  exit $lvl
 }
 
 tmpdir=$(mktemp -d)
@@ -27,35 +32,40 @@ trap cleanup ERR
 # check whether we need to update python3-mastodon
 echo
 echo "Let's see if your distribution had the recent version of python3-mastodon..."
-if [[ -f /etc/debian_versions ]]; then
+if [[ -f /etc/debian_version ]]; then
   mver="$(dpkg -l python3-mastodon |tail -n 1 |awk '{print $3}')"
 elif [[ -f /etc/redhat_release || -f /etc/fedora-release ]]; then
   mver="$(yum info python3-Mastodon |grep -Ei '^Version' |awk '{print $3}')"
 else
-  read -n 1 -p "Could not determine whether your system is DEB or RPM based. Continue anyway? (y/n) " REPLY
+  echo
+  echo "Could not determine whether your system is DEB or RPM based."
+  echo "To continue, this script would assume that the 'python3-mastodon' module"
+  echo "was installed to '/usr/lib/python3/dist-packages/mastodon'."
+  echo "Please make sure that this directory exists and contains at least a file"
+  echo "named 'Mastodon.py'. If it does not, you better abort this attempt."
+  echo ""
+  read -n 1 -p "Continue this way? (y/n) " REPLY
   if [[ "${REPLY,,}" = 'y' || "${REPLY,,}" = 'j' ]]; then
     echo
     echo "Assuming package version 1.5.0 to continue."
     echo
-    echo "This assumes that the module was installed to '/usr/lib/python3/dist-packages/mastodon'."
-    echo "Please make sure that directory exists and contains at least a file named 'Mastodon.py'."
-    echo "If it does not, you better abort this attempt."
     mver="1.5.0-1"
   else
-    echo "Aborting on user request."
-    exit 10
+    cleanup "Aborting on user request." 10
   fi
 fi
 
 if [[ -z "$mver" ]]; then   # package not even installed or not found
+  echo
   echo "Looks like python3-mastodon is not installed at all, so we cannot update it."
   echo "Please install it first and then try again:"
+  echo
   if [[ -f /etc/debian_version ]]; then
     echo "  sudo apt install python3-mastodon"
   else
     echo "  yum install python3-Mastodon"
   fi
-  cleanup
+  cleanup "-"
 fi
 
 mver="${mver%%-*}"
@@ -76,14 +86,13 @@ else
       sudo cp mastodon/__init__.py mastodon/Mastodon.py mastodon/streaming.py /usr/lib/python3/dist-packages/mastodon
       cd - >/dev/null
     else
-      echo "Aborting on user request."
-      exit 10
+      cleanup "Aborting on user request." 10
     fi
   else
     echo
     echo "ERROR: Target directory '/usr/lib/python3/dist-packages/mastodon' was not found"
     echo "(or did not contain a 'Mastodon.py')."
-    cleanup
+    cleanup "-" 5
   fi
   rm -rf $tmpdir
 fi
