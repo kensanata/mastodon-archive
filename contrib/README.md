@@ -5,8 +5,8 @@ mastodon-backup.
 ## `upgrade_python-mastodon.sh` (by Izzy)
 A script intended to upgrade outdated versions of `Mastodon.py` when installed
 via your Linux distribution's package manager. As of this writing,
-mastodon-backup requires at least v1.5.1 of it for full functionality. It will
-work with v1.5.0 but then lack sone features (e.g. bookmark operations are not
+mastodon-backup requires at least v1.5.1 for full functionality. It will
+work with v1.5.0 with reduced functionality (e.g. bookmark operations are not
 available). Some distributions ship even older versions. We explicitly decided
 against requiring a specific version in the package's dependencies as that would
 make the package unavailable for many LTS distributions, while the underlying

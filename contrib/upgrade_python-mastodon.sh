@@ -31,7 +31,7 @@ trap cleanup ERR
 # -----------------------------------------------------------------------------
 # check whether we need to update python3-mastodon
 echo
-echo "Let's see if your distribution had the recent version of python3-mastodon..."
+echo "Let's see if your distribution has a recent version of python3-mastodon..."
 if [[ -f /etc/debian_version ]]; then
   mver="$(dpkg -l python3-mastodon |tail -n 1 |awk '{print $3}')"
 elif [[ -f /etc/redhat_release || -f /etc/fedora-release ]]; then
