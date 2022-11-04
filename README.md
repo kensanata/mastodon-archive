@@ -449,7 +449,9 @@ blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 **Alternatives**: Check out [forget](https://forget.codl.fr/about/) (a
 web app), [ephemtoot](https://ephemetoot.hugh.run/) (a Python script),
 or [MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
-These tools expire your toots without archiving them.
+These tools expire your toots without archiving them. Or you might even
+be satisfied with the "Automated post deletion" feature you can find with your
+account preferences in recent versions of Mastodon.
 
 Anyway, back to *Mastodon Archive*. 🙂
 
@@ -862,11 +864,11 @@ There are three kinds of alternatives:
    [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
    The problem there is that you'll only get "top level" toots and
    boosts but *no replies*.
-   
+
     * [Mastotool](https://mdhughes.tech/mastotool/) includes media
       download!
     * [MastoUserScrape.py](https://gist.github.com/FlyMyPG/2e9d4532453182ada0da78e74980193b)
-   
+
 2. Solutions that extract your public toots from your Atom feed, e.g.
    [https://octodon.social/users/kensanata.atom](https://octodon.social/users/kensanata.atom).
    The problem there is that you'll only get a few pages worth of
@@ -877,7 +879,11 @@ There are three kinds of alternatives:
 3. Solutions that make use of the official Mastodon downloads.
 
     * [Mastodon Data Viewer](https://github.com/blackle/mastodon-data-viewer.py)
-	  is a viewer for Mastodon backup data written in Python. It
-	  creates a local server that you can use to browse the data.
-	  Designed for large (>40,000) toot archives. This tool only takes
-	  official Mastodon backups.
+      is a viewer for Mastodon backup data written in Python. It
+      creates a local server that you can use to browse the data.
+      Designed for large (>40,000) toot archives. This tool only takes
+      official Mastodon backups.
+    * [mav-z](https://github.com/zero-mstd/mav-z) is using HTML and Javascript.
+      You can simply open its HTML file with your browser, pick the exported
+      archive – and see nice stats, walk though your toots, jump to a given
+      month, etc.
