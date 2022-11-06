@@ -446,12 +446,12 @@ never your friends. So I want to expire my toots. We can always write
 a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
-**Alternatives**: Check out [forget](https://forget.codl.fr/about/) (a
-web app), [ephemtoot](https://ephemetoot.hugh.run/) (a Python script),
-or [MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
-These tools expire your toots without archiving them. Or you might even
-be satisfied with the "Automated post deletion" feature you can find with your
-account preferences in recent versions of Mastodon.
+**Alternatives**: Check out [ephemtoot](https://ephemetoot.hugh.run/)
+(a Python script), or
+[MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
+These tools expire your toots without archiving them. Or use the
+"Automated post deletion" feature you can find with your account
+preferences in recent versions of Mastodon.
 
 Anyway, back to *Mastodon Archive*. 🙂
 
