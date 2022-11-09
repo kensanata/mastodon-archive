@@ -20,9 +20,10 @@ autogit=0               # whether to automatically check-in new data to your loc
 
 # -----------------------------------------------------------------------------
 # Evaluate command-line options
-while getopts "a:g:" OPT; do
+while getopts "a:b:g:" OPT; do
   case $OPT in
     a) myacc=$OPTARG ;;
+    b) MASTOBASE="$OPTARG" ;;
     g) case "$OPTARG" in
          0|1) autogit=$OPTARG ;;
          *) echo "! invalid value '$OPTARG' for autogit. -g must be 0 or 1."
@@ -53,8 +54,15 @@ syntax() {
   echo "  help   : show this help page and exit"
   echo
   echo "Options:"
-  echo "  -g <0|1>    : whether to automatically check in changes to your local git (0|1)"
-  echo "  -a <handle> : Mastodon handle (user) to process"
+  echo "  -a <handle>     : Mastodon handle (user) to process"
+  echo "  -b <MASTOBASE>  : base where all our backups reside. If specified,"
+  echo "                    your backups are expected in MASTOBASE/<instanceName>"
+  echo "                    (e.g. /home/peter/mastodon/mastodon.example.net if"
+  echo "                    your account is @<username>@mastodon.example.net),"
+  echo "                    otherwise they will be looked for in your current"
+  echo "                    working directory (where you are when invoking this script)"
+  echo "  -g <0|1>        : whether to automatically check in changes to your local"
+  echo "                    git (0|1)"
   echo
   echo "Note that you can define your defaults (myacc, autogit) in"
   echo "${HOME}/.config/mastodon-backup/config"
@@ -135,7 +143,16 @@ function report() {
   echo
 }
 
+# -----------------------------------------------------------------------------
+# find out where to look for / create our backup
+if [[ -n "$MASTOBASE" ]]; then
+  INSTDIR="${MASTOBASE}/${myacc##*@}"
+else
+  INSTDIR="${PWD}"
+fi
+
 #===[ MAIN ]===
+cd "$INSTDIR"
 # What to do?
 case "$1" in
   archive) archive && save archive;;
@@ -144,3 +161,4 @@ case "$1" in
   report) report;;
   *) syntax;;
 esac
+cd - >/dev/null
