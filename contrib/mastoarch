@@ -92,6 +92,7 @@ function archive() {
 # generate static html from gathered data
 function html() {
   mastodon-archive html "$myacc"
+  mastodon-archive html --collection bookmarks "$myacc"
   mastodon-archive html --collection favourites "$myacc"
 }
 
