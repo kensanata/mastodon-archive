@@ -1,0 +1,21 @@
+# Example config file for the contrib tools.
+# copy this to ${HOME}/.config/mastodon-backup/config and adjust to your needs.
+
+# base where all our backups reside (mastosearch)
+# If you define MASTOBASE, your backups are looked for in $MASTOBASE/<ServerName>
+# Otherwise they are looked for in the current working directory.
+MASTOBASE=
+
+# use a specific viewer (mastosearch).
+# This needs markdown being available (e.g. to use lynx on Debian:
+# 'apt install markdown lynx').
+# The viewer should accept HTML from STDIN (standard input).
+# If empty, results will simply be printed on your console.
+#viewer="lynx -stdin"
+viewer=
+
+# default account (mastoarch, mastosearch)
+myacc=Demo@Mastodon.example.net
+
+# automatically backup to git (mastoarch)
+autogit=0

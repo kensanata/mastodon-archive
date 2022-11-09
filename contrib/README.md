@@ -46,6 +46,18 @@ cd /path/to/archive && mastoarch -a Me@MyInstance 2>/dev/null
 If you've initialized a git repo with your archive, you could include `-g 1`
 with the call to have changes committed automatically.
 
+## `mastosearch` (by Izzy)
+For your impromptu searches. Again a wrapper around the main script intended
+to be easy to use. With your defaults set up in the configuration, a search
+is as easy as `mastosearch <searchterm>`. Again, the full syntax is shown when
+called without parameters.
+
+## `config.sample` (by Izzy)
+Lets you define defaults to use with `mastoarch` and `mastosearch` to make
+calls to them as simple as possible. On your Linux machine, copy it to
+`${HOME}/.config/mastodon-backup/config` and adjust it to fit your needs.
+Hints inside.
+
 ## `mastodon-archive` (by Izzy)
 `mastodon-archive` and `mastodon-archive.py` are wrapper scripts. The latter is
 usually created automatically when installing via PyPi, the former is intended

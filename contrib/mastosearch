@@ -1,0 +1,123 @@
+#!/bin/bash
+# search our local mastodon archive
+# © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
+
+# -----------------------------------------------------------------------------
+# Defaults
+MASTOBASE=
+myacc=Demo@Mastodon.example.net
+viewer=
+
+# -----------------------------------------------------------------------------
+# Load config if exists
+[[ -f "${HOME}/.config/mastodon-backup/config" ]] && source "${HOME}/.config/mastodon-backup/config"
+
+# -----------------------------------------------------------------------------
+# Evaluate command-line options
+colls=
+context=
+while getopts "a:b:c:t:v:" OPT; do
+  case $OPT in
+    a) myacc=$OPTARG ;;
+    b) MASTOBASE="$OPTARG" ;;
+    c) case "$OPTARG" in
+         favorites) colls="$colls --collection favorites" ;;
+         mentions)  colls="$colls --collection mentions" ;;
+         bookmarks) colls="$colls --collection bookmarks" ;;
+         statuses)  colls="$colls --collection statuses" ;;
+         all)       colls="--collection all" ;;
+         *)         echo "ignoring unknown collection '$OPTARG'"
+       esac
+       ;;
+    t) context="$OPTARG" ;;
+    v) viewer="$OPTARG" ;;
+    *) $0 ; exit 1 ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+# -----------------------------------------------------------------------------
+# show help
+syntax() {
+  echo
+  echo "Mastodon Searcher"
+  echo "================="
+  echo
+  echo "Syntax:"
+  echo "  $0 [options] <searchRegEx> [<searchRegEx> ...]"
+  echo "  $0 -t <statusUrl> [-l]"
+  echo
+  echo "SearchRegEx:"
+  echo "  - a single search term, e.g. 'book'"
+  echo "  - a RegEx term, e.g. 'e?book\b'"
+  echo "  - a time frame, e.g. 2017-(07|08|09|10|11)' (useful as 2nd term)"
+  echo "  - a phrase, e.g. '(?i)android book'"
+  echo
+  echo "Options:"
+  echo "  -a <handle>     : Mastodon handle (user) to process"
+  echo "  -b <MASTOBASE>  : base where all our backups reside. If specified,"
+  echo "                    your backups are expected in MASTOBASE/<instanceName>"
+  echo "                    (e.g. /home/peter/mastodon/mastodon.example.net if"
+  echo "                    your account is @<username>@mastodon.example.net),"
+  echo "                    otherwise they will be looked for in your current"
+  echo "                    working directory (where you are when invoking this script)"
+  echo "  -c <collection> : search specified collection. Valid collections:"
+  echo "                    favorites, bookmarks, mentions, statuses, all"
+  echo "  -v <viewer>     : display results with a self-defined viewer, e.g. Lynx."
+  echo "                    The viewer needs to accept HTML from standard input, and"
+  echo "                    this feature also needs the 'markdown' command being"
+  echo "                    available on your system."
+  echo "  -t <statusUrl>  : thread (conText) search. <statusUrl> is the link to a status"
+  echo "                    which shall be shown with its context."
+  echo
+  echo "Note that you can define your defaults (MASTOBASE, myacc) in"
+  echo "${HOME}/.config/mastodon-backup/config"
+  echo
+}
+
+# -----------------------------------------------------------------------------
+# evaluate settings
+if [[ -n "$viewer" && -z "$(which $(echo $viewer | awk '{print $1}'))" ]]; then
+  echo -e "\n'$(echo $viewer | awk '{print $1}')' not found, resetting viewer.\n"
+  viewer=
+fi
+if [[ -n "$MASTOBASE" ]]; then
+  INSTDIR="${MASTOBASE}/${myacc##*@}"
+else
+  INSTDIR="${PWD}"
+fi
+[[ "$myacc" = "Demo@Mastodon.example.net" ]] && {
+  echo "You need to configure your default account (either at the top of this script or"
+  echo "in '${HOME}/.config/mastodon-backup/config') or pass an account using the '-a' option."
+  echo
+  exit 2
+}
+[[ ! -f "${INSTDIR}/${myacc##*@}.user.${myacc%%@*}.json" ]] && {
+  echo "Could not find '${INSTDIR}/${myacc##*@}.user.${myacc%%@*}.json'."
+  echo "Maybe you did not yet create a backup?"
+  echo
+  exit 5
+}
+[[ -z "$1" && -z "$context" ]] && {
+  syntax
+  exit;
+}
+
+
+# -----------------------------------------------------------------------------
+# Do it!
+cd "${INSTDIR}"
+if [[ -n "$viewer" ]]; then
+  if [[ -n "$context" ]]; then
+    mastodon-archive context $myacc $context | markdown | $viewer
+  else
+    mastodon-archive text $colls $myacc $* | markdown | $viewer
+  fi
+else
+  if [[ -n "$context" ]]; then
+    mastodon-archive context $myacc $context
+  else
+    mastodon-archive text $colls $myacc $*
+  fi
+fi
+cd - > /dev/null

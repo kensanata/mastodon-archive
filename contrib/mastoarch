@@ -15,6 +15,10 @@ autogit=0               # whether to automatically check-in new data to your loc
 # !!! ================================================================== !!!
 
 # -----------------------------------------------------------------------------
+# Load config if exists
+[[ -f "${HOME}/.config/mastodon-backup/config" ]] && source "${HOME}/.config/mastodon-backup/config"
+
+# -----------------------------------------------------------------------------
 # Evaluate command-line options
 while getopts "a:g:" OPT; do
   case $OPT in
@@ -51,6 +55,9 @@ syntax() {
   echo "Options:"
   echo "  -g <0|1>    : whether to automatically check in changes to your local git (0|1)"
   echo "  -a <handle> : Mastodon handle (user) to process"
+  echo
+  echo "Note that you can define your defaults (myacc, autogit) in"
+  echo "${HOME}/.config/mastodon-backup/config"
   echo
 }
 
