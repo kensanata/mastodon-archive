@@ -16,7 +16,8 @@ viewer=
 # Evaluate command-line options
 colls=
 context=
-while getopts "a:b:c:t:v:" OPT; do
+follower=
+while getopts "a:b:c:f:t:v:" OPT; do
   case $OPT in
     a) myacc=$OPTARG ;;
     b) MASTOBASE="$OPTARG" ;;
@@ -29,6 +30,7 @@ while getopts "a:b:c:t:v:" OPT; do
          *)         echo "ignoring unknown collection '$OPTARG'"
        esac
        ;;
+    f) follower="$OPTARG" ;;
     t) context="$OPTARG" ;;
     v) viewer="$OPTARG" ;;
     *) $0 ; exit 1 ;;
@@ -63,12 +65,16 @@ syntax() {
   echo "                    working directory (where you are when invoking this script)"
   echo "  -c <collection> : search specified collection. Valid collections:"
   echo "                    favorites, bookmarks, mentions, statuses, all"
+  echo "  -f <searchTerm> : search your followers. Requires followers to be archived"
+  echo "                    and the 'jq' tool being available. Search will always be"
+  echo "                    case insensitive. Returns JSON."
+  echo "                    Cannot be combined with -c or -t."
+  echo "  -t <statusUrl>  : thread (conText) search. <statusUrl> is the link to a status"
+  echo "                    which shall be shown with its context."
   echo "  -v <viewer>     : display results with a self-defined viewer, e.g. Lynx."
   echo "                    The viewer needs to accept HTML from standard input, and"
   echo "                    this feature also needs the 'markdown' command being"
   echo "                    available on your system."
-  echo "  -t <statusUrl>  : thread (conText) search. <statusUrl> is the link to a status"
-  echo "                    which shall be shown with its context."
   echo
   echo "Note that you can define your defaults (MASTOBASE, myacc) in"
   echo "${HOME}/.config/mastodon-backup/config"
@@ -98,7 +104,7 @@ fi
   echo
   exit 5
 }
-[[ -z "$1" && -z "$context" ]] && {
+[[ -z "$1" && -z "$context" && -z "$follower" ]] && {
   syntax
   exit;
 }
@@ -110,12 +116,16 @@ cd "${INSTDIR}"
 if [[ -n "$viewer" ]]; then
   if [[ -n "$context" ]]; then
     mastodon-archive context $myacc $context | markdown | $viewer
+  elif [[ -n "$follower" ]]; then
+    jq --arg search "$follower" '.followers[] | select(any(. | strings | test($search; "i")))' ${myacc##*@}.user.${myacc%%@*}.json | $viewer
   else
     mastodon-archive text $colls $myacc $* | markdown | $viewer
   fi
 else
   if [[ -n "$context" ]]; then
     mastodon-archive context $myacc $context
+  elif [[ -n "$follower" ]]; then
+    jq --arg search "$follower" '.followers[] | select(any(. | strings | test($search; "i")))' ${myacc##*@}.user.${myacc%%@*}.json
   else
     mastodon-archive text $colls $myacc $*
   fi
