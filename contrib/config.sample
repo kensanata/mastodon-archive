@@ -9,6 +9,12 @@ MASTOBASE=
 # default account (mastoarch, mastosearch)
 myacc=Demo@Mastodon.example.net
 
+# shall followers be archived as well? (mastoarch)
+# this is currently of limited use, hence disabled by default. It will not only
+# collect user IDs, but the entire profile info; expect about 1.5kB per profile.
+# 0: no, 1: yes
+archive_followers=0
+
 # automatically backup to git (mastoarch)
 # 0: never, 1: ask, 2: do it
 autogit=0

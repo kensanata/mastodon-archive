@@ -8,6 +8,7 @@
 # -----------------------------------------------------------------------------
 # Default options (can be overridden via command-line):
 myacc="Demo@server.tld" # Your (default) Mastodon handle
+archive_followers=0     # whether to archive followers as well
 autogit=0               # whether to automatically check-in new data to your local git repo
 
 # !!! ================================================================== !!!
@@ -20,13 +21,20 @@ autogit=0               # whether to automatically check-in new data to your loc
 
 # -----------------------------------------------------------------------------
 # Evaluate command-line options
-while getopts "a:b:g:" OPT; do
+while getopts "a:b:f:g:" OPT; do
   case $OPT in
     a) myacc=$OPTARG ;;
     b) MASTOBASE="$OPTARG" ;;
+    f) case "$OPTARG" in
+         0|1) archive_followers=$OPTARG ;;
+         *) echo -e "\n! invalid value '$OPTARG' for archive_followers. -f must be 0 or 1.\n"
+            exit 1
+            ;;
+       esac
+       ;;
     g) case "$OPTARG" in
          0|1|2) autogit=$OPTARG ;;
-         *) echo "! invalid value '$OPTARG' for autogit. -g must be 0, 1 or 2."
+         *) echo -e "\n! invalid value '$OPTARG' for autogit. -g must be 0, 1 or 2.\n"
             exit 1
             ;;
        esac
@@ -82,7 +90,11 @@ fi
 # -----------------------------------------------------------------------------
 # get data from the instance
 function archive() {
-  mastodon-archive archive --with-mentions --with-following "$myacc"
+  if [[ $archive_followers -eq 1 ]]; then
+    mastodon-archive archive --with-mentions --with-following --with-followers "$myacc"
+  else
+    mastodon-archive archive --with-mentions --with-following "$myacc"
+  fi
   mastodon-archive replies "$myacc"
   mastodon-archive media --collection favourites "$myacc"
   mastodon-archive media --collection bookmarks "$myacc"
