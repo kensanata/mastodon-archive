@@ -25,8 +25,8 @@ while getopts "a:b:g:" OPT; do
     a) myacc=$OPTARG ;;
     b) MASTOBASE="$OPTARG" ;;
     g) case "$OPTARG" in
-         0|1) autogit=$OPTARG ;;
-         *) echo "! invalid value '$OPTARG' for autogit. -g must be 0 or 1."
+         0|1|2) autogit=$OPTARG ;;
+         *) echo "! invalid value '$OPTARG' for autogit. -g must be 0, 1 or 2."
             exit 1
             ;;
        esac
@@ -61,8 +61,8 @@ syntax() {
   echo "                    your account is @<username>@mastodon.example.net),"
   echo "                    otherwise they will be looked for in your current"
   echo "                    working directory (where you are when invoking this script)"
-  echo "  -g <0|1>        : whether to automatically check in changes to your local"
-  echo "                    git (0|1)"
+  echo "  -g <0|1|2>      : whether to automatically check in changes to your local"
+  echo "                    git (0: don't, 1: ask, 2: do it)"
   echo
   echo "Note that you can define your defaults (myacc, autogit) in"
   echo "${HOME}/.config/mastodon-backup/config"
@@ -98,17 +98,19 @@ function html() {
 # -----------------------------------------------------------------------------
 # add changes to local git repo
 function save() {
+  [[ $autogit -lt 1 ]] && return
   [[ ! -d .git ]] && {
     echo "No git repo found, skipping check-in."
     echo "(Use 'git init' to create a repo.)"
     return
   }
-  if [[ $autogit -eq 1 ]]; then
-    gitreply=y
-  else
-    read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
-    echo
-  fi
+  case $autogit in
+    0) gitreply=n ;;
+    1) read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
+       echo
+       ;;
+    2) gitreply=y ;;
+  esac
   [[ ${gitreply,,} = 'y' || ${gitreply,,} = 'j' ]] && {
     git add .
     git commit -m "commit for backup after run for '$1' at $(date +'%y-%m-%y %H:%M:%S')"

@@ -10,6 +10,7 @@ MASTOBASE=
 myacc=Demo@Mastodon.example.net
 
 # automatically backup to git (mastoarch)
+# 0: never, 1: ask, 2: do it
 autogit=0
 
 # use a specific viewer (mastosearch).

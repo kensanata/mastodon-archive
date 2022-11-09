@@ -37,13 +37,20 @@ It will work in the directory you called it from. So if you wish to use it, I'd
 recommend you either put it into your `$PATH` or create yourself an alias for it.
 
 Once you've set it up and have it running, you could even have a Cron job
-taken care for regular runs. Here I'd recommend the following command line:
+taken care for regular runs. With the config set up properly, the command
+for that job could look like this:
 
 ```bash
-cd /path/to/archive && mastoarch -a Me@MyInstance 2>/dev/null
+source /home/johndoe && mastoarch archive
 ```
 
-If you've initialized a git repo with your archive, you could include `-g 1`
+or, alternatively:
+
+```bash
+cd /path/to/archive && mastoarch -a Me@MyInstance -b "" 2>/dev/null
+```
+
+If you've initialized a git repo with your archive, you could include `-g 2`
 with the call to have changes committed automatically.
 
 ## `mastosearch` (by Izzy)
