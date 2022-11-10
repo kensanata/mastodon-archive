@@ -117,7 +117,7 @@ if [[ -n "$viewer" ]]; then
   if [[ -n "$context" ]]; then
     mastodon-archive context $myacc $context | markdown | $viewer
   elif [[ -n "$follower" ]]; then
-    jq --arg search "$follower" '.followers[] | select(any(. | strings | test($search; "i")))' ${myacc##*@}.user.${myacc%%@*}.json | $viewer
+    jq --arg search "$follower" '.followers[] | select(any(. | strings | test($search; "i")))' ${myacc##*@}.user.${myacc%%@*}.json | echo -e "\`\`\`\n$(</dev/stdin)\n\`\`\`\n" | markdown | sed 's!<code>!<pre>!;s!</code>!</pre>!' | $viewer
   else
     mastodon-archive text $colls $myacc $* | markdown | $viewer
   fi
