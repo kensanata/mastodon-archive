@@ -41,7 +41,7 @@ taken care for regular runs. With the config set up properly, the command
 for that job could look like this:
 
 ```bash
-source /home/johndoe && mastoarch archive
+source /home/johndoe/.profile && mastoarch archive
 ```
 
 or, alternatively:
@@ -63,7 +63,8 @@ called without parameters.
 Lets you define defaults to use with `mastoarch` and `mastosearch` to make
 calls to them as simple as possible. On your Linux machine, copy it to
 `${HOME}/.config/mastodon-backup/config` and adjust it to fit your needs.
-Hints inside.
+Hints inside. This file is optional, defaults are defined in the scripts
+and can be overridden using command-line parameters.
 
 ## `mastodon-archive` (by Izzy)
 `mastodon-archive` and `mastodon-archive.py` are wrapper scripts. The latter is
