@@ -1,5 +1,5 @@
 # Example config file for the contrib tools.
-# copy this to ${HOME}/.config/mastodon-backup/config and adjust to your needs.
+# copy this to ${HOME}/.config/mastodon-archive/config and adjust to your needs.
 
 # base where all our backups reside (mastoarch, mastosearch)
 # If you define MASTOBASE, your backups are looked for in $MASTOBASE/<ServerName>

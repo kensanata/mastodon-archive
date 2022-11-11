@@ -10,7 +10,7 @@ viewer=
 
 # -----------------------------------------------------------------------------
 # Load config if exists
-[[ -f "${HOME}/.config/mastodon-backup/config" ]] && source "${HOME}/.config/mastodon-backup/config"
+[[ -f "${HOME}/.config/mastodon-archive/config" ]] && source "${HOME}/.config/mastodon-archive/config"
 
 # -----------------------------------------------------------------------------
 # Evaluate command-line options
@@ -83,7 +83,7 @@ syntax() {
   echo "                    available on your system."
   echo
   echo "Note that you can define your defaults (MASTOBASE, myacc) in"
-  echo "${HOME}/.config/mastodon-backup/config"
+  echo "${HOME}/.config/mastodon-archive/config"
   echo
 }
 
@@ -100,7 +100,7 @@ else
 fi
 [[ "$myacc" = "Demo@Mastodon.example.net" ]] && {
   echo "You need to configure your default account (either at the top of this script or"
-  echo "in '${HOME}/.config/mastodon-backup/config') or pass an account using the '-a' option."
+  echo "in '${HOME}/.config/mastodon-archive/config') or pass an account using the '-a' option."
   echo
   exit 2
 }

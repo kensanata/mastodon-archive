@@ -17,7 +17,7 @@ autogit=0               # whether to automatically check-in new data to your loc
 
 # -----------------------------------------------------------------------------
 # Load config if exists
-[[ -f "${HOME}/.config/mastodon-backup/config" ]] && source "${HOME}/.config/mastodon-backup/config"
+[[ -f "${HOME}/.config/mastodon-archive/config" ]] && source "${HOME}/.config/mastodon-archive/config"
 
 # -----------------------------------------------------------------------------
 # Evaluate command-line options
@@ -73,7 +73,7 @@ syntax() {
   echo "                    git (0: don't, 1: ask, 2: do it)"
   echo
   echo "Note that you can define your defaults (myacc, autogit) in"
-  echo "${HOME}/.config/mastodon-backup/config"
+  echo "${HOME}/.config/mastodon-archive/config"
   echo
 }
 

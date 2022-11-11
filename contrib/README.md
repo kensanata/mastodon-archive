@@ -1,11 +1,11 @@
 # Contrib
 This directory contains user-provided contributions intended to enhance
-mastodon-backup.
+mastodon-archive.
 
 ## `upgrade_python-mastodon.sh` (by Izzy)
 A script intended to upgrade outdated versions of `Mastodon.py` when installed
 via your Linux distribution's package manager. As of this writing,
-mastodon-backup requires at least v1.5.1 for full functionality. It will
+mastodon-archive requires at least v1.5.1 for full functionality. It will
 work with v1.5.0 with reduced functionality (e.g. bookmark operations are not
 available). Some distributions ship even older versions. We explicitly decided
 against requiring a specific version in the package's dependencies as that would
@@ -20,7 +20,7 @@ What it does:
 * if it cannot find out (no `dpkg`/`yum` found or package not installed) it
   will inform you. You can then decide to proceed anyhow – or to use your
   package manager to install (this situation should not happen if you installed
-  mastodon-backup via `apt`/`yum`, but who knows
+  mastodon-archive via `apt`/`yum`, but who knows
 * if a proper version (1.5.1 or later) was found, it says Good-Bye
 * else it checks if the target directory & module exists. If not, it will abort.
 * now it downloads the code from PyPi and replaces the existing old version
@@ -62,7 +62,7 @@ called without parameters.
 ## `config.sample` (by Izzy)
 Lets you define defaults to use with `mastoarch` and `mastosearch` to make
 calls to them as simple as possible. On your Linux machine, copy it to
-`${HOME}/.config/mastodon-backup/config` and adjust it to fit your needs.
+`${HOME}/.config/mastodon-archive/config` and adjust it to fit your needs.
 Hints inside. This file is optional, defaults are defined in the scripts
 and can be overridden using command-line parameters.
 
