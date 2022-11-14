@@ -8,6 +8,7 @@
 # -----------------------------------------------------------------------------
 # Default options (can be overridden via command-line):
 myacc="Demo@server.tld" # Your (default) Mastodon handle
+archive_followers=0     # whether to archive followers as well
 autogit=0               # whether to automatically check-in new data to your local git repo
 
 # !!! ================================================================== !!!
@@ -15,13 +16,25 @@ autogit=0               # whether to automatically check-in new data to your loc
 # !!! ================================================================== !!!
 
 # -----------------------------------------------------------------------------
+# Load config if exists
+[[ -f "${HOME}/.config/mastodon-archive/config" ]] && source "${HOME}/.config/mastodon-archive/config"
+
+# -----------------------------------------------------------------------------
 # Evaluate command-line options
-while getopts "a:g:" OPT; do
+while getopts "a:b:f:g:" OPT; do
   case $OPT in
     a) myacc=$OPTARG ;;
+    b) MASTOBASE="$OPTARG" ;;
+    f) case "$OPTARG" in
+         0|1) archive_followers=$OPTARG ;;
+         *) echo -e "\n! invalid value '$OPTARG' for archive_followers. -f must be 0 or 1.\n"
+            exit 1
+            ;;
+       esac
+       ;;
     g) case "$OPTARG" in
-         0|1) autogit=$OPTARG ;;
-         *) echo "! invalid value '$OPTARG' for autogit. -g must be 0 or 1."
+         0|1|2) autogit=$OPTARG ;;
+         *) echo -e "\n! invalid value '$OPTARG' for autogit. -g must be 0, 1 or 2.\n"
             exit 1
             ;;
        esac
@@ -49,8 +62,18 @@ syntax() {
   echo "  help   : show this help page and exit"
   echo
   echo "Options:"
-  echo "  -g <0|1>    : whether to automatically check in changes to your local git (0|1)"
-  echo "  -a <handle> : Mastodon handle (user) to process"
+  echo "  -a <handle>     : Mastodon handle (user) to process"
+  echo "  -b <MASTOBASE>  : base where all our backups reside. If specified,"
+  echo "                    your backups are expected in MASTOBASE/<instanceName>"
+  echo "                    (e.g. /home/peter/mastodon/mastodon.example.net if"
+  echo "                    your account is @<username>@mastodon.example.net),"
+  echo "                    otherwise they will be looked for in your current"
+  echo "                    working directory (where you are when invoking this script)"
+  echo "  -g <0|1|2>      : whether to automatically check in changes to your local"
+  echo "                    git (0: don't, 1: ask, 2: do it)"
+  echo
+  echo "Note that you can define your defaults (myacc, autogit) in"
+  echo "${HOME}/.config/mastodon-archive/config"
   echo
 }
 
@@ -67,7 +90,11 @@ fi
 # -----------------------------------------------------------------------------
 # get data from the instance
 function archive() {
-  mastodon-archive archive --with-mentions --with-following "$myacc"
+  if [[ $archive_followers -eq 1 ]]; then
+    mastodon-archive archive --with-mentions --with-following --with-followers "$myacc"
+  else
+    mastodon-archive archive --with-mentions --with-following "$myacc"
+  fi
   mastodon-archive replies "$myacc"
   mastodon-archive media --collection favourites "$myacc"
   mastodon-archive media --collection bookmarks "$myacc"
@@ -77,23 +104,26 @@ function archive() {
 # generate static html from gathered data
 function html() {
   mastodon-archive html "$myacc"
+  mastodon-archive html --collection bookmarks "$myacc"
   mastodon-archive html --collection favourites "$myacc"
 }
 
 # -----------------------------------------------------------------------------
 # add changes to local git repo
 function save() {
+  [[ $autogit -lt 1 ]] && return
   [[ ! -d .git ]] && {
     echo "No git repo found, skipping check-in."
     echo "(Use 'git init' to create a repo.)"
     return
   }
-  if [[ $autogit -eq 1 ]]; then
-    gitreply=y
-  else
-    read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
-    echo
-  fi
+  case $autogit in
+    0) gitreply=n ;;
+    1) read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
+       echo
+       ;;
+    2) gitreply=y ;;
+  esac
   [[ ${gitreply,,} = 'y' || ${gitreply,,} = 'j' ]] && {
     git add .
     git commit -m "commit for backup after run for '$1' at $(date +'%y-%m-%y %H:%M:%S')"
@@ -128,7 +158,16 @@ function report() {
   echo
 }
 
+# -----------------------------------------------------------------------------
+# find out where to look for / create our backup
+if [[ -n "$MASTOBASE" ]]; then
+  INSTDIR="${MASTOBASE}/${myacc##*@}"
+else
+  INSTDIR="${PWD}"
+fi
+
 #===[ MAIN ]===
+cd "$INSTDIR"
 # What to do?
 case "$1" in
   archive) archive && save archive;;
@@ -137,3 +176,4 @@ case "$1" in
   report) report;;
   *) syntax;;
 esac
+cd - >/dev/null
