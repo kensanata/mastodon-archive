@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/lib/python3/dist-packages/mastodon_archive/mastodon-archive.py $*
+/usr/lib/python3/dist-packages/mastodon-archive/mastodon-archive.py $*
