@@ -1,5 +1,5 @@
 #!/bin/bash
-# install mastodon-backup via Debian packages instead of PyPi dependencies
+# install mastodon-archive via Debian packages instead of PyPi dependencies
 # © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
 
 # -----------------------------------------------------------------------------

@@ -217,7 +217,7 @@ There's one thing you need to remember, though: the media directory
 contains all the media from your statuses, and all the media from your
 favourites. There is no particular reason why the media files from
 both sources need to be in the same directory, see
-[issue #11](https://github.com/kensanata/mastodon-backup/issues/11).
+[issue #11](https://github.com/kensanata/mastodon-archive/issues/11).
 
 # Generating a text file
 
@@ -478,7 +478,7 @@ If you use `--older-than 0`, then *all* your toots will be deleted, or
 will be dismissed.
 
 ```text
-~/src/mastodon-backup $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
+~/src/mastodon-archive $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
 This is a dry run and nothing will be expired.
 Instead, we'll just list what would have happened.
 Use --confirmed to actually do it.
