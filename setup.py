@@ -11,7 +11,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Alex Schroeder",
     author_email="alex@gnu.org",
-    url='https://github.com/kensanata/mastodon-backup#mastodon-archive',
+    url='https://github.com/kensanata/mastodon-archive#mastodon-archive',
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 3 :: Only',
