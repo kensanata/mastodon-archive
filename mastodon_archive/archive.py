@@ -154,6 +154,11 @@ def archive(args):
     except AttributeError as e:
         bookmarks = []
         print("Skipping bookmarks since your Mastodon.py library is too old!")
+        print("You might have a file called upgrade_python-mastodon.sh on your system.")
+        print("Find it for example using 'locate upgrade_python-mastodon.sh' and then run it")
+        print("to attempt an upgrade in-place: 'bash /path/to/upgrade_python-mastodon.sh'")
+        print("If you don't have 'locate' installed, try to use 'find' to find the script:")
+        print("'find / -name upgrade_python-mastodon.sh'")
 
     if not with_mentions:
         print("Skipping mentions")
