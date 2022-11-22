@@ -17,7 +17,7 @@ account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
 tool. Use something like
 [mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
-to browse the archive.
+or [meow](#meow) to browse the archive.
 
 Please report issues on the
 [Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
@@ -35,6 +35,7 @@ You can get the latest sources
 - [Searching your archive](#searching-your-archive)
 - [Show context for a toot](#show-context-for-a-toot)
 - [Generating a HTML file](#generating-a-html-file)
+- [Meow](#meow)
 - [Reporting](#reporting)
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
