@@ -58,7 +58,7 @@ There are multiple alternative ways to install `mastodon-archive` on your machin
 There are now packages available for Debian (`*.deb`) and Redhat (`*.rpm`) based
 systems. They are not in the standard repositories, though – but for now can be
 installed from [IzzySoft's Repositories](https://apt.izzysoft.de/). There you
-also find instructions on how to include them with your
+also find instructions on how to include them:
 
 * [Debian-based system](https://apt.izzysoft.de/ubuntu/dists/generic/)
   (including derivates like Ubuntu, Linux Mint etc)
