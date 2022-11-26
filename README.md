@@ -53,7 +53,29 @@ You can get the latest sources
 <!-- markdown-toc end -->
 
 # Installation
+There are multiple alternative ways to install `mastodon-archive` on your machine:
 
+## Linux Packages
+There are now packages available for Debian (`*.deb`) and Redhat (`*.rpm`) based
+systems. They are not in the standard repositories, though – but for now can be
+installed from [IzzySoft's Repositories](https://apt.izzysoft.de/). There you
+also find instructions on how to include them:
+
+* [Debian-based system](https://apt.izzysoft.de/ubuntu/dists/generic/)
+  (including derivates like Ubuntu, Linux Mint etc)
+* [Redhat based system](https://apt.izzysoft.de/redhat/) (including Fedora,
+  SuSE etc.)
+
+Once you've got the repo added and your indexes refreshed, just install using
+
+* `sudo apt install mastodon-archive` on Debian & derivates
+* `sudo yum install mastodon-archive` on Redhat & derivates
+
+Should you get a notice on your `Mastodon.py` being outdated while running
+`mastodon-archive` (will e.g. happen on Ubuntu 20.04), please see the
+[contrib/README.md](contrib/README.md) for a fix (`upgrade_python-mastodon.sh`).
+
+## Using PIP
 The following command will install `mastodon-archive` and all its
 dependencies:
 
@@ -78,6 +100,17 @@ setup tools. Try the following:
 pip3 install --user setuptools
 pip3 install mastodon-archive
 ```
+
+## Manually install the latest development code
+You can always clone the repository and run `python setup.py` from within its
+root directory:
+
+```bash
+git clone https://github.com/kensanata/mastodon-archive
+cd mastodon-archive
+python setup.py
+```
+
 
 # Making an archive
 
