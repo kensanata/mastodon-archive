@@ -15,3 +15,5 @@ make upload
 ```
 
 Push new tag to origin and github remotes!
+
+Send a note to Izzy for packaging `*.deb` and `*.rpm`.
