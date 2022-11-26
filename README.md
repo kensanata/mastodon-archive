@@ -108,7 +108,7 @@ root directory:
 ```bash
 git clone https://github.com/kensanata/mastodon-archive
 cd mastodon-archive
-python setup.py
+python setup.py install
 ```
 
 
