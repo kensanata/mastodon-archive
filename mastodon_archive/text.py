@@ -69,7 +69,7 @@ def text(args):
     for status in statuses:
         str = '';
         if status["reblog"] is not None:
-            str += (status["account"]["display_name"] + "boosted\n")
+            str += (status["account"]["display_name"] + " boosted\n")
             status = status["reblog"]
         str += ("%s @%s %s\n" % (
             status["account"]["display_name"],
