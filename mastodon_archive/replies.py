@@ -98,7 +98,7 @@ def replies(args):
                 status = mastodon.status(id)
                 replies.append(status)
             except Exception as e:
-                if  "not found" in str(e):
+                if  "not found" in str(e) or "Not Found" in str(e):
                     pass
                 else:
                     print(e, file=sys.stderr)
