@@ -292,7 +292,8 @@ def html(args):
     status_file = domain + '.user.' + username + '.json'
     media_dir = domain + '.user.' + username
     base_url = 'https://' + domain
-    data = core.load(status_file, required=True, combine=combine)
+    data = core.load(status_file, required=True, combine=combine,
+                     quiet=args.quiet)
     user = data["account"]
     statuses = data[collection]
 
@@ -324,7 +325,8 @@ def html(args):
 
             with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
 
-                print("Writing %s" % file_name)
+                if not args.quiet:
+                    print("Writing %s" % file_name)
 
                 html = header_template % (
                     user["display_name"],

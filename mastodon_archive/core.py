@@ -269,7 +269,7 @@ def load(file_name, required=False, quiet=False, combine=False):
 
     return None
 
-def save(file_name, data):
+def save(file_name, data, quiet=False):
     """
     Save the JSON data in a file. If the file exists, rename it,
     just in case.
@@ -281,7 +281,8 @@ def save(file_name, data):
 
     if os.path.isfile(file_name):
         backup_file = file_name + '~'
-        print("Backing up", file_name, "to", backup_file)
+        if not quiet:
+            print("Backing up", file_name, "to", backup_file)
         if os.path.isfile(backup_file):
             ans = ""
             while ans.lower() not in ("y", "n", "yes", "no"):

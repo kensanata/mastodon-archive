@@ -68,8 +68,9 @@ def meow(args):
 
     bar = None
     if len(media_files) > 0:
-        bar = Bar("Exporting files", max = len(media_files) + 1)
-        file_cb = lambda *args: bar.next()
+        if not args.quiet:
+            bar = Bar("Exporting files", max = len(media_files) + 1)
+            file_cb = lambda *args: bar.next()
 
     serve(server_port, meow_origin, data, media_dir, media_files, file_cb)
 

@@ -32,7 +32,8 @@ def fix_boosts(args):
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required=True, combine=args.combine)
+    data = core.load(status_file, required=True, combine=args.combine,
+                     quiet=args.quiet)
     n = 0
 
     for status in data["statuses"]:
@@ -46,12 +47,14 @@ def fix_boosts(args):
 
     if confirmed and n > 0:
 
-        print("Saving updated data to", status_file)
-        core.save(status_file, data)
+        if not args.quiet:
+            print("Saving updated data to", status_file)
+        core.save(status_file, data, quiet=args.quiet)
 
     elif confirmed:
 
-        print("No boosted statuses were undeleted")
+        if not args.quiet:
+            print("No boosted statuses were undeleted")
 
     else:
 

@@ -26,11 +26,12 @@ def replies(args):
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True)
+    data = core.load(status_file, required = True, quiet = args.quiet)
 
     mastodon = core.login(args)
 
-    print("Get user info")
+    if not args.quiet:
+        print("Get user info")
 
     try:
         user = mastodon.account_verify_credentials()
@@ -57,10 +58,12 @@ def replies(args):
                        "mentions",
                        "replies"]:
         if collection not in data:
-            print("No %s in this archive..." % collection)
+            if not args.quiet:
+                print("No %s in this archive..." % collection)
         else:
             statuses = data[collection];
-            print("Indexing %d %s..." % (len(statuses), collection))
+            if not args.quiet:
+                print("Indexing %d %s..." % (len(statuses), collection))
             for status in statuses:
 
                 if status["reblog"] is not None:
@@ -71,19 +74,23 @@ def replies(args):
                     pass
                 else:
                     index[status["id"]] = 1
-    print("Indexed %d statuses..." % (len(index)))
+    if not args.quiet:
+        print("Indexed %d statuses..." % (len(index)))
 
-    print("Counting missing replies...")
+    if not args.quiet:
+        print("Counting missing replies...")
     for status in data["statuses"]:
         # skip boosts
         if status["reblog"] is None and status["in_reply_to_id"] is not None:
             if status["in_reply_to_id"] not in index:
                 missing.append(status["in_reply_to_id"])
-    print("Missing %d originals..." % (len(missing)))
+    if not args.quiet:
+        print("Missing %d originals..." % (len(missing)))
 
     if len(missing) > 300:
-        print("Given the typical rate limit of 300 requests per 5 minutes, "
-              "this will take about %d minutes" % (len(missing) // 300 * 5))
+        if not args.quiet:
+            print("Given the typical rate limit of 300 requests per 5 minutes, "
+                  "this will take about %d minutes" % (len(missing) // 300 * 5))
 
     if len(missing) > 0:
         if not "replies" in data:
@@ -91,7 +98,8 @@ def replies(args):
         else:
             replies = data["replies"]
 
-        bar = Bar('Fetching', max = len(missing))
+        if not args.quiet:
+            bar = Bar('Fetching', max = len(missing))
 
         for id in missing:
             try:
@@ -103,9 +111,11 @@ def replies(args):
                 else:
                     print(e, file=sys.stderr)
 
-            bar.next()
+            if not args.quiet:
+                bar.next()
 
-        bar.finish()
+        if not args.quiet:
+            bar.finish()
 
         data["replies"] = replies
-        core.save(status_file, data)
+        core.save(status_file, data, quiet=args.quiet)

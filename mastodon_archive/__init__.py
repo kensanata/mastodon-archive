@@ -39,6 +39,9 @@ def main():
         use 'all' instead of your account and the commands will be run
         once for every archive in the directory.""")
 
+    parser.add_argument("--quiet", "-q", action='store_true', default=False,
+                        help='do not output normal status messages')
+
     subparsers = parser.add_subparsers()
 
 
@@ -103,6 +106,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--suppress-errors", action='store_true',
+                                default=False, help="don't print messages "
+                                "about media that can't be downloaded")
     parser_content.set_defaults(command=media.media)
 
 

@@ -25,7 +25,8 @@ def login(args):
 
     mastodon = core.login(args)
 
-    print("Get user info")
+    if not args.quiet:
+        print("Get user info")
 
     try:
         user = mastodon.account_verify_credentials()

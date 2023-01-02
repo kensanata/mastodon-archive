@@ -35,7 +35,7 @@ def split(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True)
+    data = core.load(status_file, required = True, quiet = args.quiet)
     older_data = {}
 
     n = 0
@@ -50,7 +50,8 @@ def split(args):
     delta = timedelta(weeks = args.weeks)
     cutoff = datetime.today() - delta
 
-    print("Older than " + str(cutoff))
+    if not args.quiet:
+        print("Older than " + str(cutoff))
 
     n_statuses = 0
 
@@ -69,19 +70,23 @@ def split(args):
         older_data[collection] = older_statuses
 
         moved = len(older_statuses)
-        print(collection + ": " + str(moved))
+        if not args.quiet:
+            print(collection + ": " + str(moved))
         n_statuses += moved
 
     if confirmed and n_statuses > 0:
 
-        print("Saving " + status_file)
-        core.save(status_file, data)
-        print("Saving " + older_status_file)
-        core.save(older_status_file, older_data)
+        if not args.quiet:
+            print("Saving " + status_file)
+        core.save(status_file, data, quiet=args.quiet)
+        if not args.quiet:
+            print("Saving " + older_status_file)
+        core.save(older_status_file, older_data, quiet=args.quiet)
 
     elif confirmed:
 
-        print("No older statuses to move")
+        if not args.quiet:
+            print("No older statuses to move")
 
     else:
 

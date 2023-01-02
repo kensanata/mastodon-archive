@@ -56,15 +56,18 @@ def media(args):
     for picture in ["avatar", "header"]:
         urls.append(data["account"][picture])
 
-    print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
+    if not args.quiet:
+        print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
-    bar = Bar('Downloading', max = len(urls))
+    if not args.quiet:
+        bar = Bar('Downloading', max = len(urls))
 
     errors = 0
 
     # start downloading the missing files from the back
     for url in reversed(urls):
-        bar.next()
+        if not args.quiet:
+            bar.next()
         path = urlparse(url).path
         file_name = media_dir + path
         if not os.path.isfile(file_name):
@@ -80,16 +83,19 @@ def media(args):
                     data = response.read()
                     fp.write(data)
                 except HTTPError as he:
-                  print("\nFailed to open " + url + " during a media request.")
+                  if not args.suppress_errors:
+                      print("\nFailed to open " + url + " during a media request.")
                 except URLError as ue:
-                  print("\nFailed to open " + url + " during a media request.")
+                  if not args.suppress_errors:
+                      print("\nFailed to open " + url + " during a media request.")
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
             if pace:
                 time.sleep(1)
 
-    bar.finish()
+    if not args.quiet:
+        bar.finish()
 
     if errors > 0:
         print("%d downloads failed" % errors)

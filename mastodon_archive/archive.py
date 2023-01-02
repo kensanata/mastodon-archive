@@ -33,11 +33,12 @@ def archive(args):
     (username, domain) = core.parse(args.user)
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file)
+    data = core.load(status_file, quiet = args.quiet)
 
     mastodon = core.login(args)
 
-    print("Get user info")
+    if not args.quiet:
+        print("Get user info")
 
     try:
         user = mastodon.account_verify_credentials()
@@ -70,7 +71,8 @@ def archive(args):
         obviously.
         """
         seen = { str(status["id"]): status for status in statuses }
-        progress = core.progress_bar()
+        if not args.quiet:
+            progress = core.progress_bar()
 
         # define function such that we can return from the inner and
         # from the outer loop
@@ -78,7 +80,8 @@ def archive(args):
             count = 0
             duplicates = 0
             while len(page) > 0:
-                progress()
+                if not args.quiet:
+                    progress()
                 for item in page:
                     status = item
                     # possibly a notification containing a status
@@ -94,62 +97,73 @@ def archive(args):
                         else:
                             duplicates = duplicates + 1
                             if duplicates > 10 and stopping:
-                                print() # at the end of the progress bar
-                                print("Seen 10 duplicates, stopping now.")
-                                print("Use --no-stopping to prevent this.")
+                                if not args.quiet:
+                                    print() # at the end of the progress bar
+                                    print("Seen 10 duplicates, stopping now.")
+                                    print("Use --no-stopping to prevent this.")
                                 return count
                 page = mastodon.fetch_next(page)
                 if page is None:
-                    print() # at the end of the progress bar
+                    if not args.quiet:
+                        print() # at the end of the progress bar
                     return count
             # if len(page) was 0
             return count
 
         count = process(page)
-        print("Added a total of %d new items" % count)
+        if not args.quiet:
+            print("Added a total of %d new items" % count)
         return statuses
 
     def keep_mentions(notifications):
         return [x.status for x in notifications if x.type == "mention"]
 
     if data is None or not "statuses" in data or len(data["statuses"]) == 0:
-        print("Get all statuses (this may take a while)")
+        if not args.quiet:
+            print("Get all statuses (this may take a while)")
         statuses = mastodon.account_statuses(user["id"], limit=100)
         statuses = mastodon.fetch_remaining(
             first_page = statuses)
     else:
-        print("Get new statuses")
+        if not args.quiet:
+            print("Get new statuses")
         statuses = complete(data["statuses"], mastodon.account_statuses(user["id"], limit=100))
 
     if skip_favourites:
-        print("Skipping favourites")
+        if not args.quiet:
+            print("Skipping favourites")
         if data is None or not "favourites" in data:
             favourites = []
         else:
             favourites = data["favourites"]
     elif data is None or not "favourites" in data or len(data["favourites"]) == 0:
-        print("Get favourites (this may take a while)")
+        if not args.quiet:
+            print("Get favourites (this may take a while)")
         favourites = mastodon.favourites()
         favourites = mastodon.fetch_remaining(
             first_page = favourites)
     else:
-        print("Get new favourites")
+        if not args.quiet:
+            print("Get new favourites")
         favourites = complete(data["favourites"], mastodon.favourites())
 
     try:
         if skip_bookmarks:
-            print("Skipping bookmarks")
+            if not args.quiet:
+                print("Skipping bookmarks")
             if data is None or not "bookmarks" in data:
                 bookmarks = []
             else:
                 bookmarks = data["bookmarks"]
         elif data is None or not "bookmarks" in data or len(data["bookmarks"]) == 0:
-            print("Get bookmarks (this may take a while)")
+            if not args.quiet:
+                print("Get bookmarks (this may take a while)")
             bookmarks = mastodon.bookmarks()
             bookmarks = mastodon.fetch_remaining(
                 first_page = bookmarks)
         else:
-            print("Get new bookmarks")
+            if not args.quiet:
+                print("Get new bookmarks")
             bookmarks = complete(data["bookmarks"], mastodon.bookmarks())
     except AttributeError as e:
         bookmarks = []
@@ -161,42 +175,49 @@ def archive(args):
         print("'find / -name upgrade_python-mastodon.sh'")
 
     if not with_mentions:
-        print("Skipping mentions")
+        if not args.quiet:
+            print("Skipping mentions")
         if data is None or not "mentions" in data:
             mentions = []
         else:
             mentions = data["mentions"]
     elif data is None or not "mentions" in data or len(data["mentions"]) == 0:
-        print("Get notifications and look for mentions (this may take a while)")
+        if not args.quiet:
+            print("Get notifications and look for mentions (this may take a while)")
         notifications = mastodon.notifications(limit=100)
         notifications = mastodon.fetch_remaining(
             first_page = notifications)
         mentions = keep_mentions(notifications)
     else:
-        print("Get new notifications and look for mentions")
+        if not args.quiet:
+            print("Get new notifications and look for mentions")
         is_mention = lambda x: "type" in x and x["type"] == "mention"
         mentions = complete(data["mentions"], mastodon.notifications(limit=100), is_mention)
 
     if not with_followers:
-        print("Skipping followers")
+        if not args.quiet:
+            print("Skipping followers")
         if data is None or not "followers" in data:
             followers = []
         else:
             followers = data["followers"]
     else:
-        print("Get followers (this may take a while)")
+        if not args.quiet:
+            print("Get followers (this may take a while)")
         followers = mastodon.account_followers(user.id, limit=100)
         followers = mastodon.fetch_remaining(
             first_page = followers)
 
     if not with_following:
-        print("Skipping following")
+        if not args.quiet:
+            print("Skipping following")
         if data is None or not "following" in data:
             following = []
         else:
             following = data["following"]
     else:
-        print("Get following (this may take a while)")
+        if not args.quiet:
+            print("Get following (this may take a while)")
         following = mastodon.account_following(user.id, limit=100)
         following = mastodon.fetch_remaining(
             first_page = following)
@@ -211,12 +232,13 @@ def archive(args):
         'following': following,
     }
 
-    print("Saving %d statuses, %d favourites, %d bookmarks, %d mentions, %d followers, and %d following" % (
-        len(statuses),
-        len(favourites),
-        len(bookmarks),
-        len(mentions),
-        len(followers),
-        len(following)))
+    if not args.quiet:
+        print("Saving %d statuses, %d favourites, %d bookmarks, %d mentions, %d followers, and %d following" % (
+            len(statuses),
+            len(favourites),
+            len(bookmarks),
+            len(mentions),
+            len(followers),
+            len(following)))
 
-    core.save(status_file, data)
+    core.save(status_file, data, quiet=args.quiet)
