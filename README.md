@@ -28,6 +28,7 @@ You can get the latest sources
 **Table of Contents**
 
 - [Installation](#installation)
+- [Global options](#global-options)
 - [Making an archive](#making-an-archive)
 - [Splitting an archive](#splitting-an-archive)
 - [Downloading media files](#downloading-media-files)
@@ -110,6 +111,17 @@ git clone https://github.com/kensanata/mastodon-archive
 cd mastodon-archive
 python setup.py install
 ```
+
+
+# Global options
+
+If you don't want the script to generate any output unless there are
+errors, e.g., because you are running it from a scheduled task and
+don't want to get email about it unless something goes wrong, you can
+specify `--quiet` before the command to suppress non-error output,
+e.g., `mastodon-archive --quiet archive`, `mastodon-archive --quiet
+media`, etc. This will not suppress output for commands whose main
+point is to generate output.
 
 
 # Making an archive
@@ -245,7 +257,9 @@ contains all the media you uploaded, and their corresponding previews.
 If you rerun it, it will simply try to get the remaining files. Note,
 however, that instance administrators can *delete* media files. Thus,
 you might be forever missing some files—particularly the ones from
-*remote* instances, if you added any to your favourites.
+*remote* instances, if you added any to your favourites. If you don't
+want to see errors about media that fail to download for this reason,
+add `--suppress-errors` to the command.
 
 There's one thing you need to remember, though: the media directory
 contains all the media from your statuses, and all the media from your
