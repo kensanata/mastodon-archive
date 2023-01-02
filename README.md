@@ -42,6 +42,8 @@ You can get the latest sources
 - [Troubleshooting](#troubleshooting)
 - [Followers](#followers)
 - [Following](#following)
+- [Mutes and blocks](#mutes-and-blocks)
+- [User notes](#user-notes)
 - [Whitelist](#whitelist)
 - [Mutuals](#mutuals)
 - [Example Setup](#example-setup)
@@ -719,6 +721,25 @@ Note that the application needs the permission to unfollow people in
 your name, which is why you need to authorize it again.
 
 This command supports the [whitelist](#whitelist).
+
+
+# Mutes and Blocks
+
+You can download lists of users you've muted and/or blocked by adding
+`--with-mutes` and/or `--with-blocks` to the `archive` command.
+
+
+# User notes
+
+There is currently a deficiency in the Mastodon API: it can't list all
+users for whom you have added private notes. Therefore, it is
+impossible for this script to definitively archive all private notes.
+However, if you add `--with-notes` to the `archive` command, then the
+script will download and archive notes for all users already
+downloaded for other reasons, i.e., followers, follows, mutes, and/or
+blocks. This is useful, e.g., if you are in the habit of adding
+private notes documenting for your future reference why you've
+followed, blocked, or muted someone.
 
 # Whitelist
 

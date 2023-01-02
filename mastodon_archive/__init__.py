@@ -68,6 +68,14 @@ def main():
                                 action='store_const',
                                 const=True, default=False,
                                 help='download following (the people you follow)')
+    parser_content.add_argument("--with-mutes", action='store_true',
+                                default=False, help='download people you muted')
+    parser_content.add_argument("--with-blocks", action='store_true',
+                                default=False, help='download people you blocked')
+    parser_content.add_argument("--with-notes", action='store_true',
+                                default=False, help='download private notes '
+                                'for any followers, follows, mutes, and/or '
+                                'blocks that have been downloaded')
     parser_content.add_argument("--no-stopping", dest='stopping',
                                 action='store_const',
                                 const=False, default=True,
