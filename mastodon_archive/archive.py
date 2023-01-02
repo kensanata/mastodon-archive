@@ -17,6 +17,7 @@
 import sys
 import os.path
 from . import core
+from mastodon.errors import MastodonAPIError
 
 def archive(args):
     """
@@ -28,6 +29,9 @@ def archive(args):
     with_mentions = args.with_mentions
     with_followers = args.with_followers
     with_following = args.with_following
+    with_mutes = args.with_mutes
+    with_blocks = args.with_blocks
+    with_notes = args.with_notes
     stopping = args.stopping
 
     (username, domain) = core.parse(args.user)
@@ -222,6 +226,65 @@ def archive(args):
         following = mastodon.fetch_remaining(
             first_page = following)
 
+    if not with_mutes:
+        if not args.quiet:
+            print("Skipping mutes")
+        if data is None or not "mutes" in data:
+            mutes = []
+        else:
+            mutes = data["mutes"]
+    else:
+        if not args.quiet:
+            print("Get mutes (this may take a while)")
+        mutes = mastodon.mutes(limit=100)
+        mutes = mastodon.fetch_remaining(first_page = mutes)
+
+    if not with_blocks:
+        if not args.quiet:
+            print("Skipping blocks")
+        if data is None or not "blocks" in data:
+            blocks = []
+        else:
+            blocks = data["blocks"]
+    else:
+        if not args.quiet:
+            print("Get blocks (this may take a while)")
+        blocks = mastodon.blocks(limit=100)
+        blocks = mastodon.fetch_remaining(first_page = blocks)
+
+    if not with_notes:
+        if not args.quiet:
+            print("Skipping notes")
+        if data is None or not "notes" in data:
+            notes = []
+        else:
+            notes = data["notes"]
+    else:
+        if not args.quiet:
+            print("Get notes (this may take a while)")
+        all_ids = set()
+        for coll in (followers, following, mutes, blocks):
+            for user in coll:
+                all_ids.add(user['id'])
+        all_ids = list(all_ids)
+        # If there are too many IDs the call may fail because the URI is too
+        # long, so we use binary back-off to find a request size that works.
+        requested = 0
+        notes = []
+        request_size = len(all_ids)
+        while requested < len(all_ids):
+            try:
+                relationships = mastodon.account_relationships(
+                    all_ids[requested:requested + request_size])
+            except MastodonAPIError as e:
+                if 414 in e.args: # URI too large
+                    request_size = int(request_size / 2)
+                    continue
+                raise
+            requested += request_size
+            notes.extend(({'id': u.id, 'note': u.note}
+                          for u in relationships if u.note))
+
     data = {
         'account': user,
         'statuses': statuses,
@@ -230,15 +293,21 @@ def archive(args):
         'mentions': mentions,
         'followers': followers,
         'following': following,
+        'mutes': mutes,
+        'blocks': blocks,
+        'notes': notes,
     }
 
     if not args.quiet:
-        print("Saving %d statuses, %d favourites, %d bookmarks, %d mentions, %d followers, and %d following" % (
+        print("Saving %d statuses, %d favourites, %d bookmarks, %d mentions, %d followers, %d following, %d mutes, %d blocks, %d notes" % (
             len(statuses),
             len(favourites),
             len(bookmarks),
             len(mentions),
             len(followers),
-            len(following)))
+            len(following),
+            len(mutes),
+            len(blocks),
+            len(notes)))
 
     core.save(status_file, data, quiet=args.quiet)
