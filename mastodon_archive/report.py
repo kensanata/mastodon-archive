@@ -103,16 +103,22 @@ def report(args):
 
     if args.all:
         print("Considering the entire archive")
-        statuses = data["statuses"]
-        favourites = data["favourites"]
-        bookmarks = data["bookmarks"]
+        if "statuses" in data:
+            statuses = data["statuses"]
+        if "favourites" in data:
+            favourites = data["favourites"]
+        if "bookmarks" in data:
+            bookmarks = data["bookmarks"]
     else:
         print("Considering the last "
               + str(args.weeks)
               + " weeks")
-        statuses = core.keep(data["statuses"], args.weeks)
-        favourites = core.keep(data["favourites"], args.weeks)
-        bookmarks = core.keep(data["bookmarks"], args.weeks)
+        if "statuses" in data:
+            statuses = core.keep(data["statuses"], args.weeks)
+        if "favourites" in data:
+            favourites = core.keep(data["favourites"], args.weeks)
+        if "bookmarks" in data:
+            bookmarks = core.keep(data["bookmarks"], args.weeks)
 
     if "statuses" in data:
         print("Statuses:".ljust(20), str(len(statuses)).rjust(6))
