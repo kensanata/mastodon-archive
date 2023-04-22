@@ -115,7 +115,6 @@ a:hover {
 .media {
         margin-top: 8px;
         margin-bottom: 8px;
-        height: 110px;
         overflow: hidden;
 }
 .media a {
@@ -131,11 +130,10 @@ a:hover {
         max-height: 50%%;
         display: block;
 }
-/* http://jonrohan.codes/fieldnotes/vertically-center-clipped-image/ */
+
 .media img {
-        position: relative;
-        top: 50%%;
-        transform: translateY(-50%%);
+        max-width: 100%%;
+        height: auto;
 }
 nav a, .content a {
         color: #d9e1e8;
