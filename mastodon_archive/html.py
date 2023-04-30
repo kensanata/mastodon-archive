@@ -216,11 +216,11 @@ media_template = '''\
 '''
 
 image_template = '''\
-<a href="%s"><img src="%s"/></a>
+<a href="%s"><img loading="lazy" src="%s"/></a>
 '''
 
 video_template = '''\
-<video controls src="%s"><a href="%s"><img src="%s"/></a></video>
+<video controls preload="metadata" src="%s"><a href="%s"><img src="%s"/></a></video>
 '''
 
 wrapper_template = '''\
