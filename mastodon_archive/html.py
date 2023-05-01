@@ -220,7 +220,7 @@ image_template = '''\
 '''
 
 video_template = '''\
-<video controls preload="none" src="%s" poster="%s"><a href="%s"><img src="%s"/></a></video>
+<video controls preload="metadata" src="%s" ><a href="%s"><img src="%s"/></a></video>
 '''
 
 wrapper_template = '''\
@@ -269,7 +269,6 @@ def write_status(fp, media_dir, status):
             if attachment["type"] == "video" and src:
                 previews.append(video_template % (
                     src, # video
-                    file_url(media_dir, attachment["preview_url"]), # poster image
                     file_url(media_dir, attachment["remote_url"]), # remote link
                     file_url(media_dir, attachment["preview_url"]))) # image for remote link
             elif attachment["type"] == "image":
