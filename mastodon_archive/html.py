@@ -143,6 +143,7 @@ nav a:visited, .content a:visited {
 nav {
         padding: 10px 0;
         border-top: 1px solid #393f4f;
+        height: 1em;
 }
 footer nav {
         padding-bottom: 0;
@@ -184,11 +185,11 @@ nav_template = '''\
 '''
 
 previous_template = '''\
-<a class="previous" href="%s">Previous</a>
+<a class="previous" href="%s">Later</a>
 '''
 
 next_template = '''\
-<a class="next" href="%s">Next</a>
+<a class="next" style="float:right;" href="%s">Earlier</a>
 '''
 
 boost_template = '''\
