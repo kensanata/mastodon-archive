@@ -221,7 +221,11 @@ image_template = '''\
 '''
 
 video_template = '''\
-<video controls preload="metadata" src="%s" ><a href="%s"><img src="%s"/></a></video>
+<video controls preload="metadata" src="%s"><a href="%s"><img src="%s"/></a></video>
+'''
+
+video_with_poster_template = '''\
+<video controls preload="none" src="%s" poster="%s"><a href="%s"><img src="%s"/></a></video>
 '''
 
 wrapper_template = '''\
@@ -268,10 +272,21 @@ def write_status(fp, media_dir, status):
             # video src must never be the unknown image
             src = file_url(media_dir, attachment["url"], False);
             if attachment["type"] == "video" and src:
-                previews.append(video_template % (
-                    src, # video
-                    file_url(media_dir, attachment["remote_url"]), # remote link
-                    file_url(media_dir, attachment["preview_url"]))) # image for remote link
+                # Pleroma and maybe others don't offer a separate
+                # preview. The preview_url is the same as the video
+                # source.
+                preview = file_url(media_dir, attachment["preview_url"], False)
+                if src and preview and src == preview or not preview:
+                    previews.append(video_template % (
+                        src, # video
+                        file_url(media_dir, attachment["remote_url"]), # remote link
+                        preview)) # image for remote link
+                else:
+                    previews.append(video_with_poster_template % (
+                        src, # video
+                        preview, # poster
+                        file_url(media_dir, attachment["remote_url"]), # remote link
+                        preview)) # image for remote link
             elif attachment["type"] == "image":
                 previews.append(image_template % (
                     src,
