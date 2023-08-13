@@ -247,19 +247,19 @@ def main():
 
     parser_content = subparsers.add_parser(
         name='followers',
-        help='''find followers who never mention you''')
+        help='''show followers''')
+    parser_content.add_argument("--no-mentions", dest='mentions', action='store_const',
+                                const=False, default=True,
+                                help='Limit to followers that do not mention you')
     parser_content.add_argument("--block", dest='block', action='store_const',
                                 const=True, default=False,
                                 help='...and block them')
     parser_content.add_argument("--all", dest='all', action='store_const',
                                 const=True, default=False,
-                                help='consider all toots (ignore --newer-than)')
+                                help='consider all toots (ignore --newer-than) when looking for interactions')
     parser_content.add_argument("--newer-than", dest='weeks',
                                 metavar='N', type=int, default=12,
                                 help='require interaction within this many weeks (default is 12)')
-    parser_content.add_argument("--pace", dest='pace', action='store_const',
-                                const=True, default=False,
-                                help='avoid timeouts and pace requests')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=followers.followers)

@@ -32,7 +32,7 @@ def find_lurkers(followers, whitelist, mentions):
 
 def followers(args):
     """
-    List followers who never mention you
+    List followers
     """
 
     (username, domain) = args.user.split('@')
@@ -42,7 +42,7 @@ def followers(args):
 
     # Print both error messages if the data is missing
     error = 0
-    if "mentions" not in data or len(data["mentions"]) == 0:
+    if args.mentions and "mentions" not in data or len(data["mentions"]) == 0:
         print("You need to run 'mastodon-archive archive --with-mentions'",
               file=sys.stderr)
         error = 5
@@ -52,6 +52,14 @@ def followers(args):
         error = 6
     if error > 0:
         sys.exit(error)
+
+    # If we're not checking for mentions, this is quickly done.
+    if not args.mentions:
+        for account in sorted(data["followers"], key=lambda account:
+                              account["display_name"] or account["username"]):
+            print("%s <%s>" % (account["display_name"] or account["username"],
+                               account["acct"]))
+        sys.exit(0)
 
     if args.all:
         if not args.quiet:
