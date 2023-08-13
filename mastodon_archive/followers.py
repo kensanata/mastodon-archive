@@ -76,7 +76,7 @@ def followers(args):
 
     if args.block:
         mastodon = core.readwrite(args)
-        accounts = find_lurkers(data["followers"], whitelist, data["mentions"])
+        accounts = find_lurkers(data["followers"], whitelist, mentions)
 
         if not args.quiet:
             bar = Bar('Blocking', max = len(accounts))
@@ -100,7 +100,7 @@ def followers(args):
             bar.finish()
 
     else:
-        accounts = find_lurkers(data["followers"], whitelist, data["mentions"])
+        accounts = find_lurkers(data["followers"], whitelist, mentions)
         for account in sorted(accounts, key=lambda account:
                               account["display_name"] or account["username"]):
             print("%s <%s>" % (account["display_name"] or account["username"],
