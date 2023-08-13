@@ -1,9 +1,10 @@
 # Mastodon Archive
 
-This tool allows you to make an archive of your statuses, your
-favourites, bookmarks and the media in both your statuses, your favourites and your bookmarks.
-From this archive, you can generate a simple text file, or a HTML file
-with or without media. Take a look at an
+This tool enables you to make an archive of your statuses, your
+favourites, bookmarks and the media in both your statuses, your
+favourites and your bookmarks. From this archive, you can generate a
+simple text file, or a HTML file with or without media. Take a look at
+an
 [example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
 if you're curious.
 
@@ -19,6 +20,10 @@ tool. Use something like
 [tumelune](https://tumelune.netlify.app/),
 [mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
 or [meow](#meow) to browse the archive.
+
+This tool does not download the full archive of your toots from the
+server. Instead, it uses the Mastodon client API to fetch them
+incrementally.
 
 Please report issues on the
 [Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
