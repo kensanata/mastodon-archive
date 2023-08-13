@@ -633,11 +633,14 @@ permissions.
 # Followers
 
 This is work in progress. I'm actually not sure where I want to go
-with this. Right now it lists all your followers that haven't
-interacted with you. If a toot of theirs mentions you, then that
-counts as an interaction. Favouring and boosting does not count. By
-default, this looks at the last twelve weeks. In order for this to
-work, you need an archive containing both mentions and followers.
+with this. Right now it either lists all your followers, or it lists
+all your followers that haven't interacted with you; in the later case
+you can block them, too. This is for very grumpy users, for sure.
+
+If a toot of theirs mentions you, then that counts as an interaction.
+Favouring and boosting does not count. By default, this looks at the
+last twelve weeks. In order for this to work, you need an archive
+containing both mentions and followers.
 
 ```text
 $ mastodon-archive archive --with-mentions --with-followers kensanata@dice.camp
@@ -656,7 +659,7 @@ Saving 659 statuses, 376 favourites, 478 mentions, and 107 followers
 Now you're ready to determine the list of lurkers:
 
 ```text
-$ mastodon-archive followers kensanata@dice.camp
+$ mastodon-archive followers --no-mentions kensanata@dice.camp
 Considering the last 12 weeks
 There is no whitelist
 ...
