@@ -74,7 +74,7 @@ def archive(args):
         keys. That's why we fetch it all over again. Expiry helps,
         obviously.
         """
-        seen = { str(status["id"]): status for status in statuses }
+        seen = { str(status["id"]): status for status in statuses if status is not None }
         if not args.quiet:
             progress = core.progress_bar()
 
