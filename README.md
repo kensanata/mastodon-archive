@@ -25,10 +25,8 @@ This tool does not download the full archive of your toots from the
 server. Instead, it uses the Mastodon client API to fetch them
 incrementally.
 
-Please report issues on the
-[Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
 You can get the latest sources
-[from the author’s site](https://alexschroeder.ch/cgit/mastodon-archive/about/).
+[from the author’s site](https://src.alexschroeder.ch/mastodon-archive.git).
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
