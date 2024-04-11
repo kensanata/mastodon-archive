@@ -78,16 +78,27 @@ def media(args):
                     url, data=None,
                     headers={'User-Agent': 'Mastodon-Archive/1.3 '
                              '(+https://github.com/kensanata/mastodon-archive#mastodon-archive)'})
-                try:
-                  with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
-                    data = response.read()
-                    fp.write(data)
-                except HTTPError as he:
-                  if not args.suppress_errors:
-                      print("\nFailed to open " + url + " during a media request.")
-                except URLError as ue:
-                  if not args.suppress_errors:
-                      print("\nFailed to open " + url + " during a media request.")
+                retries = 5
+                retry_downloads = True
+                while retries > 0 and retry_downloads:
+                    try:
+                        with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
+                            data = response.read()
+                            fp.write(data)
+                            retry_downloads = False
+                    except HTTPError as he:
+                        if not args.suppress_errors:
+                            print("\nFailed to open " + url + " during a media request.")
+                        if he.status == 429:
+                            print("Delaying next requests...")
+                            time.sleep(3*60)
+                            retries -= 1
+                        else:
+                            retry_downloads = False
+                    except URLError as ue:
+                        if not args.suppress_errors:
+                            print("\nFailed to open " + url + " during a media request.")
+                        retry_downloads = False
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
