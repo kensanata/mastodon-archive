@@ -14,6 +14,9 @@ Possibly clean up the dist/ folder.
 make upload
 ```
 
+Note that the auth token for the upload is stored in ~/.pypirc
+
 Push new tag to origin and github remotes!
 
-Send a note to Izzy for packaging `*.deb` and `*.rpm`.
+Send a note to Izzy <izzy@qumran.org> for packaging `*.deb` and `*.rpm`.
+Or use fedi: @IzzyOnDroid@floss.social.
