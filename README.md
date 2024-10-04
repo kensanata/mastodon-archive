@@ -628,6 +628,22 @@ mastodon-archive. Now you can try the authorization URL again and you
 will only get read permissions instead of both read and write
 permissions.
 
+🔥 Some servers are compatible with the Mastodon client protocol and
+yet you'll get the error "Version check failed". In these cases, you
+can skip this check by using the `--no-version-check` option.
+
+```text
+$ mastodon-archive archive --pace --no-version-check alex@social.alexschroeder.ch
+```
+
+The problem is that the library iplementing the Mastodon client
+protocol tries to determine the exact feature-set available from your
+instance based on the instance's version string. When using
+mastodon-archive for instances that don't use Mastodon, you might have
+to skip the version check. When you disable the version check,
+whatever you're trying to do might work – or it might not.
+Unfortunately, you're on your own.
+
 # Followers
 
 This is work in progress. I'm actually not sure where I want to go

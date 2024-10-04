@@ -83,6 +83,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=archive.archive)
@@ -94,6 +97,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=replies.replies)
@@ -114,6 +120,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("--suppress-errors", action='store_true',
                                 default=False, help="don't print messages "
                                 "about media that can't be downloaded")
@@ -213,6 +222,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=expire.expire)
@@ -280,6 +292,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=following.following)
@@ -291,6 +306,9 @@ def main():
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=mutuals.mutuals)

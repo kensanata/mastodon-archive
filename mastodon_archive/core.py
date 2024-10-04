@@ -90,12 +90,12 @@ def deauthorize(args):
 
 def login(args, scopes=('read',)):
     """
-    Login to your Mastodon account
+    Login to your Mastodon account.
     """
     pace = hasattr(args, 'pace') and args.pace
-    app = App(args.user, scopes)
-    return app.login(pace)
-
+    version_check = hasattr(args, 'version_check') and args.version_check
+    app = App(args.user, scopes=scopes, pace=pace, version_check=version_check)
+    return app.login()
 
 class App:
     """
@@ -103,7 +103,7 @@ class App:
     account.
     """
 
-    def __init__(self, user, scopes=('read',), name="mastodon-archive"):
+    def __init__(self, user, scopes=('read',), name="mastodon-archive", pace=False, version_check="created"):
 
         self.username, self.domain = user.split("@")
         self.url = "https://" + self.domain
@@ -111,6 +111,8 @@ class App:
         self.scopes = scopes
         self.client_secret = self.domain + ".client.secret"
         self.user_secret = self.domain + ".user." + self.username + ".secret"
+        self.pace = pace
+        self.version_check = version_check
 
     def register(self):
         """
@@ -119,6 +121,7 @@ class App:
         print("Registering app")
         Mastodon.create_app(
             self.name,
+            version_check_mode=self.version_check,
             api_base_url=self.url,
             scopes=self.scopes,
             to_file=self.client_secret
@@ -133,9 +136,13 @@ class App:
         client_secret = self.client_secret
         user_secret = self.user_secret
         scopes = self.scopes
+        version_check = self.version_check,
         print("This app needs access to your Mastodon account.")
 
-        mastodon = Mastodon(client_id=client_secret, api_base_url=url)
+        mastodon = Mastodon(
+            client_id=client_secret,
+            version_check_mode=version_check,
+            api_base_url=url)
 
         url = mastodon.auth_request_url(client_id=client_secret, scopes=scopes)
 
@@ -187,13 +194,15 @@ class App:
         if os.path.isfile(client_secret):
             os.remove(client_secret)
 
-    def login(self, pace=False):
+    def login(self):
         """
         Register app, authorize and return an instance of ``Mastodon``
         """
         url = self.url
         client_secret = self.client_secret
         user_secret = self.user_secret
+        pace = self.pace
+        version_check = self.version_check
 
         if not os.path.isfile(client_secret):
             self.register()
@@ -209,6 +218,7 @@ class App:
                 mastodon = Mastodon(
                     client_id=client_secret,
                     access_token=user_secret,
+                    version_check_mode=version_check,
                     api_base_url=url,
                     ratelimit_method="pace",
                     ratelimit_pacefactor=0.9,
@@ -222,7 +232,8 @@ class App:
                 mastodon = Mastodon(
                     client_id=client_secret,
                     access_token=user_secret,
-                    api_base_url=url
+                    version_check_mode=version_check,
+                    api_base_url=url,
                 )
 
         return mastodon
@@ -274,17 +285,17 @@ def load(file_name, required=False, quiet=False, combine=False):
 
     return None
 
-def save(file_name, data, quiet=False):
+def save(file_name, data, quiet=False, backup=True):
     """
     Save the JSON data in a file. If the file exists, rename it,
-    just in case.
+    in case backup is True (the default).
     """
     date_handler = lambda obj: (
         obj.isoformat()
         if isinstance(obj, (datetime.datetime, datetime.date))
         else None)
 
-    if os.path.isfile(file_name):
+    if backup and os.path.isfile(file_name):
         backup_file = file_name + '~'
         if not quiet:
             print("Backing up", file_name, "to", backup_file)
