@@ -105,7 +105,6 @@ def media(args):
         print("%d downloads failed" % errors)
 
 def download(url, remoteurl, file_name):
-    print("Downloading " + url)
     req = urllib.request.Request(
         url, data=None,
         headers={'User-Agent': 'Mastodon-Archive/1.3 '
