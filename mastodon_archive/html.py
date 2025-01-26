@@ -304,8 +304,12 @@ media_template = '''\
 %s</div>\
 '''
 
+generic_content_template = '''\
+<a href="%s">%s</a>
+'''
+
 image_template = '''\
-<a href="%s" class="%s" style="padding: %s;"><img loading="lazy" src="%s"/></a>
+<a href="%s" class="%s" style="padding: %s;"><img loading="lazy" src="%s" title="%s" alt="%s"/></a>
 '''
 
 video_template = '''\
@@ -404,7 +408,7 @@ def write_status(fp, media_dir, status):
         for attachment in attachments:
             # video src must never be the unknown image
             src = file_url(media_dir, attachment["url"], None, False);
-            if attachment["type"] == "video" and src:
+            if (attachment["type"] == "video" or attachment["type"] == "gifv") and src:
                 # Pleroma and maybe others don't offer a separate
                 # preview. The preview_url is the same as the video
                 # source.
@@ -426,29 +430,29 @@ def write_status(fp, media_dir, status):
                 if len(attachments) == 2:
                         size = "tall"
                         if len(previews) == 0:
-                        padding = "0 1px 0 0"
+                                padding = "0 1px 0 0"
                         elif len(previews) == 1:
-                        padding = "0 0 0 1px"
+                                padding = "0 0 0 1px"
                 if len(attachments) == 3:
                         if len(previews) == 0:
-                        padding = "0 1px 0 0"
-                        size="tall"
+                                padding = "0 1px 0 0"
+                                size="tall"
                         elif len(previews) == 1:
-                        padding = "0 0 1px 1px"
-                        size = "small"
+                                padding = "0 0 1px 1px"
+                                size = "small"
                         elif len(previews) == 2:
-                        padding = "1px 0 0 1px"
-                        size = "small"
+                                padding = "1px 0 0 1px"
+                                size = "small"
                 elif len(attachments) == 4:
                         size = "small"
                         if len(previews) == 0:
-                        padding = "0 1px 1px 0"
+                                padding = "0 1px 1px 0"
                         elif len(previews) == 1:
-                        padding = "0 0 1px 1px"
+                                padding = "0 0 1px 1px"
                         elif len(previews) == 2:
-                        padding = "1px 1px 0 0"
+                                padding = "1px 1px 0 0"
                         elif len(previews) == 3:
-                        padding = "1px 0 0 1px"
+                                padding = "1px 0 0 1px"
 
                 description = escape(attachment["description"]) if attachment["description"] is not None else ""
 
@@ -459,6 +463,12 @@ def write_status(fp, media_dir, status):
                         file_url(media_dir, attachment["preview_url"], attachment["url"]),
                         description,
                         description))
+            else:
+                # other, might be audio or so
+                description = escape(attachment["description"]) if attachment["description"] is not None else attachment["type"] + " attachment"
+                previews.append(generic_content_template % (
+                    src,
+                    description))
 
         media = media_template % (
                 ''.join(previews))

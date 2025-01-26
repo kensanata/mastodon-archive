@@ -44,6 +44,7 @@ def media(args):
         attachments = status["media_attachments"]
         account = status["account"]
         emojis = status["emojis"]
+        reactions = status["reactions"]
         card = status["card"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
@@ -65,6 +66,9 @@ def media(args):
             for emoji in account["emojis"]:
                 if emoji["url"]:
                         urls.append((emoji["url"], None))
+        for reaction in reactions:
+                if "url" in reaction and reaction["url"]  :
+                        urls.append((reaction["url"], None))
         if card and card["image"]:
                 urls.append((card["image"], None))
 
@@ -96,7 +100,7 @@ def media(args):
             dir_name =  os.path.dirname(file_name)
             os.makedirs(dir_name, exist_ok = True)
             try:
-                download(url, remoteurl, file_name)
+                download(url, remoteurl, file_name, args)
             except OSError as e:
                 print("\n" + e.msg + ": " + url, file=sys.stderr)
                 errors += 1
@@ -109,7 +113,7 @@ def media(args):
     if errors > 0:
         print("%d downloads failed" % errors)
 
-def download(url, remoteurl, file_name):
+def download(url, remoteurl, file_name, args):
     req = urllib.request.Request(
         url, data=None,
         headers={'User-Agent': 'Mastodon-Archive/1.3 '
@@ -126,7 +130,7 @@ def download(url, remoteurl, file_name):
             if not args.suppress_errors:
                 print("\nFailed to open " + url + " during a media request.")
                 if remoteurl:
-                    download(remoteurl, None, file_name)
+                    download(remoteurl, None, file_name, args)
             if he.status == 429:
                 print("Delaying next requests...")
                 time.sleep(3*60)
@@ -134,10 +138,10 @@ def download(url, remoteurl, file_name):
             else:
                 retry_downloads = False
                 if remoteurl:
-                    download(remoteurl, None, file_name)
+                    download(remoteurl, None, file_name, args)
         except URLError as ue:
             if not args.suppress_errors:
                 print("\nFailed to open " + url + " during a media request.")
                 if remoteurl:
-                    download(remoteurl, None, file_name)
+                    download(remoteurl, None, file_name, args)
             retry_downloads = False
