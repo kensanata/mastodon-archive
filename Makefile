@@ -10,4 +10,4 @@ dist:
 	@echo make upload is next
 
 upload:
-	twine upload dist/*
+	twine upload --repository mastodon-archive dist/*

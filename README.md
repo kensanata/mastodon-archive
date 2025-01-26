@@ -1,9 +1,10 @@
 # Mastodon Archive
 
-This tool allows you to make an archive of your statuses, your
-favourites and the media in both your statuses and your favourites.
-From this archive, you can generate a simple text file, or a HTML file
-with or without media. Take a look at an
+This tool enables you to make an archive of your statuses, your
+favourites, bookmarks and the media in both your statuses, your
+favourites and your bookmarks. From this archive, you can generate a
+simple text file, or a HTML file with or without media. Take a look at
+an
 [example](https://alexschroeder.ch/mastodon.weaponvsac.space.user.kensanata.html)
 if you're curious.
 
@@ -16,18 +17,22 @@ your avatar and header images as well as the private key of your
 account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
 tool. Use something like
+[tumelune](https://tumelune.netlify.app/),
 [mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
-to browse the archive.
+or [meow](#meow) to browse the archive.
 
-Please report issues on the
-[Software Wiki](https://alexschroeder.ch/software/Mastodon_Archive).
+This tool does not download the full archive of your toots from the
+server. Instead, it uses the Mastodon client API to fetch them
+incrementally.
+
 You can get the latest sources
-[from the author’s site](https://alexschroeder.ch/cgit/mastodon-archive/about/).
+[from the author’s site](https://src.alexschroeder.ch/mastodon-archive.git).
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [Installation](#installation)
+- [Global options](#global-options)
 - [Making an archive](#making-an-archive)
 - [Splitting an archive](#splitting-an-archive)
 - [Downloading media files](#downloading-media-files)
@@ -35,11 +40,14 @@ You can get the latest sources
 - [Searching your archive](#searching-your-archive)
 - [Show context for a toot](#show-context-for-a-toot)
 - [Generating a HTML file](#generating-a-html-file)
+- [Meow](#meow)
 - [Reporting](#reporting)
 - [Expiring your toots and favourites](#expiring-your-toots-and-favourites)
 - [Troubleshooting](#troubleshooting)
 - [Followers](#followers)
 - [Following](#following)
+- [Mutes and blocks](#mutes-and-blocks)
+- [User notes](#user-notes)
 - [Whitelist](#whitelist)
 - [Mutuals](#mutuals)
 - [Example Setup](#example-setup)
@@ -52,7 +60,29 @@ You can get the latest sources
 <!-- markdown-toc end -->
 
 # Installation
+There are multiple alternative ways to install `mastodon-archive` on your machine:
 
+## Linux Packages
+There are now packages available for Debian (`*.deb`) and Redhat (`*.rpm`) based
+systems. They are not in the standard repositories, though – but for now can be
+installed from [IzzySoft's Repositories](https://apt.izzysoft.de/). There you
+also find instructions on how to include them:
+
+* [Debian-based system](https://apt.izzysoft.de/ubuntu/dists/generic/)
+  (including derivates like Ubuntu, Linux Mint etc)
+* [Redhat based system](https://apt.izzysoft.de/redhat/) (including Fedora,
+  SuSE etc.)
+
+Once you've got the repo added and your indexes refreshed, just install using
+
+* `sudo apt install mastodon-archive` on Debian & derivates
+* `sudo yum install mastodon-archive` on Redhat & derivates
+
+Should you get a notice on your `Mastodon.py` being outdated while running
+`mastodon-archive` (will e.g. happen on Ubuntu 20.04), please see the
+[contrib/README.md](contrib/README.md) for a fix (`upgrade_python-mastodon.sh`).
+
+## Using PIP
 The following command will install `mastodon-archive` and all its
 dependencies:
 
@@ -78,6 +108,28 @@ pip3 install --user setuptools
 pip3 install mastodon-archive
 ```
 
+## Manually install the latest development code
+You can always clone the repository and run `python setup.py` from within its
+root directory:
+
+```bash
+git clone https://github.com/kensanata/mastodon-archive
+cd mastodon-archive
+python setup.py install
+```
+
+
+# Global options
+
+If you don't want the script to generate any output unless there are
+errors, e.g., because you are running it from a scheduled task and
+don't want to get email about it unless something goes wrong, you can
+specify `--quiet` before the command to suppress non-error output,
+e.g., `mastodon-archive --quiet archive`, `mastodon-archive --quiet
+media`, etc. This will not suppress output for commands whose main
+point is to generate output.
+
+
 # Making an archive
 
 When using the app for the first time, you have to authorize it:
@@ -101,10 +153,10 @@ This can differ from instance to instance and is subject to change."
 Thus, if every request gets 20 toots, then we can get at most 6000
 toots per five minutes.
 
-If this is taking too long, consider skipping your favourites:
+If this is taking too long, consider skipping your favourites and bookmarks:
 
 ```text
-$ mastodon-archive archive --no-favourites kensanata@dice.camp
+$ mastodon-archive archive --no-favourites --no-bookmarks kensanata@dice.camp
 ```
 
 If you want a better picture of conversations, you can also include
@@ -193,11 +245,16 @@ $ mastodon-archive media kensanata@dice.camp
 Downloading |################################| 10/10
 ```
 By default, media you uploaded and media of statuses you added your
-favourites are not part of your archive. To download these too,
+favourites or bookmarks are not part of your archive. To download these too,
 specify the favourites collection:
 
 ```text
 $ mastodon-archive media --collection favourites kensanata@dice.camp
+```
+specify the bookmarks collection:
+
+```text
+$ mastodon-archive media --collection bookmarks kensanata@dice.camp
 ```
 
 You will end up with a new directory, `dice.camp.user.kensanata`. It
@@ -206,13 +263,15 @@ contains all the media you uploaded, and their corresponding previews.
 If you rerun it, it will simply try to get the remaining files. Note,
 however, that instance administrators can *delete* media files. Thus,
 you might be forever missing some files—particularly the ones from
-*remote* instances, if you added any to your favourites.
+*remote* instances, if you added any to your favourites. If you don't
+want to see errors about media that fail to download for this reason,
+add `--suppress-errors` to the command.
 
 There's one thing you need to remember, though: the media directory
 contains all the media from your statuses, and all the media from your
 favourites. There is no particular reason why the media files from
 both sources need to be in the same directory, see
-[issue #11](https://github.com/kensanata/mastodon-backup/issues/11).
+[issue #11](https://github.com/kensanata/mastodon-archive/issues/11).
 
 # Generating a text file
 
@@ -277,7 +336,7 @@ protect your backslashes and questionmarks.
 $ mastodon-archive text kensanata@dice.camp house 'rule\b'
 ```
 
-You can also search your favourites or your mentions:
+You can also search your favourites, your bookmarks or your mentions:
 
 ```text
 $ mastodon-archive text --collection favourites kensanata@dice.camp '(?i)blackbird'
@@ -410,8 +469,8 @@ Top 10 hashtags:
 ```
 
 You can specify a different time number of weeks to consider using
-`--newer-than N` or use `--all` to consider all your statuses and
-favourites.
+`--newer-than N` or use `--all` to consider all your statuses,
+favourites and bookmarks.
 
 You can list a different number of hashtags using `--top N` and you
 can list all of them by using `--top -1`. This might result in a very
@@ -420,6 +479,12 @@ long list.
 By default only your toots are considered for the hashtags. Use `--include-boosts` to also include toot you have boosted.
 
 # Expiring your toots and favourites
+
+**Somewhat deprecated**: Please note that Mastodon now offers
+Preferences → Automated post deletion. Just make sure that you never
+skip your backups and you should be fine. 😅
+
+Mastodon does not expire your favourites.
 
 **Warning**: This is a destructive operation. You will delete your
 toots on your instance, or unfavour your favourites, or dismiss your
@@ -435,10 +500,12 @@ never your friends. So I want to expire my toots. We can always write
 a blog post about the good stuff. You can read more about this [on my
 blog](https://alexschroeder.ch/wiki/2017-04-27_Record_Keeping).
 
-**Alternatives**: Check out [forget](https://forget.codl.fr/about/) (a
-web app), [ephemtoot](https://ephemetoot.hugh.run/) (a Python script),
-or [MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
-These tools expire your toots without archiving them.
+**Alternatives**: Check out [ephemtoot](https://ephemetoot.hugh.run/)
+(a Python script), or
+[MastoPurgee](https://github.com/ThomasLeister/mastopurge/#mastopurge).
+These tools expire your toots without archiving them. Or use the
+"Automated post deletion" feature you can find with your account
+preferences in recent versions of Mastodon.
 
 Anyway, back to *Mastodon Archive*. 🙂
 
@@ -465,7 +532,7 @@ If you use `--older-than 0`, then *all* your toots will be deleted, or
 will be dismissed.
 
 ```text
-~/src/mastodon-backup $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
+~/src/mastodon-archive $ mastodon-archive expire --older-than 0 kensanata@social.nasqueron.org
 This is a dry run and nothing will be expired.
 Instead, we'll just list what would have happened.
 Use --confirmed to actually do it.
@@ -561,14 +628,33 @@ mastodon-archive. Now you can try the authorization URL again and you
 will only get read permissions instead of both read and write
 permissions.
 
+🔥 Some servers are compatible with the Mastodon client protocol and
+yet you'll get the error "Version check failed". In these cases, you
+can skip this check by using the `--no-version-check` option.
+
+```text
+$ mastodon-archive archive --pace --no-version-check alex@social.alexschroeder.ch
+```
+
+The problem is that the library iplementing the Mastodon client
+protocol tries to determine the exact feature-set available from your
+instance based on the instance's version string. When using
+mastodon-archive for instances that don't use Mastodon, you might have
+to skip the version check. When you disable the version check,
+whatever you're trying to do might work – or it might not.
+Unfortunately, you're on your own.
+
 # Followers
 
 This is work in progress. I'm actually not sure where I want to go
-with this. Right now it lists all your followers that haven't
-interacted with you. If a toot of theirs mentions you, then that
-counts as an interaction. Favouring and boosting does not count. By
-default, this looks at the last twelve weeks. In order for this to
-work, you need an archive containing both mentions and followers.
+with this. Right now it either lists all your followers, or it lists
+all your followers that haven't interacted with you; in the later case
+you can block them, too. This is for very grumpy users, for sure.
+
+If a toot of theirs mentions you, then that counts as an interaction.
+Favouring and boosting does not count. By default, this looks at the
+last twelve weeks. In order for this to work, you need an archive
+containing both mentions and followers.
 
 ```text
 $ mastodon-archive archive --with-mentions --with-followers kensanata@dice.camp
@@ -587,7 +673,7 @@ Saving 659 statuses, 376 favourites, 478 mentions, and 107 followers
 Now you're ready to determine the list of lurkers:
 
 ```text
-$ mastodon-archive followers kensanata@dice.camp
+$ mastodon-archive followers --no-mentions kensanata@dice.camp
 Considering the last 12 weeks
 There is no whitelist
 ...
@@ -658,6 +744,25 @@ Note that the application needs the permission to unfollow people in
 your name, which is why you need to authorize it again.
 
 This command supports the [whitelist](#whitelist).
+
+
+# Mutes and Blocks
+
+You can download lists of users you've muted and/or blocked by adding
+`--with-mutes` and/or `--with-blocks` to the `archive` command.
+
+
+# User notes
+
+There is currently a deficiency in the Mastodon API: it can't list all
+users for whom you have added private notes. Therefore, it is
+impossible for this script to definitively archive all private notes.
+However, if you add `--with-notes` to the `archive` command, then the
+script will download and archive notes for all users already
+downloaded for other reasons, i.e., followers, follows, mutes, and/or
+blocks. This is useful, e.g., if you are in the habit of adding
+private notes documenting for your future reference why you've
+followed, blocked, or muted someone.
 
 # Whitelist
 
@@ -734,7 +839,7 @@ accounts="kensanata@octodon.social kensanata@dice.camp kensanata@tabletop.social
 echo Archive Statuses, Favourites, Mentions
 for acc in $accounts; do
     echo "$acc"
-    mastodon-archive archive --with-mentions "$acc"
+    mastodon-archive archive --skip-bookmarks --with-mentions "$acc"
 done
 
 echo Expiring Statuses
@@ -763,6 +868,7 @@ The data we have in our archive file is a hash with three keys:
 1. `account` is a [User dict](https://mastodonpy.readthedocs.io/en/latest/#user-dicts)
 2. `statuses` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 3. `favourites` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
+3. `bookmarks` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 4. `mentions` is a list of [Toot dicts](https://mastodonpy.readthedocs.io/en/latest/#toot-dicts)
 
 If you want to understand the details and the nested nature of these
@@ -850,11 +956,11 @@ There are three kinds of alternatives:
    [https://octodon.social/@kensanata](https://octodon.social/@kensanata).
    The problem there is that you'll only get "top level" toots and
    boosts but *no replies*.
-   
+
     * [Mastotool](https://mdhughes.tech/mastotool/) includes media
       download!
     * [MastoUserScrape.py](https://gist.github.com/FlyMyPG/2e9d4532453182ada0da78e74980193b)
-   
+
 2. Solutions that extract your public toots from your Atom feed, e.g.
    [https://octodon.social/users/kensanata.atom](https://octodon.social/users/kensanata.atom).
    The problem there is that you'll only get a few pages worth of
@@ -865,7 +971,11 @@ There are three kinds of alternatives:
 3. Solutions that make use of the official Mastodon downloads.
 
     * [Mastodon Data Viewer](https://github.com/blackle/mastodon-data-viewer.py)
-	  is a viewer for Mastodon backup data written in Python. It
-	  creates a local server that you can use to browse the data.
-	  Designed for large (>40,000) toot archives. This tool only takes
-	  official Mastodon backups.
+      is a viewer for Mastodon backup data written in Python. It
+      creates a local server that you can use to browse the data.
+      Designed for large (>40,000) toot archives. This tool only takes
+      official Mastodon backups.
+    * [mav-z](https://github.com/zero-mstd/mav-z) is using HTML and Javascript.
+      You can simply open its HTML file with your browser, pick the exported
+      archive – and see nice stats, walk though your toots, jump to a given
+      month, etc.

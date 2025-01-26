@@ -68,8 +68,9 @@ def meow(args):
 
     bar = None
     if len(media_files) > 0:
-        bar = Bar("Exporting files", max = len(media_files) + 1)
-        file_cb = lambda *args: bar.next()
+        if not args.quiet:
+            bar = Bar("Exporting files", max = len(media_files) + 1)
+            file_cb = lambda *args: bar.next()
 
     serve(server_port, meow_origin, data, media_dir, media_files, file_cb)
 
@@ -81,7 +82,7 @@ def transform_media_urls(data, func):
     """
     Calls func on each media file URL and sets the latter to the result.
     """
-    for collection in ["statuses", "favourites"]:
+    for collection in ["statuses", "favourites", "bookmarks"]:
         for status in data[collection]:
             attachments = status["media_attachments"]
             if status["reblog"] is not None:

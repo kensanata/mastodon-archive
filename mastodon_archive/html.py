@@ -129,7 +129,7 @@ a:hover {
         margin-top: 8px;
         margin-bottom: 8px;
         margin-left: 78px;
-        height: 110px;
+        height: 110px;=
         overflow: hidden;
         height: 273.938px;
 }
@@ -154,7 +154,7 @@ a:hover {
         height: 50%% !important;
         display: block;
 }
-.media img {
+.media video, .media img {
         height: 100%%;
         width: 100%%;
         -o-object-fit: cover;
@@ -202,7 +202,7 @@ a:hover {
 .card span {
 	display: block;
 	margin-top: 5px;
-	font-size: 13px;
+	font-siz.media video,e: 13px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -216,6 +216,7 @@ nav a:visited, .content a:visited {
 nav {
         padding: 10px 0;
         border-top: 1px solid #393f4f;
+        height: 1em;
 }
 footer nav {
         padding-bottom: 0;
@@ -271,11 +272,11 @@ nav_template = '''\
 '''
 
 previous_template = '''\
-<a class="previous" href="%s">Previous</a>
+<a class="previous" href="%s">Later</a>
 '''
 
 next_template = '''\
-<a class="next" href="%s">Next</a>
+<a class="next" style="float:right;" href="%s">Earlier</a>
 '''
 
 boost_template = '''\
@@ -303,8 +304,16 @@ media_template = '''\
 %s</div>\
 '''
 
-preview_template = '''\
-<a href="%s" class="%s" style="padding: %s;"><img src="%s" title="%s" alt="%s" /></a>
+image_template = '''\
+<a href="%s" class="%s" style="padding: %s;"><img loading="lazy" src="%s"/></a>
+'''
+
+video_template = '''\
+<video controls preload="metadata" src="%s"><a href="%s"><img src="%s"/></a></video>
+'''
+
+video_with_poster_template = '''\
+<video controls preload="none" src="%s" poster="%s"><a href="%s"><img src="%s"/></a></video>
 '''
 
 wrapper_template = '''\
@@ -393,44 +402,63 @@ def write_status(fp, media_dir, status):
     if len(attachments) > 0:
         previews = []
         for attachment in attachments:
-            size = ""
-            padding = "0"
-            if len(attachments) == 2:
-                size = "tall"
-                if len(previews) == 0:
-                    padding = "0 1px 0 0"
-                elif len(previews) == 1:
-                    padding = "0 0 0 1px"
-            if len(attachments) == 3:
-                if len(previews) == 0:
-                    padding = "0 1px 0 0"
-                    size="tall"
-                elif len(previews) == 1:
-                    padding = "0 0 1px 1px"
-                    size = "small"
-                elif len(previews) == 2:
-                    padding = "1px 0 0 1px"
-                    size = "small"
-            elif len(attachments) == 4:
-                size = "small"
-                if len(previews) == 0:
-                    padding = "0 1px 1px 0"
-                elif len(previews) == 1:
-                    padding = "0 0 1px 1px"
-                elif len(previews) == 2:
-                     padding = "1px 1px 0 0"
-                elif len(previews) == 3:
-                    padding = "1px 0 0 1px"
+            # video src must never be the unknown image
+            src = file_url(media_dir, attachment["url"], None, False);
+            if attachment["type"] == "video" and src:
+                # Pleroma and maybe others don't offer a separate
+                # preview. The preview_url is the same as the video
+                # source.
+                preview = file_url(media_dir, attachment["preview_url"], None, False)
+                if src and preview and src == preview or not preview:
+                    previews.append(video_template % (
+                        src, # video
+                        file_url(media_dir, attachment["remote_url"]), # remote link
+                        preview)) # image for remote link
+                else:
+                    previews.append(video_with_poster_template % (
+                        src, # video
+                        preview, # poster
+                        file_url(media_dir, attachment["remote_url"]), # remote link
+                        preview)) # image for remote link
+            elif attachment["type"] == "image":
+                size = ""
+                padding = "0"
+                if len(attachments) == 2:
+                        size = "tall"
+                        if len(previews) == 0:
+                        padding = "0 1px 0 0"
+                        elif len(previews) == 1:
+                        padding = "0 0 0 1px"
+                if len(attachments) == 3:
+                        if len(previews) == 0:
+                        padding = "0 1px 0 0"
+                        size="tall"
+                        elif len(previews) == 1:
+                        padding = "0 0 1px 1px"
+                        size = "small"
+                        elif len(previews) == 2:
+                        padding = "1px 0 0 1px"
+                        size = "small"
+                elif len(attachments) == 4:
+                        size = "small"
+                        if len(previews) == 0:
+                        padding = "0 1px 1px 0"
+                        elif len(previews) == 1:
+                        padding = "0 0 1px 1px"
+                        elif len(previews) == 2:
+                        padding = "1px 1px 0 0"
+                        elif len(previews) == 3:
+                        padding = "1px 0 0 1px"
 
-            description = escape(attachment["description"]) if attachment["description"] is not None else ""
+                description = escape(attachment["description"]) if attachment["description"] is not None else ""
 
-            previews.append(preview_template % (
-                file_url(media_dir, attachment["url"]),
-                size,
-                padding,
-                file_url(media_dir, attachment["preview_url"], attachment["url"]),
-                description,
-                description))
+                previews.append(image_template % (
+                        file_url(media_dir, attachment["url"]),
+                        size,
+                        padding,
+                        file_url(media_dir, attachment["preview_url"], attachment["url"]),
+                        description,
+                        description))
 
         media = media_template % (
                 ''.join(previews))
@@ -463,7 +491,8 @@ def html(args):
     status_file = domain + '.user.' + username + '.json'
     media_dir = domain + '.user.' + username
     base_url = 'https://' + domain
-    data = core.load(status_file, required=True, combine=combine)
+    data = core.load(status_file, required=True, combine=combine,
+                     quiet=args.quiet)
     user = data["account"]
     statuses = data[collection]
 
@@ -495,7 +524,8 @@ def html(args):
 
             with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
 
-                print("Writing %s" % file_name)
+                if not args.quiet:
+                    print("Writing %s" % file_name)
 
                 html = header_template % (
                     user["display_name"],

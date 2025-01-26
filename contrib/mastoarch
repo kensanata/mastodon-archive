@@ -1,0 +1,179 @@
+#!/bin/bash
+# Script to automate your Mastodon backup. Run it without any arguments to show its usage.
+# © 2022 Izzy <izzysoft AT qumran DOT org>; GPL-3.0-or-later
+#
+# You can use this script e.g. via Cron for automated backups of your Mastodon account.
+# A command for cron could be: "cd /path/to/mastoarch && ./mastoarch archive >/dev/null"
+
+# -----------------------------------------------------------------------------
+# Default options (can be overridden via command-line):
+myacc="Demo@server.tld" # Your (default) Mastodon handle
+archive_followers=0     # whether to archive followers as well
+autogit=0               # whether to automatically check-in new data to your local git repo
+
+# !!! ================================================================== !!!
+# !!! Do not change below this line unless you know what you're doing :) !!!
+# !!! ================================================================== !!!
+
+# -----------------------------------------------------------------------------
+# Load config if exists
+[[ -f "${HOME}/.config/mastodon-archive/config" ]] && source "${HOME}/.config/mastodon-archive/config"
+
+# -----------------------------------------------------------------------------
+# Evaluate command-line options
+while getopts "a:b:f:g:" OPT; do
+  case $OPT in
+    a) myacc=$OPTARG ;;
+    b) MASTOBASE="$OPTARG" ;;
+    f) case "$OPTARG" in
+         0|1) archive_followers=$OPTARG ;;
+         *) echo -e "\n! invalid value '$OPTARG' for archive_followers. -f must be 0 or 1.\n"
+            exit 1
+            ;;
+       esac
+       ;;
+    g) case "$OPTARG" in
+         0|1|2) autogit=$OPTARG ;;
+         *) echo -e "\n! invalid value '$OPTARG' for autogit. -g must be 0, 1 or 2.\n"
+            exit 1
+            ;;
+       esac
+       ;;
+    *) $0 ; exit 1 ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
+# -----------------------------------------------------------------------------
+# show help
+syntax() {
+  echo
+  echo "Mastodon Archiver"
+  echo "================="
+  echo
+  echo "Syntax:"
+  echo "  $0 [options] <command>"
+  echo
+  echo "Commands:"
+  echo "  archive: get data from the instance"
+  echo "  html   : generate static html from gathered data"
+  echo "  backup : archive & html"
+  echo "  report : show some stats"
+  echo "  help   : show this help page and exit"
+  echo
+  echo "Options:"
+  echo "  -a <handle>     : Mastodon handle (user) to process"
+  echo "  -b <MASTOBASE>  : base where all our backups reside. If specified,"
+  echo "                    your backups are expected in MASTOBASE/<instanceName>"
+  echo "                    (e.g. /home/peter/mastodon/mastodon.example.net if"
+  echo "                    your account is @<username>@mastodon.example.net),"
+  echo "                    otherwise they will be looked for in your current"
+  echo "                    working directory (where you are when invoking this script)"
+  echo "  -g <0|1|2>      : whether to automatically check in changes to your local"
+  echo "                    git (0: don't, 1: ask, 2: do it)"
+  echo
+  echo "Note that you can define your defaults (myacc, autogit) in"
+  echo "${HOME}/.config/mastodon-archive/config"
+  echo
+}
+
+# -----------------------------------------------------------------------------
+# sanity check
+if [[ "$myacc" = "Demo@server.tld" && -n "$1" ]]; then
+  syntax
+  echo "You must configure your Mastodon-handle before running this script,"
+  echo "or pass it via the '-a' option."
+  echo
+  exit 1
+fi
+
+# -----------------------------------------------------------------------------
+# get data from the instance
+function archive() {
+  if [[ $archive_followers -eq 1 ]]; then
+    mastodon-archive archive --with-mentions --with-following --with-followers "$myacc"
+  else
+    mastodon-archive archive --with-mentions --with-following "$myacc"
+  fi
+  mastodon-archive replies "$myacc"
+  mastodon-archive media --collection favourites "$myacc"
+  mastodon-archive media --collection bookmarks "$myacc"
+}
+
+# -----------------------------------------------------------------------------
+# generate static html from gathered data
+function html() {
+  mastodon-archive html "$myacc"
+  mastodon-archive html --collection bookmarks "$myacc"
+  mastodon-archive html --collection favourites "$myacc"
+}
+
+# -----------------------------------------------------------------------------
+# add changes to local git repo
+function save() {
+  [[ $autogit -lt 1 ]] && return
+  [[ ! -d .git ]] && {
+    echo "No git repo found, skipping check-in."
+    echo "(Use 'git init' to create a repo.)"
+    return
+  }
+  case $autogit in
+    0) gitreply=n ;;
+    1) read -n 1 -t 600 -p "run 'git add' and 'git commit' (y/n)? " gitreply
+       echo
+       ;;
+    2) gitreply=y ;;
+  esac
+  [[ ${gitreply,,} = 'y' || ${gitreply,,} = 'j' ]] && {
+    git add .
+    git commit -m "commit for backup after run for '$1' at $(date +'%y-%m-%y %H:%M:%S')"
+  }
+}
+
+# -----------------------------------------------------------------------------
+# show some stats
+function report() {
+  basename="${myacc##*@}.user.${myacc%%@*}"
+  echo
+  echo "Account Statistics:"
+  echo "==================="
+  echo
+  echo "Account: ${myacc}"
+  echo
+  mastodon-archive report --all "$myacc"
+  echo
+  echo "Followers who follow us back:"
+  echo "-----------------------------"
+  mastodon-archive mutuals "$myacc" | grep -iv "Get user info"
+  echo
+  echo "$(mastodon-archive mutuals "$myacc" | grep -iv "Get user info" | wc -l) Followers follow us back."
+  echo
+  echo "Header info:"
+  echo "------------"
+  echo "Statuses: $(jq .account.statuses_count ${basename}.json)"
+  echo "Followers: $(jq .account.followers_count ${basename}.json)"
+  echo "Following: $(jq .account.following_count ${basename}.json)"
+  echo "Last status: $(jq .account.last_status_at ${basename}.json | awk -F \" '{print $2}' | awk -F T '{print $1}')"
+  echo "Account created: $(jq .account.created_at ${basename}.json | awk -F \" '{print $2}' | awk -F T '{print $1}')"
+  echo
+}
+
+# -----------------------------------------------------------------------------
+# find out where to look for / create our backup
+if [[ -n "$MASTOBASE" ]]; then
+  INSTDIR="${MASTOBASE}/${myacc##*@}"
+else
+  INSTDIR="${PWD}"
+fi
+
+#===[ MAIN ]===
+cd "$INSTDIR"
+# What to do?
+case "$1" in
+  archive) archive && save archive;;
+  html) html && save html;;
+  backup) archive && html && save backup;;
+  report) report;;
+  *) syntax;;
+esac
+cd - >/dev/null

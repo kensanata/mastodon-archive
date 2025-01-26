@@ -39,9 +39,11 @@ def context(args):
 
     for collection in ["statuses",
                        "favourites",
+                       "bookmarks",
                        "mentions"]:
         statuses = data[collection];
-        print("Indexing %d %s..." % (len(statuses), collection))
+        if not args.quiet:
+            print("Indexing %d %s..." % (len(statuses), collection))
         for status in statuses:
 
             if status["reblog"] is not None:

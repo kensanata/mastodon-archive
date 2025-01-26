@@ -55,10 +55,17 @@ def text(args):
         return True
 
     if collection == "all":
-        statuses = itertools.chain.from_iterable(
-            data[collection] for collection in ["statuses", "favourites", "mentions"]
-        )
+        statuses = []
+        # a lenient collection of all the status types we might have
+        for collection in ["statuses", "favourites", "bookmarks", "mentions"]:
+            if collection in data:
+                statuses += data[collection]
     else:
+        # if a specific collection is requested, not having it in the archive is fatal
+        if collection not in data or len(data[collection]) == 0:
+            print("Sadly, {} are missing in your archive".format(collection),
+                  file=sys.stderr)
+            sys.exit(5)
         statuses = data[collection]
 
     if len(patterns) > 0:
@@ -69,7 +76,7 @@ def text(args):
     for status in statuses:
         str = '';
         if status["reblog"] is not None:
-            str += (status["account"]["display_name"] + "boosted\n")
+            str += (status["account"]["display_name"] + " boosted\n")
             status = status["reblog"]
         str += ("%s @%s %s\n" % (
             status["account"]["display_name"],

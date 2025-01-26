@@ -32,7 +32,7 @@ def find_lurkers(followers, whitelist, mentions):
 
 def followers(args):
     """
-    List followers who never mention you
+    List followers
     """
 
     (username, domain) = args.user.split('@')
@@ -42,7 +42,7 @@ def followers(args):
 
     # Print both error messages if the data is missing
     error = 0
-    if "mentions" not in data or len(data["mentions"]) == 0:
+    if args.mentions and "mentions" not in data or len(data["mentions"]) == 0:
         print("You need to run 'mastodon-archive archive --with-mentions'",
               file=sys.stderr)
         error = 5
@@ -53,25 +53,37 @@ def followers(args):
     if error > 0:
         sys.exit(error)
 
+    # If we're not checking for mentions, this is quickly done.
+    if not args.mentions:
+        for account in sorted(data["followers"], key=lambda account:
+                              account["display_name"] or account["username"]):
+            print("%s <%s>" % (account["display_name"] or account["username"],
+                               account["acct"]))
+        sys.exit(0)
+
     if args.all:
-        print("Considering the entire archive")
+        if not args.quiet:
+            print("Considering the entire archive")
         mentions = data["mentions"]
     else:
-        print("Considering the last "
-              + str(args.weeks)
-              + " weeks")
+        if not args.quiet:
+            print("Considering the last "
+                  + str(args.weeks)
+                  + " weeks")
         mentions = core.keep(data["mentions"], args.weeks)
 
     whitelist = core.whitelist(domain, username)
 
     if args.block:
         mastodon = core.readwrite(args)
-        accounts = find_lurkers(data["followers"], whitelist, data["mentions"])
+        accounts = find_lurkers(data["followers"], whitelist, mentions)
 
-        bar = Bar('Blocking', max = len(accounts))
+        if not args.quiet:
+            bar = Bar('Blocking', max = len(accounts))
 
         for account in accounts:
-            bar.next()
+            if not args.quiet:
+                bar.next()
             try:
                 mastodon.account_block(account["id"])
             except Exception as e:
@@ -84,10 +96,11 @@ def followers(args):
                 else:
                     print(e, file=sys.stderr)
 
-        bar.finish()
+        if not args.quiet:
+            bar.finish()
 
     else:
-        accounts = find_lurkers(data["followers"], whitelist, data["mentions"])
+        accounts = find_lurkers(data["followers"], whitelist, mentions)
         for account in sorted(accounts, key=lambda account:
                               account["display_name"] or account["username"]):
             print("%s <%s>" % (account["display_name"] or account["username"],

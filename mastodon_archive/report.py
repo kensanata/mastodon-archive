@@ -93,7 +93,7 @@ def print_emoji(statuses, min = 10, max_num = 30):
 
 def report(args):
     """
-    Report on your toots and favourites
+    Report on your toots, favourites and bookmarks
     """
 
     (username, domain) = args.user.split('@')
@@ -103,14 +103,22 @@ def report(args):
 
     if args.all:
         print("Considering the entire archive")
-        statuses = data["statuses"]
-        favourites = data["favourites"]
+        if "statuses" in data:
+            statuses = data["statuses"]
+        if "favourites" in data:
+            favourites = data["favourites"]
+        if "bookmarks" in data:
+            bookmarks = data["bookmarks"]
     else:
         print("Considering the last "
               + str(args.weeks)
               + " weeks")
-        statuses = core.keep(data["statuses"], args.weeks)
-        favourites = core.keep(data["favourites"], args.weeks)
+        if "statuses" in data:
+            statuses = core.keep(data["statuses"], args.weeks)
+        if "favourites" in data:
+            favourites = core.keep(data["favourites"], args.weeks)
+        if "bookmarks" in data:
+            bookmarks = core.keep(data["bookmarks"], args.weeks)
 
     if "statuses" in data:
         print("Statuses:".ljust(20), str(len(statuses)).rjust(6))
@@ -134,3 +142,14 @@ def report(args):
 
         print()
         print_tags(favourites, args.top, args.include_boosts)
+
+    if "favourites" in data and "bookmarks" in data:
+        print()
+
+    if "bookmarks" in data:
+        print("Bookmarks:".ljust(20), str(len(bookmarks)).rjust(6))
+        print("Boosts:".ljust(20), str(boosts(bookmarks)).rjust(6))
+        print("Media:".ljust(20), str(media(bookmarks)).rjust(6))
+
+        print()
+        print_tags(bookmarks, args.top, args.include_boosts)

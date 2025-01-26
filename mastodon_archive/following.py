@@ -54,12 +54,14 @@ def following(args):
         sys.exit(error)
 
     if args.all:
-        print("Considering the entire archive")
+        if not args.quiet:
+            print("Considering the entire archive")
         mentions = data["mentions"]
     else:
-        print("Considering the last "
-              + str(args.weeks)
-              + " weeks")
+        if not args.quiet:
+            print("Considering the last "
+                  + str(args.weeks)
+                  + " weeks")
         mentions = core.keep(data["mentions"], args.weeks)
 
     whitelist = core.whitelist(domain, username)
@@ -68,10 +70,12 @@ def following(args):
         mastodon = core.readwrite(args)
         accounts = find_lurkers(data["following"], whitelist, data["mentions"])
 
-        bar = Bar('Unfollowing', max = len(accounts))
+        if not args.quiet:
+            bar = Bar('Unfollowing', max = len(accounts))
 
         for account in accounts:
-            bar.next()
+            if not args.quiet:
+                bar.next()
             try:
                 mastodon.account_unfollow(account["id"])
             except Exception as e:
@@ -84,7 +88,8 @@ def following(args):
                 else:
                     print(e, file=sys.stderr)
 
-        bar.finish()
+        if not args.quiet:
+            bar.finish()
 
     else:
         accounts = find_lurkers(data["following"], whitelist, data["mentions"])

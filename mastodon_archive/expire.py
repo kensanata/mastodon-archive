@@ -72,7 +72,7 @@ def expire(args):
     (username, domain) = args.user.split('@')
 
     status_file = domain + '.user.' + username + '.json'
-    data = core.load(status_file, required = True)
+    data = core.load(status_file, required = True, quiet = True)
 
     if confirmed:
         mastodon = core.readwrite(args)
@@ -135,29 +135,35 @@ def expire(args):
             if error:
                 print(error, file=sys.stderr)
 
-            core.save(status_file, data)
+            core.save(status_file, data, quiet=args.quiet)
 
         elif n_statuses > 0:
 
             for status in statuses:
                 if collection == 'statuses':
-                    print("Delete: " + text(status))
+                    if not args.quiet:
+                        print("Delete: " + text(status))
                 elif collection == 'favourites':
-                    print("Unfavour: " + text(status))
+                    if not args.quiet:
+                        print("Unfavour: " + text(status))
 
     if collection == "mentions":
 
         if delete_others:
-            print('Dismissing mentions and other notifications')
+            if not args.quiet:
+                print('Dismissing mentions and other notifications')
         else:
-            print('Dismissing mentions')
+            if not args.quiet:
+                print('Dismissing mentions')
 
-        progress = core.progress_bar()
+        if not args.quiet:
+            progress = core.progress_bar()
 
         # only consider statuses with an id (no idea what the others are)
         statuses = list(filter(lambda x: "id" in x, data[collection]))
-        n_statuses = len(statuses)
-        print("Mentions already archived: " + str(n_statuses))
+        if not args.quiet:
+            n_statuses = len(statuses)
+            print("Mentions already archived: " + str(n_statuses))
 
         # create a dictionary for fast lookup of archived statuses that mention us
         ids = { x["id"]: True for x in statuses }
@@ -178,7 +184,8 @@ def expire(args):
         total = 0
         dismissed = 0
         while (notifications):
-            progress()
+            if not args.quiet:
+                progress()
             total += len(notifications)
             for notification in matches(notifications):
                 if confirmed:
@@ -211,4 +218,5 @@ def expire(args):
         if error:
             print(error, file=sys.stderr)
 
-        print(f"Dismissed {dismissed} of {total} notifications")
+        if not args.quiet:
+            print(f"Dismissed {dismissed} of {total} notifications")

@@ -75,9 +75,11 @@ def media(args):
     for picture in ["avatar", "header"]:
         urls.append((data["account"][picture], None))
 
-    print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
+    if not args.quiet:
+        print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
-    bar = Bar('Downloading', max = len(urls))
+    if not args.quiet:
+        bar = Bar('Downloading', max = len(urls))
 
     errors = 0
 
@@ -86,6 +88,8 @@ def media(args):
         bar.next()
         remoteurl = url[1]
         url = url[0]
+        if not args.quiet:
+            bar.next()
         path = urlparse(url).path
         file_name = media_dir + path
         if not os.path.isfile(file_name):
@@ -99,7 +103,8 @@ def media(args):
             if pace:
                 time.sleep(1)
 
-    bar.finish()
+    if not args.quiet:
+        bar.finish()
 
     if errors > 0:
         print("%d downloads failed" % errors)
@@ -108,16 +113,31 @@ def download(url, remoteurl, file_name):
     req = urllib.request.Request(
         url, data=None,
         headers={'User-Agent': 'Mastodon-Archive/1.3 '
-                    '(+https://github.com/kensanata/mastodon-backup#mastodon-archive)'})
-    try:
-        with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
-          data = response.read()
-          fp.write(data)
-    except HTTPError as he:
-        print("\nFailed to open " + url + " during a media request.")
-        if remoteurl:
-            download(remoteurl, None, file_name)
-    except URLError as ue:
-        print("\nFailed to open " + url + " during a media request.")
-        if remoteurl:
-            download(remoteurl, None, file_name)
+                    '(+https://github.com/kensanata/mastodon-archive#mastodon-archive)'})
+    retries = 5
+    retry_downloads = True
+    while retries > 0 and retry_downloads:
+        try:
+            with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
+                data = response.read()
+                fp.write(data)
+                retry_downloads = False
+        except HTTPError as he:
+            if not args.suppress_errors:
+                print("\nFailed to open " + url + " during a media request.")
+                if remoteurl:
+                    download(remoteurl, None, file_name)
+            if he.status == 429:
+                print("Delaying next requests...")
+                time.sleep(3*60)
+                retries -= 1
+            else:
+                retry_downloads = False
+                if remoteurl:
+                    download(remoteurl, None, file_name)
+        except URLError as ue:
+            if not args.suppress_errors:
+                print("\nFailed to open " + url + " during a media request.")
+                if remoteurl:
+                    download(remoteurl, None, file_name)
+            retry_downloads = False

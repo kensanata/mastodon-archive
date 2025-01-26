@@ -1,0 +1,28 @@
+# Example config file for the contrib tools.
+# copy this to ${HOME}/.config/mastodon-archive/config and adjust to your needs.
+
+# base where all our backups reside (mastoarch, mastosearch)
+# If you define MASTOBASE, your backups are looked for in $MASTOBASE/<ServerName>
+# Otherwise they are looked for in the current working directory.
+MASTOBASE=
+
+# default account (mastoarch, mastosearch)
+myacc=Demo@Mastodon.example.net
+
+# shall followers be archived as well? (mastoarch)
+# this is currently of limited use, hence disabled by default. It will not only
+# collect user IDs, but the entire profile info; expect about 1.5kB per profile.
+# 0: no, 1: yes
+archive_followers=0
+
+# automatically backup to git (mastoarch)
+# 0: never, 1: ask, 2: do it
+autogit=0
+
+# use a specific viewer (mastosearch).
+# This needs markdown being available (e.g. to use lynx on Debian:
+# 'apt install markdown lynx').
+# The viewer should accept HTML from STDIN (standard input).
+# If empty, results will simply be printed on your console.
+#viewer="lynx -stdin"
+viewer=
