@@ -89,7 +89,6 @@ def media(args):
 
     # start downloading the missing files from the back
     for url in reversed(urls):
-        bar.next()
         remoteurl = url[1]
         url = url[0]
         if not args.quiet:
