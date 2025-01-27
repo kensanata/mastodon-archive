@@ -78,6 +78,11 @@ h1 {
 .meta strong {
         font-weight: 500;
 }
+pre {
+  unicode-bidi: plaintext;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
 a {
         text-decoration: none;
 }
