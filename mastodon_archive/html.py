@@ -129,9 +129,12 @@ a:hover {
         margin-top: 8px;
         margin-bottom: 8px;
         margin-left: 78px;
-        height: 110px;=
         overflow: hidden;
         height: 273.938px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap:1px;
 }
 .media a {
         display: block;
@@ -144,15 +147,12 @@ a:hover {
         width: 100%%;
         cursor: zoom-in;
 }
-.tall {
-        width: 50%% !important;
-        height: 100%%;
-        display: block;
+.media .tall {
+        grid-row: span 2;
 }
-.small {
-        width: 50%% !important;
-        height: 50%% !important;
-        display: block;
+.media .one {
+        grid-column: span 2;
+        grid-row: span 2;
 }
 .media video, .media img {
         height: 100%%;
@@ -162,6 +162,10 @@ a:hover {
         object-fit: cover;
         object-position: center;
         border-radius: 4px;
+}
+.media video, .media figure{
+        grid-column: span 2;
+        grid-row: span 2;
 }
 .card {
         cursor: pointer;
@@ -309,7 +313,7 @@ generic_content_template = '''\
 '''
 
 image_template = '''\
-<a href="%s" class="%s" style="padding: %s;"><img loading="lazy" src="%s" title="%s" alt="%s"/></a>
+<a href="%s" class="%s"><img loading="lazy" src="%s" title="%s" alt="%s"/></a>
 '''
 
 video_template = '''\
@@ -319,6 +323,15 @@ video_template = '''\
 video_with_poster_template = '''\
 <video controls preload="none" src="%s" poster="%s"><a href="%s"><img src="%s"/></a></video>
 '''
+
+audeo_template = '''\
+<figure>
+  <figcaption>%s</figcaption>
+  <audio controls src="%s"></audio>
+  <a href="%s"> Download audio </a>
+</figure>
+'''
+
 
 wrapper_template = '''\
 <div class="wrapper">
@@ -424,47 +437,28 @@ def write_status(fp, media_dir, status):
                         preview, # poster
                         file_url(media_dir, attachment["remote_url"]), # remote link
                         preview)) # image for remote link
+            elif attachment["type"] == "audio":
+                previews.append(audeo_template % (
+                        attachment["description"], # alt text
+                        src, # audio
+                        src)) # audio for download link
             elif attachment["type"] == "image":
                 size = ""
-                padding = "0"
-                if len(attachments) == 2:
+                if len(attachments) == 1:
+                        size = "one"
+                elif len(attachments) == 2 or (len(attachments) == 3 and len(previews) == 0):
                         size = "tall"
-                        if len(previews) == 0:
-                                padding = "0 1px 0 0"
-                        elif len(previews) == 1:
-                                padding = "0 0 0 1px"
-                if len(attachments) == 3:
-                        if len(previews) == 0:
-                                padding = "0 1px 0 0"
-                                size="tall"
-                        elif len(previews) == 1:
-                                padding = "0 0 1px 1px"
-                                size = "small"
-                        elif len(previews) == 2:
-                                padding = "1px 0 0 1px"
-                                size = "small"
-                elif len(attachments) == 4:
-                        size = "small"
-                        if len(previews) == 0:
-                                padding = "0 1px 1px 0"
-                        elif len(previews) == 1:
-                                padding = "0 0 1px 1px"
-                        elif len(previews) == 2:
-                                padding = "1px 1px 0 0"
-                        elif len(previews) == 3:
-                                padding = "1px 0 0 1px"
 
                 description = escape(attachment["description"]) if attachment["description"] is not None else ""
 
                 previews.append(image_template % (
-                        file_url(media_dir, attachment["url"]),
-                        size,
-                        padding,
-                        file_url(media_dir, attachment["preview_url"], attachment["url"]),
-                        description,
-                        description))
+                        file_url(media_dir, attachment["url"]), # link to image
+                        size, # class for how it should be rendered
+                        file_url(media_dir, attachment["preview_url"], attachment["url"]), # image
+                        description, # title (hover text)
+                        description)) # alt text
             else:
-                # other, might be audio or so
+                # other, likely "unknown"
                 description = escape(attachment["description"]) if attachment["description"] is not None else attachment["type"] + " attachment"
                 previews.append(generic_content_template % (
                     src,
