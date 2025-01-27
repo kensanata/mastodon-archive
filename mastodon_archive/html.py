@@ -471,7 +471,7 @@ def write_status(fp, media_dir, status):
                 card_content["url"],
                 file_url(media_dir, card_content["image"]),
                 card_content["title"],
-                card_content["title"],
+                escape(card_content["title"]),
                 urlparse(card_content["url"]).netloc)
 
     html = wrapper_template % (boost, info, media, card)
