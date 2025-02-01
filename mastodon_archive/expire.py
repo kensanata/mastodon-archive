@@ -112,9 +112,14 @@ def expire(args):
 
             signal.signal(signal.SIGINT, signal_handler)
 
+            i = 1
             for status in statuses:
                 try:
                     delete(mastodon, collection, status)
+                    if i % 300 == 0:
+                        core.save(status_file, data, quiet=True, backup=False)
+                    i = i+1
+                    bar.next()
                 except Exception as e:
                     if "authorized scopes" in str(e):
                         print("\nWe need to authorize the app to make changes to your account.")
@@ -124,11 +129,11 @@ def expire(args):
                         delete(mastodon, collection, status)
                     elif "not found" in str(e):
                         status["deleted"] = True
+                        bar.next()
                     elif "Name or service not known" in str(e):
                         error = "Error: the instance name is either misspelled or offline"
                     else:
                         print(e, file=sys.stderr)
-                        bar.next()
 
             bar.finish()
 
