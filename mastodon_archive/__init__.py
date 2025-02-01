@@ -25,7 +25,7 @@ from . import expire
 from . import report
 from . import followers
 from . import following
-from . import whitelist
+from . import allowlist
 from . import mutuals
 from . import login
 from . import fix
@@ -315,11 +315,11 @@ def main():
 
 
     parser_content = subparsers.add_parser(
-        name='whitelist',
-        help='''print the whitelist to help you debug problems''')
+        name='allowlist',
+        help='''print the allowlist to help you debug problems''')
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
-    parser_content.set_defaults(command=whitelist.print_whitelist)
+    parser_content.set_defaults(command=allowlist.print_allowlist)
 
     parser_content = subparsers.add_parser(
         name='fix-boosts',

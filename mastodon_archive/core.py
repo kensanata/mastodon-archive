@@ -345,9 +345,9 @@ def keep(statuses, weeks):
 
     return list(filter(matches, statuses))
 
-def whitelist(domain, username):
-    file_name = domain + '.user.' + username + '.whitelist.txt'
-    whitelist = set()
+def allowlist(domain, username):
+    file_name = domain + '.user.' + username + '.allowlist.txt'
+    allowlist = set()
     if os.path.isfile(file_name):
         with open(file_name, mode = 'r', encoding = 'utf-8') as fp:
             for line in fp:
@@ -358,8 +358,8 @@ def whitelist(domain, username):
                 if not m:
                     m = re.search(r"([a-zA-Z0-9.-]+)", line)
                 if m:
-                    whitelist.add(m.group(1))
-        print("%d accounts are on the whitelist" % len(whitelist))
+                    allowlist.add(m.group(1))
+        print("%d accounts are on the allowlist" % len(allowlist))
     else:
-        print("There is no whitelist")
-    return whitelist
+        print("There is no allowlist")
+    return allowlist

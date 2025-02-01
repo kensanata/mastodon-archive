@@ -48,7 +48,7 @@ You can get the latest sources
 - [Following](#following)
 - [Mutes and blocks](#mutes-and-blocks)
 - [User notes](#user-notes)
-- [Whitelist](#whitelist)
+- [Allowlist](#allowlist)
 - [Mutuals](#mutuals)
 - [Example Setup](#example-setup)
 - [Documentation](#documentation)
@@ -675,7 +675,7 @@ Now you're ready to determine the list of lurkers:
 ```text
 $ mastodon-archive followers --no-mentions kensanata@dice.camp
 Considering the last 12 weeks
-There is no whitelist
+There is no allowlist
 ...
 ```
 
@@ -683,7 +683,7 @@ As I said, this is work in progress and I don't really know where I'm
 going with this. More
 [on my blog](https://alexschroeder.ch/wiki/2018-04-13_Social_Media_Goals).
 
-This command supports the [whitelist](#whitelist).
+This command supports the [allowlist](#allowlist).
 
 # Following
 
@@ -743,7 +743,7 @@ Then paste the access token here:
 Note that the application needs the permission to unfollow people in
 your name, which is why you need to authorize it again.
 
-This command supports the [whitelist](#whitelist).
+This command supports the [allowlist](#allowlist).
 
 
 # Mutes and Blocks
@@ -764,15 +764,15 @@ blocks. This is useful, e.g., if you are in the habit of adding
 private notes documenting for your future reference why you've
 followed, blocked, or muted someone.
 
-# Whitelist
+# Allowlist
 
-You can have a whitelist of people you want to be exempt from some
+You can have an allowlist of people you want to be exempt from some
 commands. Create a text file with a name like the following:
-`dice.camp.user.kensanata.whitelist.txt`.
+`dice.camp.user.kensanata.allowlist.txt`.
 
-That is: `<your domain>.user.<your account>.whitelist.txt`.
+That is: `<your domain>.user.<your account>.allowlist.txt`.
 
-There, list the accounts you want to have in your whitelist, one per
+There, list the accounts you want to have in your allowlist, one per
 line. All of these formats should work:
 
 ```text
@@ -781,11 +781,11 @@ kensanata@dice.camp
 Alex Schroeder <kensanata@dice.camp>
 ```
 
-To verify your whitelist, use the whitelist command:
+To verify your allowlist, use the allowlist command:
 
 ```text
-$ mastodon-archive whitelist kensanata@dice.camp
-2 accounts are on the whitelist
+$ mastodon-archive allowlist kensanata@dice.camp
+2 accounts are on the allowlist
 kensanata@dice.camp
 kensanata
 ```
@@ -796,14 +796,14 @@ that it works:
 ```text
 $ mastodon-archive followers kensanata@dice.camp | wc -l
 58
-$ echo linkskywalker@soc.ialis.me >> dice.camp.user.kensanata.whitelist.txt
+$ echo linkskywalker@soc.ialis.me >> dice.camp.user.kensanata.allowlist.txt
 $ mastodon-archive followers kensanata@dice.camp | wc -l
 57
 ```
 
 # Mutuals
 
-How do you go about creating a whitelist, though? It's hard! You could
+How do you go about creating a allowlist, though? It's hard! You could
 start with the list of people that are following you back, perhaps?
 Here's a command to do just that:
 

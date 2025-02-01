@@ -25,9 +25,9 @@ def is_lurker(account, mentions):
             return False
     return True
 
-def find_lurkers(followers, whitelist, mentions):
+def find_lurkers(followers, allowlist, mentions):
     return [x for x in followers
-            if x["acct"] not in whitelist
+            if x["acct"] not in allowlist
             and is_lurker(x, mentions)]
 
 def followers(args):
@@ -72,11 +72,11 @@ def followers(args):
                   + " weeks")
         mentions = core.keep(data["mentions"], args.weeks)
 
-    whitelist = core.whitelist(domain, username)
+    allowlist = core.allowlist(domain, username)
 
     if args.block:
         mastodon = core.readwrite(args)
-        accounts = find_lurkers(data["followers"], whitelist, mentions)
+        accounts = find_lurkers(data["followers"], allowlist, mentions)
 
         if not args.quiet:
             bar = Bar('Blocking', max = len(accounts))
@@ -100,7 +100,7 @@ def followers(args):
             bar.finish()
 
     else:
-        accounts = find_lurkers(data["followers"], whitelist, mentions)
+        accounts = find_lurkers(data["followers"], allowlist, mentions)
         for account in sorted(accounts, key=lambda account:
                               account["display_name"] or account["username"]):
             print("%s <%s>" % (account["display_name"] or account["username"],
