@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='mastodon_archive',
-    version='1.4.6',
+    version='1.4.7',
     description="Utility for backing up your Mastodon content",
     long_description=long_description,
     long_description_content_type="text/markdown",
