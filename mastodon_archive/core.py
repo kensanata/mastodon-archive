@@ -121,7 +121,6 @@ class App:
         print("Registering app")
         Mastodon.create_app(
             self.name,
-            version_check_mode=self.version_check,
             api_base_url=self.url,
             scopes=self.scopes,
             to_file=self.client_secret
