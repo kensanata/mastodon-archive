@@ -135,7 +135,7 @@ class App:
         client_secret = self.client_secret
         user_secret = self.user_secret
         scopes = self.scopes
-        version_check = self.version_check,
+        version_check = self.version_check
         print("This app needs access to your Mastodon account.")
 
         mastodon = Mastodon(
