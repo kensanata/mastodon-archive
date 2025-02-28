@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 import sys
 import os.path
 from . import core
@@ -33,6 +34,7 @@ def archive(args):
     with_blocks = args.with_blocks
     with_notes = args.with_notes
     stopping = args.stopping
+    update = args.update
 
     (username, domain) = core.parse(args.user)
 
@@ -60,6 +62,76 @@ def archive(args):
         # exit in either case
         sys.exit(1)
 
+    def recursive_compare(item1, item2):
+        """True if identical, False otherwise"""
+        # Filter out frequently changing, transient values that shouldn't
+        # trigger a re-archive.
+        ignore_keys = ("following_count", "followers_count", "statuses_count",
+                       "last_status_at", "verified_at")
+        if isinstance(item1, list):
+            if not isinstance(item2, list):
+                return False
+            try:
+                for v1, v2 in zip(item1, item2, strict=True):
+                    if not recursive_compare(v1, v2):
+                        return False
+            except ValueError:
+                return False
+            return True
+        elif isinstance(item1, dict):
+            if not isinstance(item2, dict):
+                return False
+            # Treat None as equivalent to not existing
+            item1 = {k: v for k, v in item1.items() if v is not None}
+            item2 = {k: v for k, v in item2.items() if v is not None}
+            if len(item1) != len(item2):
+                return False
+            for k1, v1 in item1.items():
+                if k1 in ignore_keys:
+                    continue
+                if k1 not in item2:
+                    return False
+                if not recursive_compare(v1, item2[k1]):
+                    return False
+            return True
+        elif d1 := core.date_handler(item1):
+            return True if d1 == item2 else d1 == core.data_handler(item2)
+        elif d2 := core.date_handler(item1):
+            return item1 == d2
+
+        # *sigh* two different string dates or datetimes in different formats
+        # representing identical values.
+        try:
+            d1 = datetime.date.fromisoformat(item1)
+            d2 = datetime.date.fromisoformat(item2)
+            return d1 == d2
+        except (TypeError, ValueError):
+            pass
+        try:
+            d1 = datetime.datetime.fromisoformat(item1)
+            d2 = datetime.datetime.fromisoformat(item2)
+            return d1 == d2
+        except (TypeError, ValueError):
+            pass
+        
+        return str(item1) == str(item2)
+
+    # Returns True for new items, or an existing item to update, or False if
+    # the provided item should not be saved, i.e., we've already got it.
+    def should_keep(item, items, update):
+        try:
+            prev_item = items[str(item["id"])]
+        except KeyError:
+            return True
+        # Just in case it's None
+        if not prev_item:
+            return True
+        if not update:
+            return False
+        if recursive_compare(item, prev_item):
+            return False
+        return prev_item
+
     def complete(statuses, page, func = None):
         """
         Why aren't we using Mastodon.fetch_remaining(first_page)? It
@@ -74,6 +146,10 @@ def archive(args):
         keys. That's why we fetch it all over again. Expiry helps,
         obviously.
         """
+        # We use str() on the ID here and above because it could be a
+        # MaybeSnowflakeIdType when we get it from Mastodon but it's a number
+        # or string when it's stored in the JSON file, so we canonicalize it as
+        # a string.
         seen = { str(status["id"]): status for status in statuses if status is not None }
         if not args.quiet:
             progress = core.progress_bar()
@@ -83,6 +159,7 @@ def archive(args):
         def process(page):
             count = 0
             duplicates = 0
+            updated = 0
             while len(page) > 0:
                 if not args.quiet:
                     progress()
@@ -92,12 +169,17 @@ def archive(args):
                     if "status" in item:
                         status = item["status"]
                     if status and "id" in status:
-                        id = str(status["id"])
-                        if not id in seen:
+                        keep = should_keep(status, seen, update)
+                        if keep is True:
                             if func is None or func(item):
-                                seen["id"] = status
                                 statuses.insert(count, status)
                                 count = count + 1
+                        elif keep:
+                            # It's a dict that should be replaced
+                            if func is None or func(item):
+                                keep.clear()
+                                keep.update(status)
+                                updated += 1
                         else:
                             duplicates = duplicates + 1
                             if duplicates > 10 and stopping:
@@ -110,13 +192,13 @@ def archive(args):
                 if page is None:
                     if not args.quiet:
                         print() # at the end of the progress bar
-                    return count
+                    return count + updated
             # if len(page) was 0
-            return count
+            return count + updated
 
         count = process(page)
         if not args.quiet:
-            print("Added a total of %d new items" % count)
+            print("Added or updated a total of %d new items" % count)
         return statuses
 
     def keep_mentions(notifications):

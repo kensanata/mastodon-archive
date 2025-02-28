@@ -284,16 +284,16 @@ def load(file_name, required=False, quiet=False, combine=False):
 
     return None
 
+def date_handler(obj):
+    return(obj.isoformat()
+           if isinstance(obj, (datetime.datetime, datetime.date))
+           else None)
+
 def save(file_name, data, quiet=False, backup=True):
     """
     Save the JSON data in a file. If the file exists, rename it,
     in case backup is True (the default).
     """
-    date_handler = lambda obj: (
-        obj.isoformat()
-        if isinstance(obj, (datetime.datetime, datetime.date))
-        else None)
-
     if backup and os.path.isfile(file_name):
         backup_file = file_name + '~'
         if not quiet:
