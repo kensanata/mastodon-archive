@@ -325,9 +325,11 @@ def all_accounts():
     else:
         users = []
         for archive in archives:
-            m = re.match(r"(.*)\.user\.(.*)\.json", archive)
+            m = re.match(r"(.*)\.user\.(.*?)(?:\.\d+)?\.json", archive)
             if m:
-                users.append("%s@%s" % m.group(2, 1))
+                user = "%s@%s" % m.group(2, 1)
+                if user not in users:
+                    users.append("%s@%s" % m.group(2, 1))
         return users
 
 def keep(statuses, weeks):
