@@ -14,6 +14,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+from . import core
 from . import archive
 from . import replies
 from . import text
