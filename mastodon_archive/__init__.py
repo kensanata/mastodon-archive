@@ -14,6 +14,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+from . import core
 from . import archive
 from . import replies
 from . import text
@@ -80,6 +81,10 @@ def main():
                                 action='store_const',
                                 const=False, default=True,
                                 help='do not stop after seeing 10 duplicates')
+    parser_content.add_argument("--update", dest='update',
+                                action='store_const',
+                                const=True, default=False,
+                                help='save updated versions of statuses')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')

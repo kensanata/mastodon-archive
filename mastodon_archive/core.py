@@ -284,16 +284,16 @@ def load(file_name, required=False, quiet=False, combine=False):
 
     return None
 
+def date_handler(obj):
+    return(obj.isoformat()
+           if isinstance(obj, (datetime.datetime, datetime.date))
+           else None)
+
 def save(file_name, data, quiet=False, backup=True):
     """
     Save the JSON data in a file. If the file exists, rename it,
     in case backup is True (the default).
     """
-    date_handler = lambda obj: (
-        obj.isoformat()
-        if isinstance(obj, (datetime.datetime, datetime.date))
-        else None)
-
     if backup and os.path.isfile(file_name):
         backup_file = file_name + '~'
         if not quiet:
@@ -325,9 +325,11 @@ def all_accounts():
     else:
         users = []
         for archive in archives:
-            m = re.match(r"(.*)\.user\.(.*)\.json", archive)
+            m = re.match(r"(.*)\.user\.(.*?)(?:\.\d+)?\.json", archive)
             if m:
-                users.append("%s@%s" % m.group(2, 1))
+                user = "%s@%s" % m.group(2, 1)
+                if user not in users:
+                    users.append("%s@%s" % m.group(2, 1))
         return users
 
 def keep(statuses, weeks):
