@@ -44,7 +44,7 @@ def media(args):
         attachments = status["media_attachments"]
         account = status["account"]
         emojis = status["emojis"]
-        reactions = status["reactions"]
+        reactions = status.get("reactions", [])
         card = status["card"]
         if status["reblog"] is not None:
             attachments = status["reblog"]["media_attachments"]
