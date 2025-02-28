@@ -82,29 +82,33 @@ def media(args):
     if not args.quiet:
         print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
 
+    urls = ((url, remoteurl, media_dir + urlparse(url).path)
+            for url, remoteurl in urls)
+    urls = [(url, remoteurl, file_name)
+            for url, remoteurl, file_name in urls
+            if not os.path.isfile(file_name) and
+            not os.path.isfile(f"{file_name}.missing")]
+
     if not args.quiet:
+        print(f"{len(urls)} to download")
         bar = Bar('Downloading', max = len(urls))
 
     errors = 0
 
     # start downloading the missing files from the back
-    for url in reversed(urls):
-        remoteurl = url[1]
-        url = url[0]
+    for url, remoteurl, file_name in reversed(urls):
         if not args.quiet:
             bar.next()
         path = urlparse(url).path
-        file_name = media_dir + path
-        if not os.path.isfile(file_name):
-            dir_name =  os.path.dirname(file_name)
-            os.makedirs(dir_name, exist_ok = True)
-            try:
-                download(url, remoteurl, file_name, args)
-            except OSError as e:
-                print("\n" + e.msg + ": " + url, file=sys.stderr)
-                errors += 1
-            if pace:
-                time.sleep(1)
+        dir_name =  os.path.dirname(file_name)
+        os.makedirs(dir_name, exist_ok = True)
+        try:
+            download(url, remoteurl, file_name, args)
+        except OSError as e:
+            print("\n" + e.msg + ": " + url, file=sys.stderr)
+            errors += 1
+        if pace:
+            time.sleep(1)
 
     if not args.quiet:
         bar.finish()
@@ -112,7 +116,7 @@ def media(args):
     if errors > 0:
         print("%d downloads failed" % errors)
 
-def download(url, remoteurl, file_name, args):
+def download(url, remoteurl, file_name, args, from404=True):
     req = urllib.request.Request(
         url, data=None,
         headers={'User-Agent': 'Mastodon-Archive/1.3 '
@@ -128,8 +132,17 @@ def download(url, remoteurl, file_name, args):
         except HTTPError as he:
             if not args.suppress_errors:
                 print("\nFailed to open " + url + " during a media request.")
+                # We stop trying to download both 401 and 404 because 401
+                # almost always means the server has authorized fetch enabled
+                # and we're never going to be able to download.
                 if remoteurl:
-                    download(remoteurl, None, file_name, args)
+                    return download(remoteurl, None, file_name, args,
+                                    from404=he.status in (401, 404))
+                if from404 and he.status in (401, 404):
+                    flag = f"{file_name}.missing"
+                    if not args.suppress_errors:
+                        print(f"\nSuppressing future downloads with {flag}.")
+                    open(flag, "wb").close()
             if he.status == 429:
                 print("Delaying next requests...")
                 time.sleep(3*60)
