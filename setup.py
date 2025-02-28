@@ -25,7 +25,7 @@ setup(
         "console_scripts": ["mastodon-archive=mastodon_archive:main"]
     },
     install_requires=[
-        "mastodon.py",
+        "Mastodon.py@https://github.com/jikamens/Mastodon.py/archive/refs/heads/master.zip",
         "progress",
         "html2text",
     ],
