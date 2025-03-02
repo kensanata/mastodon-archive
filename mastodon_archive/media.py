@@ -105,7 +105,7 @@ def media(args):
         try:
             download(url, remoteurl, file_name, args)
         except OSError as e:
-            print("\n" + e.msg + ": " + url, file=sys.stderr)
+            print("\n" + str(e) + ": " + url, file=sys.stderr)
             errors += 1
         if pace:
             time.sleep(1)
