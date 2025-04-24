@@ -18,7 +18,7 @@ account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
 tool. Use something like
 [Mastodon Archive Reader Lite](https://github.com/s427/MARL) (MARL),
-[tumelune](https://tumelune.netlify.app/),
+[tumelune](https://fedi.doom.solutions/tumelune/),
 [mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
 or [meow](#meow) to browse the archive.
 
