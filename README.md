@@ -17,6 +17,7 @@ your avatar and header images as well as the private key of your
 account used for signing content." If all you want to do is have a
 backup of your data, perhaps that is enough and you don't need this
 tool. Use something like
+[Toot-suite](https://codeberg.org/chrmoe/toot-suite) for Emacs,
 [Mastodon Archive Reader Lite](https://github.com/s427/MARL) (MARL),
 [tumelune](https://fedi.doom.solutions/tumelune/),
 [mastodon-data-viewer.py](https://github.com/blackle/mastodon-data-viewer.py)
