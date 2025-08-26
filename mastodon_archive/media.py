@@ -171,13 +171,9 @@ def check_if_permanent_error(url, file_name, error, args):
     error_string = repr(error)
     errors_path = f"{file_name}.errors"
 
+    add_entry = {'timestamp': time.time(), 'url': url, 'error': error_string}
     with open(errors_path, 'a') as f:
-        entry = {
-            'timestamp': time.time(),
-            'url': url,
-            'error': error_string,
-        }
-        f.write(json.dumps(entry, indent=None, sort_keys=True) + '\n')
+        f.write(json.dumps(add_entry, indent=None, sort_keys=True) + '\n')
 
     # Check if we now have a streak of identical errors.
 
