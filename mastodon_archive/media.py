@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
+import itertools
 import os
 import sys
 import json
@@ -151,9 +152,48 @@ def download(url, remoteurl, file_name, args, from404=True):
                 retry_downloads = False
                 if remoteurl:
                     download(remoteurl, None, file_name, args)
+                check_if_permanent_error(url, file_name, he, args)
         except URLError as ue:
             if not args.suppress_errors:
                 print("\nFailed to open " + url + " during a media request.")
                 if remoteurl:
                     download(remoteurl, None, file_name, args)
             retry_downloads = False
+            check_if_permanent_error(url, file_name, ue, args)
+
+def check_if_permanent_error(url, file_name, error, args):
+    """
+    Record a download error for this media and possibly suppress further attempts.
+
+    Suppression occurs if the same error has been observed on all attempts for
+    at least two weeks.
+    """
+    error_string = repr(error)
+    errors_path = f"{file_name}.errors"
+
+    with open(errors_path, 'a') as f:
+        entry = {
+            'timestamp': time.time(),
+            'url': url,
+            'error': error_string,
+        }
+        f.write(json.dumps(entry, indent=None, sort_keys=True) + '\n')
+
+    # Check if we now have a streak of identical errors.
+
+    with open(errors_path, 'r') as f:
+        entries = [json.loads(entry) for entry in f.readlines()]
+
+    # The same media file can have multiple URLs, so we'll only look
+    # at failures for the current URL. We'll also look the entries in
+    # reverse chrono order.
+    recent_entries = [e for e in reversed(entries) if e['url'] == url]
+    latest_error = recent_entries[0]['error']
+    streak = list(itertools.takewhile(lambda e: e['error'] == error_string, recent_entries))
+    streak_s = (streak[0]['timestamp'] - streak[-1]['timestamp']) / 86400
+
+    if streak_s > 14:
+        flag = f"{file_name}.missing"
+        if not args.suppress_errors:
+            print(f"\nSuppressing future downloads with {flag} due to repeated failures.")
+        open(flag, "wb").close()
