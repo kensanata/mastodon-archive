@@ -190,9 +190,9 @@ def check_if_permanent_error(url, file_name, error, args):
     recent_entries = [e for e in reversed(entries) if e['url'] == url]
     latest_error = recent_entries[0]['error']
     streak = list(itertools.takewhile(lambda e: e['error'] == error_string, recent_entries))
-    streak_s = (streak[0]['timestamp'] - streak[-1]['timestamp']) / 86400
+    streak_days = (streak[0]['timestamp'] - streak[-1]['timestamp']) / 86400
 
-    if streak_s > 14:
+    if streak_days >= 14:
         flag = f"{file_name}.missing"
         if not args.suppress_errors:
             print(f"\nSuppressing future downloads with {flag} due to repeated failures.")
