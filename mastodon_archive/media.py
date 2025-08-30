@@ -180,9 +180,11 @@ def check_if_permanent_error(url, file_name, error, args):
     with open(errors_path, 'r') as f:
         entries = [json.loads(entry) for entry in f.readlines()]
 
-    # The same media file can have multiple URLs, so we'll only look
-    # at failures for the current URL. We'll also look the entries in
-    # reverse chrono order.
+    # The same media file *could* have multiple URLs, so we'll only
+    # look at failures for the current URL. (As of 2025-08-30, the
+    # `download` function effectively only calls this check for the
+    # remote URL, but that could change in the future.) We'll also
+    # look the entries in reverse chrono order.
     recent_entries = [e for e in reversed(entries) if e['url'] == url]
     latest_error = recent_entries[0]['error']
     streak = list(itertools.takewhile(lambda e: e['error'] == error_string, recent_entries))
