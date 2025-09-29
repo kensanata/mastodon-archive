@@ -130,6 +130,11 @@ def download(url, remoteurl, file_name, args, from404=True):
                 data = response.read()
                 fp.write(data)
                 retry_downloads = False
+            # On success, clear any history maintained by `check_if_permanent_error`
+            try:
+                os.remove(f"{file_name}.errors")
+            except FileNotFoundError:
+                pass  # error file often won't exist
         except HTTPError as he:
             if not args.suppress_errors:
                 print("\nFailed to open " + url + " during a media request.")
