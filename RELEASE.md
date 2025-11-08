@@ -1,5 +1,7 @@
 # How to make a release
 
+Check CHANGES.md for completeness.
+
 Increase the version number in setup.py.
 
 Tag the commit.
