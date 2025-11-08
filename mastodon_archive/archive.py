@@ -95,7 +95,7 @@ def archive(args):
                     return False
             return True
         elif d1 := core.date_handler(item1):
-            return True if d1 == item2 else d1 == core.data_handler(item2)
+            return True if d1 == item2 else d1 == core.date_handler(item2)
         elif d2 := core.date_handler(item1):
             return item1 == d2
 
