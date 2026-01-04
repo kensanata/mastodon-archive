@@ -19,6 +19,7 @@ from . import archive
 from . import replies
 from . import text
 from . import context
+from . import generic_fetch
 from . import html
 from . import media
 from . import split
@@ -324,6 +325,30 @@ def main():
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=mutuals.mutuals)
 
+
+    parser_content = subparsers.add_parser(
+        name='followed-tags', help='print followed hashtags')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
+    parser_content.add_argument(
+        "--json", action='store_true',
+        help='output JSON from server instead of plaintext')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=generic_fetch.followed_tags)
+
+    parser_content = subparsers.add_parser(
+        name='filters', help='print filters')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
+    parser_content.add_argument(
+        "--json", action='store_true',
+        help='output JSON from server instead of plaintext')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=generic_fetch.filters)
 
     parser_content = subparsers.add_parser(
         name='allowlist',

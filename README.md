@@ -763,6 +763,12 @@ your name, which is why you need to authorize it again.
 
 This command supports the [allowlist](#allowlist).
 
+# Followed hashtags and filters
+
+You can export followed hashtags or filters with the `followed-tags`
+or `filters` command. By default these will print a plaintext
+representation of the data which does not include all details returned
+by the server. If you want to see all details, specify `--json`.
 
 # Mutes and Blocks
 
