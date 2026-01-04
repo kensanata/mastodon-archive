@@ -173,7 +173,7 @@ def media(args):
                 bar.finish()
 
 
-    if errors > 0:
+    if not args.suppress_errors and errors > 0:
         print("%d downloads failed" % errors)
 
 
