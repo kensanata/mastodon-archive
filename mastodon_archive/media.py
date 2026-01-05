@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 import itertools
 import os
 import sys
@@ -26,12 +27,33 @@ from progress.bar import Bar
 from urllib.parse import urlparse
 from . import core
 
+DEFAULT_PACE = 1
+paces_file = 'host_paces.txt'
+hosts_paces = {}
+# The first time in a run we decide we need to increase the pace for a host, we
+# save the new pace here. If we increase it again later in the same run, we
+# _don't_ save it here. This is because the first time in a run we hit the rate
+# limit, it's likely that we were starting from a blank slate, whereas if we
+# hit it again in the same run we were probably cut off prematurely due to our
+# earlier requests. Our goal is for the paces stored in the pace file to be
+# our best guess of what the lowest possible delay between requests needs to be
+# to avoid rate-limiting entirely.
+hosts_paces_first = {}
+hosts_raced = {}
+hosts_paced = {}
+
+class RateLimitException(Exception):
+    def __init__(self, host):
+        self.host = host
+
+
 def media(args):
     """
     Download all the media files linked to from your archive
     """
 
-    pace = hasattr(args, 'pace') and args.pace
+    if args.pace:
+        read_paces_file()
 
     (username, domain) = args.user.split('@')
 
@@ -39,46 +61,51 @@ def media(args):
     media_dir = domain + '.user.' + username
     data = core.load(status_file, required=True, quiet=True, combine=args.combine)
 
-    urls = []
-    preview_urls_count=0
-    for status in data[args.collection]:
-        attachments = status["media_attachments"]
-        account = status["account"]
-        emojis = status["emojis"]
-        reactions = status.get("reactions", [])
-        card = status["card"]
-        if status["reblog"] is not None:
-            attachments = status["reblog"]["media_attachments"]
-            account = status["reblog"]["account"]
-            emojis = status["reblog"]["emojis"]
-            card = status["reblog"]["card"]
-        for attachment in attachments:
-                if attachment["preview_url"]:
-                        urls.append((attachment["preview_url"], attachment["preview_remote_url"]))
-                        preview_urls_count += 1
-                if attachment["url"]:
-                        urls.append((attachment["url"], attachment["remote_url"]))
-        if account["avatar"]:
-                urls.append((account["avatar"], None))
-        for emoji in emojis:
-                if emoji["url"]:
-                        urls.append((emoji["url"], None))
-        if len(account["emojis"]) > 0:
-            for emoji in account["emojis"]:
-                if emoji["url"]:
-                        urls.append((emoji["url"], None))
-        for reaction in reactions:
-                if "url" in reaction and reaction["url"]  :
-                        urls.append((reaction["url"], None))
-        if card and card["image"]:
-                urls.append((card["image"], None))
+    urls = {}
+    preview_urls_count = 0
 
-    urls = list(dict.fromkeys(urls))
+    for collection in (args.collection or args.collection_default):
+        for status in data[collection]:
+            attachments = status["media_attachments"]
+            account = status["account"]
+            emojis = status["emojis"]
+            reactions = status.get("reactions", [])
+            card = status["card"]
+            if status["reblog"] is not None:
+                attachments = status["reblog"]["media_attachments"]
+                account = status["reblog"]["account"]
+                emojis = status["reblog"]["emojis"]
+                card = status["reblog"]["card"]
+            for attachment in attachments:
+                if attachment["preview_url"]:
+                    tuple = (attachment["preview_url"],
+                             attachment["preview_remote_url"])
+                    if tuple not in urls:
+                        urls[tuple] = 1
+                        preview_urls_count += 1
+                    if attachment["url"]:
+                        urls[(attachment["url"], attachment["remote_url"])] = 1
+            if account["avatar"]:
+                urls[(account["avatar"], None)] = 1
+            for emoji in emojis:
+                if emoji["url"]:
+                    urls[(emoji["url"], None)] = 1
+            if len(account["emojis"]) > 0:
+                for emoji in account["emojis"]:
+                    if emoji["url"]:
+                        urls[(emoji["url"], None)] = 1
+            for reaction in reactions:
+                if "url" in reaction and reaction["url"]:
+                    urls[(reaction["url"], None)] = 1
+            if card and card["image"]:
+                urls[(card["image"], None)] = 1
 
     # these two are always available; if the user didn't set it, will link to a
     # placeholder image
     for picture in ["avatar", "header"]:
-        urls.append((data["account"][picture], None))
+        urls[(data["account"][picture], None)] = 1
+
+    urls = list(urls.keys())
 
     if not args.quiet:
         print("%d urls in your backup (%d are previews)" % (len(urls), preview_urls_count))
@@ -90,81 +117,139 @@ def media(args):
             if not os.path.isfile(file_name) and
             not os.path.isfile(f"{file_name}.missing")]
 
-    if not args.quiet:
-        print(f"{len(urls)} to download")
-        bar = Bar('Downloading', max = len(urls))
-
     errors = 0
+    retries = 5
 
-    # start downloading the missing files from the back
-    for url, remoteurl, file_name in reversed(urls):
+    # downloading the missing files from the back
+    new_queue = list(reversed(urls))
+    while new_queue:
+        queue = new_queue
+        new_queue = []
+        rate_limit_exceptions = {}
+        succeeded = 0
+
         if not args.quiet:
-            bar.next()
-        path = urlparse(url).path
-        dir_name =  os.path.dirname(file_name)
-        os.makedirs(dir_name, exist_ok = True)
-        try:
-            download(url, remoteurl, file_name, args)
-        except OSError as e:
-            print("\n" + str(e) + ": " + url, file=sys.stderr)
-            errors += 1
-        if pace:
-            time.sleep(1)
+            print(f"{len(queue)} to download")
+            bar = Bar('Downloading', max = len(queue))
 
-    if not args.quiet:
-        bar.finish()
+        for url, remoteurl, file_name in queue:
+            if not args.quiet:
+                bar.next()
+            path = urlparse(url).path
+            dir_name =  os.path.dirname(file_name)
+            os.makedirs(dir_name, exist_ok = True)
+            try:
+                if download(url, remoteurl, file_name, args):
+                    succeeded += 1
+                else:
+                    errors += 1
+            except RateLimitException as rle:
+                rate_limit_exceptions[rle.host] = 1
+                new_queue.append((url, remoteurl, file_name))
+            except OSError as e:
+                print("\n" + str(e) + ": " + url, file=sys.stderr)
+                errors += 1
 
-    if errors > 0:
+        if new_queue:
+            if succeeded:
+                retries = 5
+            else:
+                retries -= 1
+                if retries < 1:
+                    if not args.suppress_errors:
+                        print(f'\nGiving up after 5 retries')
+                    break
+                
+            now = time.time()
+            next_time = min((hosts_raced.get(h, now)
+                             for h in rate_limit_exceptions))
+            if next_time > now:
+                wait_time = next_time - now
+                if not args.suppress_errors:
+                    print(f'\nWaiting {wait_time:.0f} seconds for rate limits to expire')
+                time.sleep(wait_time)
+        else:
+            if not args.quiet:
+                bar.finish()
+
+
+    if not args.suppress_errors and errors > 0:
         print("%d downloads failed" % errors)
+
 
 def download(url, remoteurl, file_name, args, from404=True):
     req = urllib.request.Request(
         url, data=None,
         headers={'User-Agent': 'Mastodon-Archive/1.3 '
                     '(+https://github.com/kensanata/mastodon-archive#mastodon-archive)'})
-    retries = 5
-    retry_downloads = True
-    while retries > 0 and retry_downloads:
+    
+    if req.host in hosts_raced:
+        if time.time() < hosts_raced[req.host]:
+            raise RateLimitException(req.host)
+        hosts_raced.pop(req.host)
+
+    if args.pace:
+        if req.host not in hosts_paces:
+            hosts_paces[req.host] = DEFAULT_PACE
+        elif req.host in hosts_paced:
+            time.sleep(max(0, hosts_paced[req.host] - time.time()))
+        hosts_paced[req.host] = time.time() + hosts_paces[req.host]
+
+    try:
+        with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
+            data = response.read()
+            fp.write(data)
+        # On success, clear any history maintained by `check_if_permanent_error`
         try:
-            with urllib.request.urlopen(req) as response, open(file_name, 'wb') as fp:
-                data = response.read()
-                fp.write(data)
-                retry_downloads = False
-            # On success, clear any history maintained by `check_if_permanent_error`
-            try:
-                os.remove(f"{file_name}.errors")
-            except FileNotFoundError:
-                pass  # error file often won't exist
-        except HTTPError as he:
+            os.remove(f"{file_name}.errors")
+        except FileNotFoundError:
+            pass  # error file often won't exist
+        return True
+    except HTTPError as he:
+        if not args.suppress_errors:
+            print("\nFailed to open " + url + " during a media request.")
+
+        if he.status == 429:
             if not args.suppress_errors:
-                print("\nFailed to open " + url + " during a media request.")
-                # We stop trying to download both 401 and 404 because 401
-                # almost always means the server has authorized fetch enabled
-                # and we're never going to be able to download.
-                if remoteurl:
-                    return download(remoteurl, None, file_name, args,
-                                    from404=he.status in (401, 404))
-                if from404 and he.status in (401, 404):
-                    flag = f"{file_name}.missing"
-                    if not args.suppress_errors:
-                        print(f"\nSuppressing future downloads with {flag}.")
-                    open(flag, "wb").close()
-            if he.status == 429:
-                print("Delaying next requests...")
-                time.sleep(3*60)
-                retries -= 1
+                print(f'\nDelaying next request to {req.host}')
+            if args.pace:
+                # Slow down the pace for this host because we're apparently not
+                # waiting long enough to avoid its rate-limiting
+                hosts_paces[req.host] *= 1.1
+                if req.host not in hosts_paces_first:
+                    hosts_paces_first[req.host] = hosts_paces[req.host]
+                    write_paces_file()
+            if reset := he.headers['x-ratelimit-reset']:
+                hosts_raced[req.host] = \
+                    datetime.datetime.fromisoformat(reset).timestamp()
             else:
-                retry_downloads = False
-                if remoteurl:
-                    download(remoteurl, None, file_name, args)
-                check_if_permanent_error(url, file_name, he, args)
-        except URLError as ue:
+                hosts_raced[req.host] = time.time() + 3*60
+            raise RateLimitException(req.host)
+
+        # We stop trying to download 401, 403, and 404 because 401 and 403
+        # almost always means the server has authorized fetch enabled
+        # and we're never going to be able to download.
+        if remoteurl:
+            return download(remoteurl, None, file_name, args,
+                            from404=he.status in (401, 403, 404))
+
+        if from404 and he.status in (401, 403, 404):
+            flag = f"{file_name}.missing"
             if not args.suppress_errors:
-                print("\nFailed to open " + url + " during a media request.")
-                if remoteurl:
-                    download(remoteurl, None, file_name, args)
-            retry_downloads = False
-            check_if_permanent_error(url, file_name, ue, args)
+                print(f"\nSuppressing future downloads with {flag}.")
+            open(flag, "wb").close()
+            return False
+
+        check_if_permanent_error(url, file_name, he, args)
+        return False
+    except URLError as ue:
+        if not args.suppress_errors:
+            print("\nFailed to open " + url + " during a media request.")
+        if remoteurl:
+            return download(remoteurl, None, file_name, args)
+        check_if_permanent_error(url, file_name, ue, args)
+        return False
+
 
 def check_if_permanent_error(url, file_name, error, args):
     """
@@ -200,3 +285,26 @@ def check_if_permanent_error(url, file_name, error, args):
         if not args.suppress_errors:
             print(f"\nSuppressing future downloads with {flag} due to repeated failures.")
         open(flag, "wb").close()
+
+
+def read_paces_file():
+    if not os.path.exists(paces_file):
+        return
+    with open(paces_file) as f:
+        for line in f:
+            (host, pace) = line.strip().split(':', 1)
+            hosts_paces[host] = float(pace)
+
+
+def write_paces_file():
+    if not hosts_paces_first:
+        return
+    new_file = f'{paces_file}.new'
+    paces = dict(hosts_paces)
+    paces.update(hosts_paces_first)
+    with open(new_file, 'w') as f:
+        for host, pace in paces.items():
+            if pace == DEFAULT_PACE:
+                continue
+            print(f'{host}:{pace}', file=f)
+    os.rename(new_file, paces_file)

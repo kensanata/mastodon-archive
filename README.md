@@ -246,7 +246,7 @@ $ mastodon-archive media kensanata@dice.camp
 34 files already exist
 Downloading |################################| 10/10
 ```
-By default, media you uploaded and media of statuses you added your
+By default, media you uploaded and media of statuses you added to your
 favourites or bookmarks are not part of your archive. To download these too,
 specify the favourites collection:
 
@@ -258,6 +258,22 @@ specify the bookmarks collection:
 ```text
 $ mastodon-archive media --collection bookmarks kensanata@dice.camp
 ```
+
+You can specify `--collection` multiple times to download from
+different collections in one run. In fact, if you want to download
+media from multiple collections, doing them in one run is better
+because it'll enable the script to optimize rate-limiting more
+successfully. So, for example, to download from all collection types,
+you can specify `--collection statuses --collection favourites
+--collection bookmarks`.
+
+If you find that your media downloads are being rate-limited
+frequently (the script says "Waiting # seconds for rate limits to
+expire"), you may wish to add `--pace` to your command line. If you do
+this then the script will try to learn what the rate limit is for each
+host and not exceed it, which will make media downloads run faster
+overall. It stores this state in a file called `host_paces.txt` in the
+directory in which it is run.
 
 You will end up with a new directory, `dice.camp.user.kensanata`. It
 contains all the media you uploaded, and their corresponding previews.
@@ -747,6 +763,12 @@ your name, which is why you need to authorize it again.
 
 This command supports the [allowlist](#allowlist).
 
+# Followed hashtags and filters
+
+You can export followed hashtags or filters with the `followed-tags`
+or `filters` command. By default these will print a plaintext
+representation of the data which does not include all details returned
+by the server. If you want to see all details, specify `--json`.
 
 # Mutes and Blocks
 

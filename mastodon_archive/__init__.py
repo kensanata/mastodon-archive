@@ -19,6 +19,7 @@ from . import archive
 from . import replies
 from . import text
 from . import context
+from . import generic_fetch
 from . import html
 from . import media
 from . import split
@@ -113,15 +114,19 @@ def main():
     parser_content = subparsers.add_parser(
         name='media',
         help='download media referred to by toots in your archive')
+    media_collection_default = 'statuses'
     parser_content.add_argument("user",
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.add_argument("--combine",
                                 action="store_true",
                                 help="combine archives in case they are split")
-    parser_content.add_argument("--collection", dest='collection',
-                                choices=['statuses', 'favourites', 'bookmarks'],
-                                default='statuses',
-                                help='export statuses, favourites or bookmarks')
+    parser_content.add_argument(
+        "--collection", dest='collection', action='append',
+        # The default isn't specified here because if it were then whatever the
+        # user specified would be appended to it rather than replacing it.
+        choices=['statuses', 'favourites', 'bookmarks'], default=[],
+        help=f'export statuses, favourites or bookmarks (default '
+        f'{media_collection_default})')
     parser_content.add_argument("--pace", dest='pace', action='store_const',
                                 const=True, default=False,
                                 help='avoid timeouts and pace requests')
@@ -131,7 +136,9 @@ def main():
     parser_content.add_argument("--suppress-errors", action='store_true',
                                 default=False, help="don't print messages "
                                 "about media that can't be downloaded")
-    parser_content.set_defaults(command=media.media)
+    parser_content.set_defaults(
+        command=media.media,
+        collection_default=[media_collection_default])
 
 
     parser_content = subparsers.add_parser(
@@ -318,6 +325,30 @@ def main():
                                 help='your account, e.g. kensanata@octogon.social')
     parser_content.set_defaults(command=mutuals.mutuals)
 
+
+    parser_content = subparsers.add_parser(
+        name='followed-tags', help='print followed hashtags')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
+    parser_content.add_argument(
+        "--json", action='store_true',
+        help='output JSON from server instead of plaintext')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=generic_fetch.followed_tags)
+
+    parser_content = subparsers.add_parser(
+        name='filters', help='print filters')
+    parser_content.add_argument("--no-version-check", dest='version_check', action='store_const',
+                                const="none", default="created",
+                                help='ignore "Version check failed" error')
+    parser_content.add_argument(
+        "--json", action='store_true',
+        help='output JSON from server instead of plaintext')
+    parser_content.add_argument("user",
+                                help='your account, e.g. kensanata@octogon.social')
+    parser_content.set_defaults(command=generic_fetch.filters)
 
     parser_content = subparsers.add_parser(
         name='allowlist',
