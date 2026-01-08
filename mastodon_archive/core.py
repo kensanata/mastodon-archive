@@ -93,8 +93,7 @@ def login(args, scopes=('read',)):
     Login to your Mastodon account.
     """
     pace = hasattr(args, 'pace') and args.pace
-    version_check = hasattr(args, 'version_check') and args.version_check
-    app = App(args.user, scopes=scopes, pace=pace, version_check=version_check)
+    app = App(args.user, scopes=scopes, pace=pace)
     return app.login()
 
 class App:
