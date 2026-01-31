@@ -93,8 +93,7 @@ def login(args, scopes=('read',)):
     Login to your Mastodon account.
     """
     pace = hasattr(args, 'pace') and args.pace
-    version_check = hasattr(args, 'version_check') and args.version_check
-    app = App(args.user, scopes=scopes, pace=pace, version_check=version_check)
+    app = App(args.user, scopes=scopes, pace=pace)
     return app.login()
 
 class App:
@@ -103,7 +102,7 @@ class App:
     account.
     """
 
-    def __init__(self, user, scopes=('read',), name="mastodon-archive", pace=False, version_check="created"):
+    def __init__(self, user, scopes=('read',), name="mastodon-archive", pace=False, version_check="none"):
 
         self.username, self.domain = user.split("@")
         self.url = "https://" + self.domain
