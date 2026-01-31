@@ -137,8 +137,8 @@ def media(args):
                 bar.next()
             path = urlparse(url).path
             dir_name =  os.path.dirname(file_name)
-            os.makedirs(dir_name, exist_ok = True)
             try:
+                os.makedirs(dir_name, exist_ok = True)
                 if download(url, remoteurl, file_name, args):
                     succeeded += 1
                 else:
