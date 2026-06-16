@@ -298,8 +298,6 @@ def save(file_name, data, quiet=False, backup=True):
     """
     if backup and os.path.isfile(file_name):
         backup_file = file_name + '~'
-        if not quiet:
-            print("Backing up", file_name, "to", backup_file)
         if os.path.isfile(backup_file):
             ans = ""
             while ans.lower() not in ("y", "n", "yes", "no"):
@@ -307,11 +305,13 @@ def save(file_name, data, quiet=False, backup=True):
                     "Backup: {} exists! Overwrite (yes/no)? ".format(backup_file)
                 )
 
-            if ans.lower()[0] == "y":
-                shutil.copy2(file_name, backup_file)
-            else:
+            if ans.lower()[0] == "n":
                 print("Exiting to avoid overwriting backup.", file=sys.stderr)
                 sys.exit(0)
+
+        if not quiet:
+            print("Backing up", file_name, "to", backup_file)
+        shutil.copy2(file_name, backup_file)
 
     with open(file_name, mode = 'w', encoding = 'utf-8') as fp:
         data = json.dump(data, fp, indent = 2, default = date_handler)
