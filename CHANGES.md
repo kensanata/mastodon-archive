@@ -2,6 +2,24 @@
 
 Unreleased:
 
+v1.4.9
+
+- Bug fix: archive --with-notes would clobber the main user. This
+  resulted in the wrong user being shown in the header of an HTML
+  export.
+- Bug fix: save backup file when no backup file exists.
+- Feature: Use shorter media directory names, if possible. Depending
+  on file system and fedi server used, users could run into "file name
+  too long" errors.
+- Feature: --no-version-check is now the default.
+- Feature: allow suppression of media download errors.
+- Feature: add followed-tags and filters commands.
+- Feature: better handling of rate-limiting and media download pacing.
+- Bug fix: fixed a typo that resulted in a runtime error (`data_handler`
+  instead of `date_handler`).
+
+Thanks Jonathan Kamens, Feiko Nanninga, Tim McCormack.
+
 v1.4.8
 
 - Add new archive --update option to update existing items. Thanks,
