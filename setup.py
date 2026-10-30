@@ -13,13 +13,13 @@ setup(
     author_email="alex@gnu.org",
     url='https://github.com/kensanata/mastodon-archive#mastodon-archive',
     classifiers=[
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Communications',
         'Intended Audience :: End Users/Desktop',
         'Environment :: Console',
         'Development Status :: 5 - Production/Stable',
     ],
+    license="GPL-3.0-or-later",
     packages=["mastodon_archive"],
     entry_points={
         "console_scripts": ["mastodon-archive=mastodon_archive:main"]
